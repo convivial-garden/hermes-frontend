@@ -1,0 +1,6 @@
+{
+    "url": "http://keycloak:8080/",
+    "realm": "collectivo",
+    "clientId": "collectivo-ux",
+    "onLoad": "login-required"
+}

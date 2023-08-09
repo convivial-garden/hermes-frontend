@@ -1,0 +1,224 @@
+html {
+  font-size: 14px;
+}
+
+@import 'leaflet/dist/leaflet.css';
+// overwrite bootstrap standards
+$primary: #853668;
+$font-family-base:"open sans";
+$font-size-base:1rem;
+
+@import 'bootstrap/scss/bootstrap.scss';
+// @import 'react-select/dist/react-select.css';
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+/*div {*/
+/*padding: 0;*/
+/*}*/
+
+/*.contractList > .row > div {*/
+/*outline: 0px solid #eeeeee;*/
+/*font-size: 15px;*/
+/*}*/
+
+.exmarg {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.expad {
+  padding-top: 20px;
+}
+
+.boldf {
+  font-weight: bold;
+}
+
+.mh {
+  min-height: 23px;
+}
+
+.def-headline {
+  vertical-align: top;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
+.minmarg {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.gesamt {
+  font-size: larger;
+  text-align: center;
+  margin-bottom: -3px;
+}
+
+.highest-z {
+  z-index: 20;
+}
+
+.calendar-z {
+  z-index: 100;
+}
+
+.border-emphasis {
+  border: 2px #aaa solid;
+  border-radius: 3px;
+  background-color: #fff;
+  width: 100%;
+}
+
+.second-z {
+  z-index: 10;
+}
+
+.modal-z {
+  z-index: 214748364;
+}
+
+.unsaved {
+  color: black;
+}
+
+.saving {
+  color: lightgrey;
+}
+
+.saved {
+  color: green;
+}
+
+.group:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.bbot {
+  border-bottom: 2px solid #333333;
+}
+
+.bbott {
+  border-bottom: 1px solid #333333;
+}
+
+.blot {
+  border-left: 2px solid #000000;
+}
+
+.blott {
+  border-left: 4px solid #000000;
+}
+
+.brot {
+  border-right: 2px solid #000000;
+}
+
+.brott {
+  border-right: 4px solid #000000;
+}
+
+.btot {
+  border-top: 2px solid #000000;
+}
+
+.btott {
+  border-top: 1px solid #333333;
+}
+
+.timec {
+  background-color: #ffcad1;
+}
+
+.blg {
+  background-color: #ffffff;
+}
+
+.blgg {
+  background-color: #e3e3e3;
+}
+
+.bw {
+  background-color: #eee;
+}
+
+.timec_warning {
+  background-color: #f2dede;
+}
+
+.timez {
+  background-color: ghostwhite;
+}
+
+.red {
+  color: red;
+}
+
+.bbo {
+  border-bottom: 1px solid #000000;
+}
+
+.blo {
+  border-left: 1px solid #000000;
+}
+
+.bro {
+  border-right: 1px solid #000000;
+}
+
+.bto {
+  border-top: 1px solid #000000;
+}
+
+.wideModal {
+  width: 90%;
+}
+
+.smallModal {
+  width: 20%;
+}
+.main-navigation {
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 10px 0px;
+}
+@media (min-width: 1200px) {
+  .h3,
+  h3 {
+    font-size: 1.3rem;
+  }
+}
+.customer-search .Select{
+  width: 100%;
+}
+.customer-search .input-group > div:first-child{
+  width: 100%;
+}
+.rider-select{
+  width: 70%;
+}
+.staff-detail .Select{
+  width: 80%;
+}
+.rider-modal{
+  min-height:50vh;
+}
+.contract-modal .modal-body,
+.rider-modal .modal-body{
+  overflow: scroll;
+  max-height: 70vh;
+  min-height: 45vh;
+}
+.delayed-payment-customer{
+  border:1px solid red;
+}
+#setting-0{
+  display: none;
+}
