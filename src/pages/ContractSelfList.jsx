@@ -5,13 +5,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-datepicker';
-import ContractPosition from '../components/ContractPosition';
+import ContractPosition from '@/components/contracts/ContractPosition';
 import {
   getAssignedContractSelfByDate,
   getStaffByDate,
   getActiveStaffByDate,
   generateRepeatedContracts,
-} from '../utils/transportFunctions';
+} from '@/utils/transportFunctions.jsx';
 
 import 'react-datepicker/dist/react-datepicker.css';
 

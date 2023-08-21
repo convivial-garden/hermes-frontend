@@ -1,8 +1,9 @@
 import React from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Api } from '@/utils/transportFunctions.jsx';
+
 
 import moment from 'moment';
 
@@ -32,7 +33,7 @@ function ActiveStaffEntry({
         <Button
           size="sm"
           onClick={() => {
-            axios
+            Api
               .delete(data.url)
               .then(() => {
                 update();

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   Row, Col, Container, Form, Button,
 } from 'react-bootstrap';
-import { getSettings, saveSettings } from '../utils/transportFunctions';
+import { getSettings, saveSettings } from '@/utils/transportFunctions.jsx';
 
 export default class SettingsView extends Component {
   state = {

@@ -11,9 +11,9 @@ import {
   Nav,
 } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
-import ContractPosition from '../components/ContractPosition';
-import { getContractArchive, getStaffNames } from '../utils/transportFunctions';
-import CustomerSelect from '../components/CustomerSelect';
+import ContractPosition from '@/components/contracts/ContractPosition';
+import { getContractArchive, getStaffNames } from '@/utils/transportFunctions.jsx';
+import CustomerSelect from '@/components/CustomerSelect';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -77,7 +77,7 @@ class ContractArchive extends Component {
 
   render() {
     return (
-      <Container fluid className="contractList bbo">
+      <Container fluid className="contractList bbo contractarchive">
         <Row>
           <Col xs={2}>
             <h3 className="def-headline">Auftragsarchiv</h3>
@@ -95,6 +95,7 @@ class ContractArchive extends Component {
               selected={this.state.date}
               onChange={this.dateChange}
               className="form-control"
+              calendarStartDay={1}
             />
           </Col>
           <Col xs={4}>

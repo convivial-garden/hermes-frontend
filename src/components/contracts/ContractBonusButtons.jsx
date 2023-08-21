@@ -34,7 +34,7 @@ function ContractBonusButtons({ handler, id, position }) {
   if (weight_size_bonus !== '') weight_size_label = weight_size_bonus === 'weight' ? 'Gewicht' : 'Groesse';
 
   return (
-    <Container fluid>
+    <Container fluid className='bonus'>
       <Row>
         <Col xs={6}>
           <ButtonGroup vertical>
@@ -65,11 +65,6 @@ function ContractBonusButtons({ handler, id, position }) {
             >
               Grossgebaeude
             </Button>
-
-          </ButtonGroup>
-        </Col>
-        <Col xs={6}>
-          <ButtonGroup vertical>
             <Button
               active={is_express}
               onClick={(event) => handler(id, event, !is_express)}
@@ -78,6 +73,11 @@ function ContractBonusButtons({ handler, id, position }) {
             >
               EXPRESS
             </Button>
+          </ButtonGroup>
+        </Col>
+        <Col xs={6}>
+          <ButtonGroup vertical>
+
             {/* <Button active={isProvisionally} onClick={(event) => handler(id, event, !isProvisionally)} name="isProvisionally" */}
             {/* style={{border: emphasizedBorder}} */}
             {/* >Vorlaeufig</Button> */}

@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { putDelayedPayment } from '../utils/transportFunctions';
+import { putDelayedPayment } from '@/utils/transportFunctions.jsx';
 
 class DeleteDelayedPaymentModal extends Component {
   constructor() {

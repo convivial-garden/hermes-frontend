@@ -6,8 +6,8 @@ import { faHourglass } from '@fortawesome/free-solid-svg-icons';
 import * as R from 'ramda';
 import {
   getFullCustomers, getCustomer2, getCustomerPage, BACKEND,
-} from '../utils/transportFunctions';
-import CustomerDetail from '../components/CustomerDetail';
+} from '@/utils/transportFunctions.jsx';
+import CustomerDetail from '@/components/CustomerDetail';
 
 class AllCustomers extends Component {
   constructor() {
@@ -54,6 +54,7 @@ class AllCustomers extends Component {
       const index = this.state.customers.findIndex((customer) => customer && customer.id === id);
       if (customer) {
         this.setState({ loading: true });
+
         getCustomer2(customer.id)
           .then((response) => {
             if (response.status === 200) {
@@ -93,7 +94,7 @@ class AllCustomers extends Component {
 
   render() {
     return (
-      <Container fluid className="contractList bbott">
+      <Container fluid className="contractList bbott allcustomers">
         <Row>
           <Col xs={3}>
             <h3 className="def-headline">Liste Aller Kunden</h3>

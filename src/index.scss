@@ -86,7 +86,7 @@ body {
 }
 
 .unsaved {
-  color: black;
+  color: white;
 }
 
 .saving {
@@ -221,4 +221,9 @@ body {
 }
 #setting-0{
   display: none;
+}
+.bonus{
+  border: 1px solid;
+  padding: 5px;
+  border-radius: 6px;
 }

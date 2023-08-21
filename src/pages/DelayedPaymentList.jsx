@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { getDelayedPaymentCustomers } from '../utils/transportFunctions';
-import CustomerDetail from '../components/CustomerDetail';
+import { getDelayedPaymentCustomers } from '@/utils/transportFunctions.jsx';
+import CustomerDetail from '@/components/CustomerDetail';
 
 class DelayedPaymentList extends Component {
   constructor() {

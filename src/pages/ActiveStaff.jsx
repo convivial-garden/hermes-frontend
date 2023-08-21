@@ -4,9 +4,9 @@ import {
   ListGroup, ListGroupItem,
   Container, Row, Col,
 } from 'react-bootstrap';
-import ActiveStaffEntry from '../components/ActiveStaffEntry';
-import AddStaffModal from '../components/AddStaffModal';
-import { getTimesByDate } from '../utils/transportFunctions';
+import ActiveStaffEntry from '@/components/ActiveStaffEntry';
+import AddStaffModal from '@/components/AddStaffModal';
+import { getTimesByDate } from '@/utils/transportFunctions.jsx';
 
 class ActiveStaff extends Component {
   constructor() {
@@ -51,6 +51,7 @@ class ActiveStaff extends Component {
               selected={this.state.date}
               onChange={this.dateChange}
               className="form-control"
+              calendarStartDay={1}
             />
           </Col>
         </Row>

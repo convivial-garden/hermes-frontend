@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleMinus } from '@fortawesome/free-solid-svg-icons';
-import TimeInput from './TimeInput';
+import TimeInput from '@/components/TimeInput';
 
 class ContractFormTimesForm extends Component {
   constructor(props) {

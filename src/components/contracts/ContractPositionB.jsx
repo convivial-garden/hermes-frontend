@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import moment from 'moment';
-import { ADDZONEPRICE } from '../constants/prices';
+import { ADDZONEPRICE } from '@/constants/prices';
 
 class ContractPositionB extends Component {
   render() {

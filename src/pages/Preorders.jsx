@@ -3,8 +3,8 @@ import {
   Container, Row, ListGroupItem, Col,
 } from 'react-bootstrap';
 import moment from 'moment';
-import ContractPosition from '../components/ContractPosition';
-import { getPreorders } from '../utils/transportFunctions';
+import ContractPosition from '@/components/contracts/ContractPosition';
+import { getPreorders } from '@/utils/transportFunctions.jsx';
 
 import 'react-datepicker/dist/react-datepicker.css';
 

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
-import { getCustomersByNameList, getCustomer, getCustomersByExternalIdList } from '../utils/transportFunctions';
-import CustomerDetail from '../components/CustomerDetail';
+import { getCustomersByNameList, getCustomer, getCustomersByExternalIdList } from '@/utils/transportFunctions.jsx';
+import CustomerDetail from '@/components/CustomerDetail';
 
 class CustomerList extends Component {
   constructor() {

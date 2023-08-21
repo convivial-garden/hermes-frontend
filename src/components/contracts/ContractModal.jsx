@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import ContractFormContainer from '../pages/ContractFormContainer';
+import ContractFormContainer from '@/pages/ContractFormContainer';
 
 class ContractModal extends Component {
   constructor() {

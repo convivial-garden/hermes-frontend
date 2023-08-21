@@ -35,7 +35,7 @@ class ContractPositionA extends Component {
         level,
         door,
         postal_code,
-      } = address[0];
+      } = address[0]? address[0] : {};
 
       const sameDay = moment(start_time).isSame(this.props.date, 'day');
       const name = customer !== null ? (customer.name === '_anon' ? anon_name : customer.name) : '';
@@ -52,7 +52,7 @@ class ContractPositionA extends Component {
       }
 
       return (
-        <Row>
+        <Row className='contractPositionA' >
           <Col xs={12}>
             <Row>
               <Col xs={12} className="minmarg">

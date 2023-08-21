@@ -9,8 +9,8 @@ import {
 import AsyncSelect from 'react-select/async';
 import { faTrash, faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ContractFormTimesForm from './ContractFormTimesForm';
-import { INITIAL_CONTRACT_FORM_STATE } from '../constants/initialStates';
+import ContractFormTimesForm from '@/components/contracts/ContractFormTimesForm.jsx';
+import { INITIAL_CONTRACT_FORM_STATE } from '@/constants/initialStates.js';
 import {
   getCustomersByNameList,
   getCustomer,
@@ -19,7 +19,7 @@ import {
   postNewCustomer,
   getCustomersByExternalIdList,
   getSettings,
-} from '../utils/transportFunctions';
+} from '@/utils/transportFunctions.jsx';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const emptyContractForm = {
@@ -154,6 +154,7 @@ class ContractFormRepresentational extends Component {
   }
 
   selectStreetLoadOptions(input, callback) {
+    if (input.length < 4) return;
     setTimeout(() => {
       getStreetNamesFast(input)
         .then((resp) => {

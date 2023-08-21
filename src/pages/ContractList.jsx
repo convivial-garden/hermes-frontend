@@ -5,14 +5,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-datepicker';
-import ContractPosition from '../components/ContractPosition';
+import ContractPosition from '../components/contracts/ContractPosition';
 import {
   getAssignedContractByDate,
   getUnassignedContractByDate,
   getStaffByDate,
   getActiveStaffByDate,
   generateRepeatedContracts,
-} from '../utils/transportFunctions';
+} from '@/utils/transportFunctions.jsx';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -142,18 +142,19 @@ class ContractList extends Component {
               <Col xs={1} />
             </Row>
           </Col>
+          
           <Col xs={4}>
             <ToggleButtonGroup name="riders" value={this.state.selectedRider}>
               <ToggleButton value={-1} onClick={() => this.setRider(-1)}>Unzugeordnet</ToggleButton>
               {this.state.currentRiders && this.state.currentRiders.length > 0
                 ? this.state.currentRiders.map((rider) => (
                   <ToggleButton
-                    key={rider.id}
-                    value={rider.id}
-                    onClick={() => this.setRider(rider.id)}
-                    style={{ backgroundColor: (this.state.selectedRider === rider.id ? 'mistyrose' : '') }}
+                    key={rider.user}
+                    value={rider.user}
+                    onClick={() => this.setRider(rider.user)}
+                    style={{ backgroundColor: (this.state.selectedRider === rider.user ? 'mistyrose' : '') }}
                   >
-                    {rider.user__first_name}
+                    {rider.times[0].staff_member.user__first_name}
                   </ToggleButton>
                 ))
                 : <ToggleButton disabled value={-2}>Zur Zeit keine Fahrer</ToggleButton>}

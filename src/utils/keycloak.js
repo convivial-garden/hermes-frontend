@@ -3,6 +3,7 @@ import Keycloak from 'keycloak-js';
 export let keycloak = null;
 
 function initKeycloak() {
+  console.log('initKeycloak');
   const initOptions = {
     url: 'http://keycloak:8080/',
     realm: 'collectivo',
@@ -12,6 +13,8 @@ function initKeycloak() {
   keycloak = new Keycloak(initOptions);
   keycloak.redirectUri = window.location.origin + "/";
   keycloak.onAuthSuccess = () => {
+    localStorage.setItem('token', keycloak.token);
+    console.log('onAuthSuccess', localStorage.getItem('token'));
     console.log('onAuthSuccess');
   };
   keycloak.onAuthError = () => {

@@ -5,8 +5,8 @@ import {
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
-import DeleteDelayedPaymentModal from './DeleteDelayedPaymentModal';
-import CustomerFormModal from './CustomerFormModal';
+import DeleteDelayedPaymentModal from '@/components/DeleteDelayedPaymentModal.jsx';
+import CustomerFormModal from './CustomerFormModal.jsx';
 
 const initialAddress = {
   street: '',

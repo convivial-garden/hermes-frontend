@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import AsyncSelect from 'react-select/async';
-import { getCustomer, getCustomersByNameList } from '../utils/transportFunctions';
+import { getCustomer, getCustomersByNameList } from '@/utils/transportFunctions.jsx';
 
 class CustomerSelect extends Component {
   constructor(props) {

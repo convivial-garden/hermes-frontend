@@ -16,8 +16,8 @@ import * as R from 'ramda';
 import {
   faSearch, faFloppyDisk, faFileCircleCheck, faTriangleExclamation, faHourglass,
 } from '@fortawesome/free-solid-svg-icons';
-import { getStreetNamesFast, putCustomer2 } from '../utils/transportFunctions';
-import DeleteDelayedPaymentModal from './DeleteDelayedPaymentModal';
+import { getStreetNamesFast, putCustomer2 } from '@/utils/transportFunctions.jsx';
+import DeleteDelayedPaymentModal from '@/components/DeleteDelayedPaymentModal.jsx';
 
 const initialAddress = {
   street: '',

@@ -3,14 +3,17 @@ import { Row, Col, Button } from 'react-bootstrap';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown, faBicycle } from '@fortawesome/free-solid-svg-icons';
+import DeleteContractModal from '@/components/contracts/DeleteContractModal.jsx';
+import ContractPositionA from '@/components/contracts/ContractPositionA.jsx';
+import ContractPositionB from '@/components/contracts/ContractPositionB.jsx';
+import ContractModal from '@/components/contracts/ContractModal.jsx';
+import RiderSelect from '@/components/RiderSelect.jsx';
 import axios from 'axios';
-import { BACKEND } from '../utils/transportFunctions';
 
-import DeleteContractModal from './DeleteContractModal';
-import ContractPositionA from './ContractPositionA';
-import ContractPositionB from './ContractPositionB';
-import ContractModal from './ContractModal';
-import RiderSelect from './RiderSelect';
+import {
+  BACKEND,
+  Api
+} from '@/utils/transportFunctions.jsx';
 
 class ContractPosition extends Component {
   constructor() {
@@ -32,6 +35,7 @@ class ContractPosition extends Component {
       this.state.perPositionSelection.slice(0, position - 1),
     );
     const newEntry = [].concat(this.state.perPositionSelection[position - 1]);
+    console.log(position, sequence, event.target.value)
     newEntry[sequence] = Number.parseInt(event.target.value, 10);
     newPerPositionSelection.push(newEntry);
     newPerPositionSelection = newPerPositionSelection.concat(
@@ -56,7 +60,7 @@ class ContractPosition extends Component {
               (dispo) => dispo.position === position.id && dispo.sequence === selIndex,
             );
             if (matchingDispo !== undefined) {
-              dispoRequests.push(axios.delete(matchingDispo.url));
+              dispoRequests.push(Api.delete(matchingDispo.url));
             }
           });
         }
@@ -87,10 +91,10 @@ class ContractPosition extends Component {
         if (selection !== -1) {
           if (matchingDispo !== undefined) {
             if (matchingDispo.dispatched_to === selection) {
-              axios.put(matchingDispo.url, { preliminary: false });
+              Api.put(matchingDispo.url, { preliminary: false });
             } else {
-              axios.delete(matchingDispo.url).then(() => {
-                axios
+              Api.delete(matchingDispo.url).then(() => {
+                Api
                   .post(`${BACKEND}dispo/`, {
                     dispatched_to: selection,
                     position: this.props.contract.positions[posI].id,
@@ -101,7 +105,7 @@ class ContractPosition extends Component {
               });
             }
           } else {
-            axios
+            Api
               .post(`${BACKEND}dispo/`, {
                 dispatched_to: selection,
                 position: this.props.contract.positions[posI].id,
@@ -111,7 +115,7 @@ class ContractPosition extends Component {
               .then(callback);
           }
         } else if (matchingDispo !== undefined) {
-          axios.delete(matchingDispo.url).then(callback);
+          Api.delete(matchingDispo.url).then(callback);
         }
       },
     );
@@ -132,11 +136,11 @@ class ContractPosition extends Component {
     const requests = [];
     if (selection !== -1) {
       if (existingDispo !== undefined) {
-        requests.push(axios.delete(existingDispo.url));
+        requests.push(Api.delete(existingDispo.url));
       }
 
       requests.push(
-        axios.post(`${BACKEND}dispo/`, {
+        Api.post(`${BACKEND}dispo/`, {
           dispatched_to: selection,
           position: this.props.contract.positions[positionIndex].id,
           sequence,
@@ -144,7 +148,7 @@ class ContractPosition extends Component {
         }),
       );
     } else if (existingDispo !== undefined) {
-      requests.push(axios.delete(existingDispo.url));
+      requests.push(Api.delete(existingDispo.url));
     }
     axios.all(requests).then(() => {
       callback();

@@ -25,17 +25,21 @@ const Api = axios.create({
 });
 
 Api.interceptors.request.use((config) => {
+  console.log('interceptor request', config.url);
+  console.log('interceptor request', keycloak?.authenticated);
+  if(!keycloak)throw new axios.Cancel('Keycloak not ready.');
   if (keycloak?.authenticated) {
     config.headers.Authorization = `Token ${keycloak.token}`;
   } else if (localStorage.getItem('token')!== null){
     const token = localStorage.getItem('token');
     config.headers.Authorization = `Token ${token}`;
   } else{
-    // initKeycloak();
-
+    throw new axios.Cancel('Keycloak not ready.');
   }
   config.headers['Accept'] = 'application/json; version=0.1.0';
   return config;
+}, function (error) {
+  return Promise.reject(error);
 });
 Api.interceptors.response.use(
   function (response) {
@@ -207,17 +211,19 @@ function getAssignedContractSelfByDate(date, callback) {
   );
 }
 function getCustomer(id, callback) {
+  console.log('getCustomer', CUSTOMERS_ENDPOINT, id)
   Api.get(`${CUSTOMERS_ENDPOINT}${id}/`).then((customerResp) => {
     callback(customerResp.data);
   });
 }
 
 function getCustomer2(id) {
+  console.log('getCustomer2', CUSTOMERS_ENDPOINT, id)
   return Api.get(`${CUSTOMERS_ENDPOINT}${id}/`);
 }
 
 function getCustomerPage(url) {
-  return axios.get(url);
+  return Api.get(url);
 }
 
 function getSettings() {
@@ -241,15 +247,15 @@ function getFullCustomers(callback) {
 }
 
 function deleteContract(url, callback) {
-  axios.delete(url).then((response) => callback(response.data.results));
+  Api.delete(url).then((response) => callback(response.data.results));
 }
 
 function postNewAddress(newAddress, callback) {
-  axios.post(ADDRESSES, newAddress).then((resp) => callback(resp.data));
+  Api.post(ADDRESSES, newAddress).then((resp) => callback(resp.data));
 }
 
 function deleteAddress(url) {
-  return axios.delete(url);
+  return Api.delete(url);
 }
 
 function contractPayloadFromFrontend(contract) {
@@ -324,7 +330,7 @@ function prepareNewContract(contract) {
 
 function putContract(contract, callback) {
   prepareNewContract(contract).then((payload) =>
-    axios
+    Api
       .put(contract.url, payload)
       .then((response) => {
         callback(response);
@@ -373,6 +379,7 @@ function customerPayloadFromContractform(formData) {
 }
 
 function putCustomer(data, callback) {
+  console.log('putCustomer', data)
   Api.put(
     `${CUSTOMERS_ENDPOINT}
     data.customer_url`,
@@ -381,7 +388,8 @@ function putCustomer(data, callback) {
 }
 
 function putCustomer2(url, payload) {
-  return Api.put(`${CUSTOMERS_ENDPOINT}${url}`, payload);
+  console.log('putCustomer2', url, payload)
+  return Api.put(`${url}`, payload);
 }
 
 function postNewCustomer(data) {
@@ -402,8 +410,11 @@ function getStaffByDate(date, callback) {
   const year = date.format('YYYY');
   const month = date.format('MM');
   const day = date.format('DD');
-  Api.get(`staff/date/${year}/${month}/${day}/`).then((response) =>
-    callback(response.data.results),
+  Api.get(`staff/date/${year}/${month}/${day}/`).then((response) =>{
+    console.log('getStaffByDate', response)
+    return callback(response.data)
+
+  }
   );
 }
 
@@ -413,7 +424,7 @@ function getActiveStaffByDate(date, callback) {
   const month = date.format('MM');
   const day = date.format('DD');
   Api.get(`staff/active/${year}/${month}/${day}/`).then((response) =>
-    callback(response.data.results),
+    callback(response.data),
   );
 }
 

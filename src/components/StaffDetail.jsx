@@ -21,7 +21,7 @@ import {
   postNewStaffMember,
   BACKEND,
   Api
-} from '../utils/transportFunctions';
+} from '@/utils/transportFunctions.jsx';
 
 const initialState = (pos, date) => {
   const end = new Date();

@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import CustomerForm from './CustomerForm';
-import { deleteCustomer } from '../utils/transportFunctions';
+import { deleteCustomer } from '@/utils/transportFunctions.jsx';
 
 class CustomerFormModal extends Component {
   constructor() {

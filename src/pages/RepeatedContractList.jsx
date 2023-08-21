@@ -7,11 +7,11 @@ import {
   ToggleButtonGroup,
   ToggleButton,
 } from 'react-bootstrap';
-import RepeatedContractPosition from '../components/RepeatedContractPosition';
+import RepeatedContractPosition from '@/components/contracts/RepeatedContractPosition';
 import {
   getRepeatedContracts,
   getTerminatedRepeatedContracts,
-} from '../utils/transportFunctions';
+} from '@/utils/transportFunctions.jsx';
 
 class RepeatedContractList extends Component {
   constructor() {

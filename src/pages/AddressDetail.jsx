@@ -3,7 +3,7 @@ import {
   Container, Row, Col, FormGroup, FormControl, FormLabel, Button, Alert,
 } from 'react-bootstrap';
 import axios from 'axios';
-import { deleteAddress } from '../utils/transportFunctions';
+import { deleteAddress } from '@/utils/transportFunctions.jsx';
 
 // street = models.CharField(max_length=300, default='')
 // number = models.CharField(max_length=10)
@@ -41,7 +41,7 @@ class AddressDetail extends Component {
     const { url } = this.props;
     this.setState({ url });
     if (url !== '') {
-      axios
+      Api
         .get(url)
         .then((response) => {
           this.setState({ data: response.data });
@@ -56,7 +56,7 @@ class AddressDetail extends Component {
   saveAddress() {
     this.setState({ saved: false });
     if (this.state.url !== '') {
-      axios
+      Api
         .put(this.state.url, this.state.data)
         .then((resp) => {
           this.setState({ saved: (resp.status === 200) });
@@ -84,7 +84,7 @@ class AddressDetail extends Component {
       street, number, stair, level, door, postal_code,
     } = this.state.data;
     return (
-      <Container>
+      <Container className='AddressDetail'>
         <FormGroup controlId="fourth" className="row">
           <Row>
             <Col xs={COL_WIDTH}>

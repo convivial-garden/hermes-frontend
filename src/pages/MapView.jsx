@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import {
-  MapContainer, TileLayer, Marker, useMap,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import { Row, Col, Container } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
 import * as R from 'ramda';
-import { getStreetNamesFast } from '../utils/transportFunctions';
+import { getStreetNamesFast, getSettings } from '@/utils/transportFunctions.jsx';
 
 const DEFAULT_VIEWPORT = {
   center: [48.216625, 16.385063],
@@ -23,34 +21,55 @@ export default class MapView extends Component {
       lat: 48.216625,
       lon: 16.385063,
     },
+    settings: null,
   };
+
+  componentDidMount() {
+
+    getSettings().then((response) => {
+      this.setState({
+        settings: response,
+        viewport: {
+          center: [response.gps_lat, response.gps_lon],
+          zoom: 17,
+        },
+        street: {
+          lat: response.gps_lat,
+          lon: response.gps_lon,
+        },
+        lat: response.gps_lat,
+        lng: response.gps_lon,
+        map: map
+      });
+      console.log(response);
+    });
+  }
 
   streetFilter(option, filter) {
     let hasSubstring = false;
     if (filter.includes(' ')) {
       const parts = filter.split(' ');
       parts.forEach((part) => {
-        if (option.label.toLowerCase().includes(part.toLowerCase())) hasSubstring = true;
+        if (option.label.toLowerCase().includes(part.toLowerCase()))
+          hasSubstring = true;
       });
-    } else if (option.label.toLowerCase().includes(filter.toLowerCase())) hasSubstring = true;
+    } else if (option.label.toLowerCase().includes(filter.toLowerCase()))
+      hasSubstring = true;
     return hasSubstring;
   }
 
   selectStreetLoadOptions(input, callback) {
     setTimeout(() => {
-      getStreetNamesFast(input)
-        .then((resp) => {
-          callback(resp.data);
-        });
+      getStreetNamesFast(input).then((resp) => {
+        callback(resp.data);
+      });
     }, 200);
   }
-
   handleStreetSelect(val) {
-    this.setState((prevState) => R.mergeDeepRight(
-      prevState,
-      {
-        street:
-        {
+    console.log(val.data.lat)
+    this.setState((prevState) =>
+      R.mergeDeepRight(prevState, {
+        street: {
           lat: val.data.lat,
           long: val.data.lon,
         },
@@ -60,8 +79,8 @@ export default class MapView extends Component {
           center: [val.data.lat, val.data.lon],
           zoom: 17,
         },
-      },
-    ));
+      }),
+    );
   }
 
   render() {
@@ -71,24 +90,24 @@ export default class MapView extends Component {
         <Row>
           <Col xs={10}>
             <MapContainer
+              key={JSON.stringify(this.state.viewport.center)}
               center={this.state.viewport.center}
               zoom={17} // viewport={this.state.viewport}
               style={{ height: '800px' }}
             >
               <TileLayer
-                url="https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png"
+                url='https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png'
                 subdomains={['maps', 'maps1', 'maps2', 'maps3']}
-                minZoom="1"
-                maxZoom="18"
+                minZoom='1'
+                maxZoom='18'
                 // attribution="123"
-
               />
               <Marker position={position} />
             </MapContainer>
           </Col>
           <Col xs={2}>
             <AsyncSelect
-              name="street_name"
+              name='street_name'
               value={this.state.street.name}
               loadOptions={this.selectStreetLoadOptions}
               autoload={false}

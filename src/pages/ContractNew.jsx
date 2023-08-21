@@ -34,19 +34,20 @@ import {
   apiResponseToInitialState,
 } from '@/constants/initialStates';
 import MapModal from '@/components/MapModal';
-import ContractBonusButtons from '@/components/contracts/ContractBonusButtons';
-import { ContractFormRepresentational } from '@/components/contracts/ContractFormRepresentational';
+import ContractBonusButtons from '@/components/contracts/ContractBonusButtons.jsx';
+import Contractor from '@/components/contracts/Contractor.jsx';
+import { ContractFormRepresentational } from '@/components/contracts/ContractFormRepresentational.jsx';
 import {
   getAnon,
   postNewContract,
   putContract,
   postNewCustomer,
   putDelayedPayment,
-  PUBHOST,
   getSettings,
   Api,
 } from '@/utils/transportFunctions.jsx';
 
+import { haversine, zoneFromDistance, markenFromPrice } from '@/utils/helper.js';
 
 const SAVEICONS = {
   unsaved: faBicycle,
@@ -54,42 +55,7 @@ const SAVEICONS = {
   saved: faCheck,
 };
 
-function haversine(lat1, lon1, lat2, lon2) {
-  const toRad = (x) => (x * Math.PI) / 180;
-  const R = 6371; // km
-  const x1 = lat2 - lat1;
-  const dLat = toRad(x1);
-  const x2 = lon2 - lon1;
-  const dLon = toRad(x2);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-function zoneFromDistance(distance, zone_size, addzone_size) {
-  if (distance >= 0.00001) {
-    const temp_dist = distance - zone_size;
-    let zone = 1;
-    let additionalZones = 0;
-    if (temp_dist > 0) {
-      additionalZones = Math.floor((temp_dist + addzone_size) / addzone_size);
-    }
-    zone += additionalZones;
-    return zone;
-  }
-  return 0;
-}
-
-function markenFromPrice(price, basezoneprice) {
-  return Math.floor(price / basezoneprice);
-}
-
-class ContractFormContainer extends Component {
+class ContractNew extends Component {
   constructor() {
     super();
     this.addContractForm = this.addContractForm.bind(this);
@@ -739,6 +705,19 @@ class ContractFormContainer extends Component {
     return (
       <Container fluid className='ContractFormContainer'>
         <Row>
+          <Col xs={12} className='mb-5'>
+          Neuer Auftrag
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} className='contractor-wrapper'>
+            {JSON.stringify(this.state)}
+            <Contractor
+              customer={this.state.customer}
+            ></Contractor>
+          </Col>
+        </Row>
+        <Row>
           <Col xs={12} xl={2} className='mb-5'>
             <ListGroup>
               <ListGroupItem style={{ border: emphasizedBorder }}>
@@ -1137,4 +1116,4 @@ class ContractFormContainer extends Component {
   }
 }
 
-export default ContractFormContainer;
+export default ContractNew;

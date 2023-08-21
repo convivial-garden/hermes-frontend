@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 import RepeatedContractList from './pages/RepeatedContractList';
-import ContractFormContainer from './pages/ContractFormContainer';
+import ContractNew from './pages/ContractNew';
 import CustomerList from './pages/CustomerList';
 import AllCustomers from './pages/AllCustomers';
 import ContractList from './pages/ContractList';
@@ -24,10 +24,10 @@ import MapView from './pages/MapView';
 import SettingsView from './pages/SettingsView';
 import Preorders from './pages/Preorders';
 import DelayedPaymentList from './pages/DelayedPaymentList';
-import { getSales } from './utils/transportFunctions';
-import initKeycloak from './utils/keycloak';
+import { getSales } from './utils/transportFunctions.jsx';
+import initKeycloak, { keycloak } from '@/utils/keycloak.js';
 import registerServiceWorker from './utils/registerServiceWorker';
-import { PUBHOST } from './utils/transportFunctions';
+import { PUBHOST } from './utils/transportFunctions.jsx';
 
 function CustomLink({ children, to, ...props }) {
   const resolved = useResolvedPath(to);
@@ -70,8 +70,7 @@ class App extends Component {
 
     registerServiceWorker();
     if (
-      localStorage.getItem('token') === null ||
-      localStorage.getItem('tokenByAdaper') === true
+      keycloak== null || !keycloak.authenticated 
     ) {
       initKeycloak();
     }
@@ -89,6 +88,9 @@ class App extends Component {
   }
 
   render() {
+    if (keycloak==null || !keycloak.authenticated) {
+      return <div> not authenticated</div>
+    }
     return (
       <BrowserRouter>
         {/* <main> */}
@@ -97,7 +99,7 @@ class App extends Component {
             <Nav>
               <CustomLink
                 className='nav-link btn btn-primary text-white ms-3'
-                to='disposerv/disposerv/1/newcontract'
+                to='disposerv/disposerv/newcontract'
               >
                 <Nav>Neuer Auftrag</Nav>
               </CustomLink>
@@ -105,20 +107,20 @@ class App extends Component {
             <Nav>
               <CustomLink
                 className='nav-link'
-                to='disposerv/disposerv/1/staff'
+                to='disposerv/disposerv/staff'
               >
                 <Nav>Personaleinsatz</Nav>
               </CustomLink>
             </Nav>
             <Nav>
-              <CustomLink className='nav-link' to='disposerv/disposerv/1/'>
+              <CustomLink className='nav-link' to='disposerv/disposerv/'>
                 <Nav>Auftragsübersicht</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
                 className='nav-link'
-                to='disposerv/disposerv/1/preorders'
+                to='disposerv/disposerv/preorders'
               >
                 <Nav>Vorbestellungen</Nav>
               </CustomLink>
@@ -126,7 +128,7 @@ class App extends Component {
             <Nav>
               <CustomLink
                 className='nav-link'
-                to='disposerv/disposerv/1/repeated'
+                to='disposerv/disposerv/repeated'
               >
                 <Nav>Daueraufträge</Nav>
               </CustomLink>
@@ -134,7 +136,7 @@ class App extends Component {
             <Nav>
               <CustomLink
                 className='nav-link'
-                to='disposerv/disposerv/1/customers'
+                to='disposerv/disposerv/customers'
               >
                 <Nav>Kundensuche</Nav>
               </CustomLink>
@@ -142,7 +144,7 @@ class App extends Component {
             <Nav>
               <CustomLink
                 className='nav-link'
-                to='disposerv/disposerv/1/allcustomers'
+                to='disposerv/disposerv/allcustomers'
               >
                 <Nav>Kundenliste</Nav>
               </CustomLink>
@@ -150,7 +152,7 @@ class App extends Component {
             <Nav>
               <CustomLink
                 className='nav-link'
-                to='disposerv/disposerv/1/archive'
+                to='disposerv/disposerv/archive'
               >
                 <Nav>Auftragsarchiv</Nav>
               </CustomLink>
@@ -158,25 +160,25 @@ class App extends Component {
             <Nav>
               <CustomLink
                 className='nav-link'
-                to='disposerv/disposerv/1/delayedcustomers'
+                to='disposerv/disposerv/delayedcustomers'
               >
                 <Nav>Nachzahlungen</Nav>
               </CustomLink>
             </Nav>
             <Nav>
-              <CustomLink className='nav-link' to='disposerv/disposerv/1/self'>
+              <CustomLink className='nav-link' to='disposerv/disposerv/self'>
                 <Nav>Meine Aufträge</Nav>
               </CustomLink>
             </Nav>
             <Nav>
-              <CustomLink className='nav-link' to='disposerv/disposerv/1/map'>
+              <CustomLink className='nav-link' to='disposerv/disposerv/map'>
                 <Nav>Karte</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
                 className='nav-link'
-                to='disposerv/disposerv/1/settings'
+                to='disposerv/disposerv/settings'
               >
                 <Nav>
                   <FontAwesomeIcon icon={faCog} />
@@ -197,52 +199,52 @@ class App extends Component {
               element={<ContractList appUpdate={this.update} />}
             />
             <Route
-              path='disposerv/disposerv/1/'
+              path='disposerv/disposerv/'
               element={<ContractList appUpdate={this.update} />}
             />
             <Route
-              path='disposerv/disposerv/1/self/'
+              path='disposerv/disposerv/self/'
               element={<ContractSelfList appUpdate={this.update} />}
             />
             <Route
-              path='disposerv/disposerv/1/newcontract'
-              element={<ContractFormContainer />}
+              path='disposerv/disposerv/newcontract'
+              element={<ContractNew />}
             />
             <Route
-              path='disposerv/disposerv/1/customers'
+              path='disposerv/disposerv/customers'
               element={<CustomerList />}
             />
             <Route
-              path='disposerv/disposerv/1/allcustomers'
+              path='disposerv/disposerv/allcustomers'
               element={<AllCustomers />}
             />
             <Route
-              path='disposerv/disposerv/1/staff'
+              path='disposerv/disposerv/staff'
               element={<ActiveStaff />}
             />
             <Route
-              path='disposerv/disposerv/1/test/:id'
+              path='disposerv/disposerv/test/:id'
               element={<AddressDetail />}
             />
             <Route
-              path='disposerv/disposerv/1/archive'
+              path='disposerv/disposerv/archive'
               element={<ContractArchive />}
             />
             <Route
-              path='disposerv/disposerv/1/preorders'
+              path='disposerv/disposerv/preorders'
               element={<Preorders />}
             />
             <Route
-              path='disposerv/disposerv/1/delayedcustomers'
+              path='disposerv/disposerv/delayedcustomers'
               element={<DelayedPaymentList />}
             />
-            <Route path='disposerv/disposerv/1/map' element={<MapView />} />
+            <Route path='disposerv/disposerv/map' element={<MapView />} />
             <Route
-              path='disposerv/disposerv/1/settings'
+              path='disposerv/disposerv/settings'
               element={<SettingsView />}
             />
             <Route
-              path='disposerv/disposerv/1/repeated'
+              path='disposerv/disposerv/repeated'
               element={<RepeatedContractList />}
             />
           </Routes>

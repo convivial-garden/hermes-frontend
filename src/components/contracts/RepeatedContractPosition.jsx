@@ -4,10 +4,10 @@ import moment from 'moment';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
-import DeleteContractModal from './DeleteContractModal';
-import ContractPositionA from './ContractPositionA';
-import ContractPositionB from './ContractPositionB';
-import ContractModal from './ContractModal';
+import DeleteContractModal from '@/components/contracts/DeleteContractModal.jsx';
+import ContractPositionA from '@/components/contracts/ContractPositionA.jsx';
+import ContractPositionB from '@/components/contracts/ContractPositionB.jsx';
+import ContractModal from '@/components/contracts/ContractModal.jsx';
 
 const WEEKDAYS = {
   Monday: 'Montag',

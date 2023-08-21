@@ -32,7 +32,7 @@ class RiderSelect extends Component {
             >
               <option value={-1}>keine FahrerIn</option>
               {riders?.map((rider) => (
-                <option value={rider.id} key={rider.id}>{rider.name}</option>
+                <option value={rider.user} key={rider.user}>{rider.times[0].staff_member.user__first_name}</option>
               ))}
             </Form.Select>
             <Form.Select
@@ -43,7 +43,7 @@ class RiderSelect extends Component {
             >
               <option value={-1}>keine FahrerIn</option>
               {riders?.map((rider) => (
-                <option value={rider.id} key={rider.id}>{rider.name}</option>
+                <option value={rider.user} key={rider.user}>{rider.times[0].staff_member.user__first_name}</option>
               ))}
             </Form.Select>
             {this.state.thirdField
@@ -56,7 +56,7 @@ class RiderSelect extends Component {
                 >
                   <option value={-1}>keine FahrerIn</option>
                   {riders.map((rider) => (
-                    <option value={rider.id} key={rider.id}>{rider.name}</option>
+                    <option value={rider.user} key={rider.user}>{rider.times[0].staff_member.user__first_name}</option>
                   ))}
                 </Form.Select>
               )

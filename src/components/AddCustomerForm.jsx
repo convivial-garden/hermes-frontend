@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
 import { BACKEND } from './transportFunctions';
+import { Api } from '@/utils/transportFunctions.jsx';
 
 const CUSTOMER_ENDPOINT = `${BACKEND}customers/`;
 
@@ -34,7 +35,7 @@ class AddCustomerForm extends Component {
   }
 
   postNewUser() {
-    axios.post(CUSTOMER_ENDPOINT, {
+    Api.post(CUSTOMER_ENDPOINT, {
       username: this.state.name,
       email: this.state.email,
       is_staff: this.state.is_staff,
