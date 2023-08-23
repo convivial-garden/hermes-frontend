@@ -97,13 +97,13 @@ class AllCustomers extends Component {
       <Container fluid className="contractList bbott allcustomers">
         <Row>
           <Col xs={3}>
-            <h3 className="def-headline">Liste Aller Kunden</h3>
+            <h3 className="def-headline">Liste Aller Kund:innen</h3>
             {this.state.loading
               ? (
                 <h4>
                   <FontAwesomeIcon icon={faHourglass} />
                   {' '}
-                  Lade Kunden...
+                  Lade Kund:innen...
                 </h4>
               )
               : (
@@ -111,7 +111,7 @@ class AllCustomers extends Component {
                   <p>
                     {this.state.totalCustomers}
                     {' '}
-                    {this.state.totalCustomers === 1 ? 'Kund*Inn' : 'KundInnen'}
+                    {this.state.totalCustomers === 1 ? 'Kund:in' : 'Kund:innen'}
                   </p>
                 </div>
               )}

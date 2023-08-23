@@ -84,7 +84,7 @@ class AddressDetail extends Component {
       street, number, stair, level, door, postal_code,
     } = this.state.data;
     return (
-      <Container className='AddressDetail'>
+      <Container className="AddressDetail">
         <FormGroup controlId="fourth" className="row">
           <Row>
             <Col xs={COL_WIDTH}>

@@ -227,3 +227,8 @@ body {
   padding: 5px;
   border-radius: 6px;
 }
+.btn-check:checked + .btn, :not(.btn-check) + .btn:active, .btn:first-child:active, .btn.active, .btn.show {
+  color: var(--bs-btn-active-color);
+  background-color: #69c84e;
+  border-color: var(--bs-btn-active-border-color);
+}

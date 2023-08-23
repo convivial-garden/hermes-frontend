@@ -27,28 +27,26 @@ const Api = axios.create({
 Api.interceptors.request.use((config) => {
   console.log('interceptor request', config.url);
   console.log('interceptor request', keycloak?.authenticated);
-  if(!keycloak)throw new axios.Cancel('Keycloak not ready.');
+  if (!keycloak) throw new axios.Cancel('Keycloak not ready.');
   if (keycloak?.authenticated) {
     config.headers.Authorization = `Token ${keycloak.token}`;
-  } else if (localStorage.getItem('token')!== null){
+  } else if (localStorage.getItem('token') !== null) {
     const token = localStorage.getItem('token');
     config.headers.Authorization = `Token ${token}`;
-  } else{
+  } else {
     throw new axios.Cancel('Keycloak not ready.');
   }
-  config.headers['Accept'] = 'application/json; version=0.1.0';
+  config.headers.Accept = 'application/json; version=0.1.0';
   return config;
-}, function (error) {
-  return Promise.reject(error);
-});
+}, (error) => Promise.reject(error));
 Api.interceptors.response.use(
-  function (response) {
+  (response) => {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     console.log('interceptor response', response.status, response.config.url);
     return response;
   },
-  function (error) {
+  (error) => {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     console.log('interceptor error', error.response);
@@ -59,8 +57,6 @@ Api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-
 
 const CONTRACTS_BY_DATE = CONTRACTSBYDATE;
 
@@ -78,17 +74,17 @@ const CUSTOMERS_ENDPOINT = CUSTOMERS;
 
 const CONTRACTS_ENDPOINT = CONTRACTS;
 
-const CONTRACTS_ARCHIVE = `contracts/archive/`;
+const CONTRACTS_ARCHIVE = 'contracts/archive/';
 
-const CONTRACTS_ARCHIVE_BYCUSTOMER = `contracts/customer/`;
+const CONTRACTS_ARCHIVE_BYCUSTOMER = 'contracts/customer/';
 
-const PREORDERS = `preorders/`;
+const PREORDERS = 'preorders/';
 
-const STREETNAMES = `street/name/`;
+const STREETNAMES = 'street/name/';
 
-const STREETNAMES_FAST = `faststreet/name/`;
+const STREETNAMES_FAST = 'faststreet/name/';
 
-const DELAYEDPAYMENTS = `payments/`;
+const DELAYEDPAYMENTS = 'payments/';
 
 const SETTINGS_ALL = `${SETTINGS}1/`;
 function getDelayedPaymentCustomers() {
@@ -100,9 +96,7 @@ function getCustomersByNameList(name, callback) {
     callback([]);
     return;
   }
-  Api.get(`${CUSTOMERS_BY_NAME}${name}/`).then((response) =>
-    callback(response.data.results),
-  );
+  Api.get(`${CUSTOMERS_BY_NAME}${name}/`).then((response) => callback(response.data.results));
 }
 
 function getCustomersByExternalIdList(id, callback) {
@@ -110,9 +104,7 @@ function getCustomersByExternalIdList(id, callback) {
     callback([]);
     return;
   }
-  Api.get(`${CUSTOMERS_BY_EXTERNAL_ID}${id}/`).then((response) =>
-    callback(response.data.results),
-  );
+  Api.get(`${CUSTOMERS_BY_EXTERNAL_ID}${id}/`).then((response) => callback(response.data.results));
 }
 function getPreorders() {
   return Api.get(PREORDERS).then((response) => response.data.results);
@@ -211,14 +203,14 @@ function getAssignedContractSelfByDate(date, callback) {
   );
 }
 function getCustomer(id, callback) {
-  console.log('getCustomer', CUSTOMERS_ENDPOINT, id)
+  console.log('getCustomer', CUSTOMERS_ENDPOINT, id);
   Api.get(`${CUSTOMERS_ENDPOINT}${id}/`).then((customerResp) => {
     callback(customerResp.data);
   });
 }
 
 function getCustomer2(id) {
-  console.log('getCustomer2', CUSTOMERS_ENDPOINT, id)
+  console.log('getCustomer2', CUSTOMERS_ENDPOINT, id);
   return Api.get(`${CUSTOMERS_ENDPOINT}${id}/`);
 }
 
@@ -271,23 +263,34 @@ function contractPayloadFromFrontend(contract) {
       type: contract.type,
       repeated: contract.isRepeated
         ? {
-            start_date: contract.repeatedstartdate,
-            end_date: contract.repeatedenddate,
-            days_of_the_week: contract.repeated.days_of_the_week,
-          }
+          start_date: contract.repeatedstartdate,
+          end_date: contract.repeatedenddate,
+          days_of_the_week: contract.repeated.days_of_the_week,
+        }
         : null,
     };
     newContract.positions = [];
     contractPositions.forEach((entry) => {
       const { data: position, id: pos } = entry;
+      let customerUrl = position.customer_anon
+        ? resp.data.url
+        : position.customer_url;
+      console.log(position, pos);
+      if (position.customer_is_pick_up && pos === 0) {
+        customerUrl = newContract.customer.customer_url;
+      }
+      if (position.customer_is_drop_off && pos > 0) {
+        customerUrl = position.customer_url;
+      }
+
       newContract.positions.push({
         position: pos,
-        start_mode: position.start_mode,
         start_time: position.start_time.format('YYYY-MM-DDTHH:mm:ssZ'),
+        start_time_to: position.start_time_to.format('YYYY-MM-DDTHH:mm:ssZ'),
+        customer_is_drop_off: position.customer_is_drop_off,
+        customer_is_pick_up: position.customer_is_pick_up,
         memo: position.notes,
-        new_customer: position.customer_anon
-          ? resp.data.url
-          : position.customer_url,
+        new_customer: customerUrl,
         weight_size_bonus: position.weight_size_bonus,
         is_cargo: position.is_cargo,
         is_express: position.is_express,
@@ -329,28 +332,23 @@ function prepareNewContract(contract) {
 }
 
 function putContract(contract, callback) {
-  prepareNewContract(contract).then((payload) =>
-    Api
-      .put(contract.url, payload)
-      .then((response) => {
-        callback(response);
-      })
-      .catch((error) => console.log(error)),
-  );
+  prepareNewContract(contract).then((payload) => Api
+    .put(contract.url, payload)
+    .then((response) => {
+      callback(response);
+    })
+    .catch((error) => console.log(error)));
 }
 
 function postNewContract(contract, callback) {
-  prepareNewContract(contract).then((payload) =>
-    Api.post(`${CONTRACTS_ENDPOINT}`, payload)
-      .then((response) => callback(response))
-      .catch((error) => console.log(error)),
-  );
+  prepareNewContract(contract).then((payload) => Api.post(`${CONTRACTS_ENDPOINT}`, payload)
+    .then((response) => callback(response))
+    .catch((error) => console.log(error)));
 }
 
 function customerPayloadFromContractform(formData) {
   const position = formData;
-  const ext_id =
-    position.customer_number !== '' ? position.customer_number : '-1';
+  const ext_id = position.customer_number !== '' ? position.customer_number : '-1';
   const newCustomerPayload = {
     name: position.customer_name,
     phone_1: position.phone_1,
@@ -379,7 +377,7 @@ function customerPayloadFromContractform(formData) {
 }
 
 function putCustomer(data, callback) {
-  console.log('putCustomer', data)
+  console.log('putCustomer', data);
   Api.put(
     `${CUSTOMERS_ENDPOINT}
     data.customer_url`,
@@ -388,7 +386,7 @@ function putCustomer(data, callback) {
 }
 
 function putCustomer2(url, payload) {
-  console.log('putCustomer2', url, payload)
+  console.log('putCustomer2', url, payload);
   return Api.put(`${url}`, payload);
 }
 
@@ -400,9 +398,7 @@ function postNewCustomer(data) {
 }
 
 function getAnon() {
-  return Api.get(`${GET_ANON}`).then((resp) =>
-    Api.get(`${CUSTOMERS_ENDPOINT}${resp.data.id}/`),
-  );
+  return Api.get(`${GET_ANON}`).then((resp) => Api.get(`${CUSTOMERS_ENDPOINT}${resp.data.id}/`));
 }
 
 function getStaffByDate(date, callback) {
@@ -410,12 +406,10 @@ function getStaffByDate(date, callback) {
   const year = date.format('YYYY');
   const month = date.format('MM');
   const day = date.format('DD');
-  Api.get(`staff/date/${year}/${month}/${day}/`).then((response) =>{
-    console.log('getStaffByDate', response)
-    return callback(response.data)
-
-  }
-  );
+  Api.get(`staff/date/${year}/${month}/${day}/`).then((response) => {
+    console.log('getStaffByDate', response);
+    return callback(response.data);
+  });
 }
 
 function getActiveStaffByDate(date, callback) {
@@ -423,9 +417,7 @@ function getActiveStaffByDate(date, callback) {
   const year = date.format('YYYY');
   const month = date.format('MM');
   const day = date.format('DD');
-  Api.get(`staff/active/${year}/${month}/${day}/`).then((response) =>
-    callback(response.data),
-  );
+  Api.get(`staff/active/${year}/${month}/${day}/`).then((response) => callback(response.data));
 }
 
 function getTimesByDate(date, callback) {
@@ -433,20 +425,18 @@ function getTimesByDate(date, callback) {
   const year = date.format('YYYY');
   const month = date.format('MM');
   const day = date.format('DD');
-  Api.get(`times/date/${year}/${month}/${day}/`).then((response) =>
-    callback(response.data.results),
-  );
+  Api.get(`times/date/${year}/${month}/${day}/`).then((response) => callback(response.data.results));
 }
 
 function getStaffNames(callback) {
-  Api.get(`staffnames/`)
+  Api.get('staffnames/')
     .then((response) => {
       callback(response.data);
-    })
+    });
 }
 
 function postNewStaffMember(newStaffMember) {
-  return Api.post(`staff/`, newStaffMember)
+  return Api.post('staff/', newStaffMember)
     .then((response) => response.data.results)
     .catch((error) => console.log('postNewStaffMember Error', error));
 }
@@ -477,7 +467,7 @@ function getSales(date) {
 }
 
 function getContracts() {
-  return Api.get(`totalcontracts/`).then((response) => response.data);
+  return Api.get('totalcontracts/').then((response) => response.data);
 }
 
 function getRepeatedContracts(weekday) {
@@ -488,8 +478,7 @@ function getRepeatedContracts(weekday) {
 }
 
 function getTerminatedRepeatedContracts(weekday) {
-  const endpoint =
-    weekday !== 'All' ? `repeateddone/${weekday}/` : 'repeateddoneall';
+  const endpoint = weekday !== 'All' ? `repeateddone/${weekday}/` : 'repeateddoneall';
   return Api.get(endpoint).then((response) => response.data.results);
 }
 

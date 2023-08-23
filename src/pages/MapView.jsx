@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import {
+  MapContainer, TileLayer, Marker, useMap,
+} from 'react-leaflet';
 import { Row, Col, Container } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
 import * as R from 'ramda';
@@ -25,7 +27,6 @@ export default class MapView extends Component {
   };
 
   componentDidMount() {
-
     getSettings().then((response) => {
       this.setState({
         settings: response,
@@ -39,7 +40,7 @@ export default class MapView extends Component {
         },
         lat: response.gps_lat,
         lng: response.gps_lon,
-        map: map
+        map,
       });
       console.log(response);
     });
@@ -50,11 +51,9 @@ export default class MapView extends Component {
     if (filter.includes(' ')) {
       const parts = filter.split(' ');
       parts.forEach((part) => {
-        if (option.label.toLowerCase().includes(part.toLowerCase()))
-          hasSubstring = true;
+        if (option.label.toLowerCase().includes(part.toLowerCase())) hasSubstring = true;
       });
-    } else if (option.label.toLowerCase().includes(filter.toLowerCase()))
-      hasSubstring = true;
+    } else if (option.label.toLowerCase().includes(filter.toLowerCase())) hasSubstring = true;
     return hasSubstring;
   }
 
@@ -65,22 +64,21 @@ export default class MapView extends Component {
       });
     }, 200);
   }
+
   handleStreetSelect(val) {
-    console.log(val.data.lat)
-    this.setState((prevState) =>
-      R.mergeDeepRight(prevState, {
-        street: {
-          lat: val.data.lat,
-          long: val.data.lon,
-        },
+    console.log(val.data.lat);
+    this.setState((prevState) => R.mergeDeepRight(prevState, {
+      street: {
         lat: val.data.lat,
-        lng: val.data.lon,
-        viewport: {
-          center: [val.data.lat, val.data.lon],
-          zoom: 17,
-        },
-      }),
-    );
+        long: val.data.lon,
+      },
+      lat: val.data.lat,
+      lng: val.data.lon,
+      viewport: {
+        center: [val.data.lat, val.data.lon],
+        zoom: 17,
+      },
+    }));
   }
 
   render() {
@@ -96,10 +94,10 @@ export default class MapView extends Component {
               style={{ height: '800px' }}
             >
               <TileLayer
-                url='https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png'
+                url="https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png"
                 subdomains={['maps', 'maps1', 'maps2', 'maps3']}
-                minZoom='1'
-                maxZoom='18'
+                minZoom="1"
+                maxZoom="18"
                 // attribution="123"
               />
               <Marker position={position} />
@@ -107,7 +105,7 @@ export default class MapView extends Component {
           </Col>
           <Col xs={2}>
             <AsyncSelect
-              name='street_name'
+              name="street_name"
               value={this.state.street.name}
               loadOptions={this.selectStreetLoadOptions}
               autoload={false}

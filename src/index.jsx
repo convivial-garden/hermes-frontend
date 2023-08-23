@@ -10,8 +10,7 @@ console.log('say hy from index.jsx');
 
 const App = React.lazy(() => import('./App'));
 
-
-const container = document.getElementById("root");
+const container = document.getElementById('root');
 const root = createRoot(container);
 
 root.render(<App />);

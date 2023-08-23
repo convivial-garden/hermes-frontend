@@ -35,11 +35,11 @@ export default class SettingsView extends Component {
           Object.keys(this.state.settings).map((item, id) => (
             <tr key="{id}" id={`setting-${id}`}>
               <td>{item}</td>
-              <td></td>
+              <td />
               <td>
                 <Form.Control
                   onChange={(e) => this.changeSettingsProperty(item, e)}
-                  step="0.1" 
+                  step="0.1"
                   type="number"
                   value={this.state.settings[item]}
                 />

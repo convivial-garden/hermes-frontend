@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import {
-  Modal, Button, Container, Row, Col, Glyphicon,
+  Modal,
+  Button,
+  Container,
+  Row,
+  Col,
+  Glyphicon,
 } from 'react-bootstrap';
 
 class DeletePaymentNotification extends Component {
@@ -25,13 +30,19 @@ class DeletePaymentNotification extends Component {
   render() {
     return (
       <div>
-        <Modal show={this.state.showModal} onHide={this.close} dialogClassName="smallModal">
+        <Modal
+          show={this.state.showModal}
+          onHide={this.close}
+          dialogClassName="smallModal"
+        >
           <Modal.Header closeButton>
             <Modal.Title>
-              Wollen sie die Nachzahlung fuer KundIn
+              Wollen sie die Nachzahlung für Kund:in
+              {' '}
               {customer.name}
               {' '}
-              wirklich loeschen?
+              wirklich
+              löschen?
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>

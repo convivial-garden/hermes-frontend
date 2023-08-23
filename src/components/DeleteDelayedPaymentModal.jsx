@@ -29,39 +29,48 @@ class DeleteDelayedPaymentModal extends Component {
     const { customer, update } = this.props;
     return (
       <div>
-        <Button
-          onClick={this.open}
-          size="small"
-        >
+        <Button onClick={this.open} size="small">
           <FontAwesomeIcon icon={faTrash} />
         </Button>
 
-        <Modal show={this.state.showModal} onHide={this.close} dialogClassName="smallModal">
+        <Modal
+          show={this.state.showModal}
+          onHide={this.close}
+          dialogClassName="smallModal"
+        >
           <Modal.Header closeButton>
             <Modal.Title>
-              Wollen sie die Nachzahlung fuer KundIn
+              Wollen sie die Nachzahlung für Kund:in
+              {' '}
               {customer.name}
               {' '}
-              wirklich loeschen?
+              wirklich
+              löschen?
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Container fluid>
               <Row>
                 <Col xs={9}>
-                  <Button onClick={() => {
-                    putDelayedPayment(customer.id, { id: customer.id, has_delayed_payment: false, has_delayed_payment_memo: '' })
-                      .then((resp) => {
+                  <Button
+                    onClick={() => {
+                      putDelayedPayment(customer.id, {
+                        id: customer.id,
+                        has_delayed_payment: false,
+                        has_delayed_payment_memo: '',
+                      }).then((resp) => {
                         update();
                         this.close();
                       });
-                  }}
+                    }}
                   >
                     Ja
                   </Button>
                 </Col>
                 <Col xs={3}>
-                  <Button focus onClick={this.close}>Nein</Button>
+                  <Button focus onClick={this.close}>
+                    Nein
+                  </Button>
                 </Col>
               </Row>
             </Container>

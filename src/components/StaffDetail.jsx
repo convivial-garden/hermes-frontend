@@ -14,13 +14,13 @@ import {
 import AsyncSelect from 'react-select/async';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleMinus } from '@fortawesome/free-solid-svg-icons';
-import StaffDetailTimesForm from './StaffDetailTimesForm';
 import axios from 'axios';
+import StaffDetailTimesForm from './StaffDetailTimesForm';
 import {
   getStaffNames,
   postNewStaffMember,
   BACKEND,
-  Api
+  Api,
 } from '@/utils/transportFunctions.jsx';
 
 const initialState = (pos, date) => {
@@ -70,7 +70,7 @@ class StaffDetail extends Component {
     if (times) {
       times.forEach((time) => {
         const start = new Date(time.start_datetime);
-        const end = typeof time.end_datetime != null ? time.end_datetime: '';
+        const end = typeof time.end_datetime != null ? time.end_datetime : '';
         newEntries.push({
           pos,
           date,

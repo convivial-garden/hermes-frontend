@@ -3,16 +3,16 @@ import { Row, Col, Button } from 'react-bootstrap';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown, faBicycle } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 import DeleteContractModal from '@/components/contracts/DeleteContractModal.jsx';
 import ContractPositionA from '@/components/contracts/ContractPositionA.jsx';
 import ContractPositionB from '@/components/contracts/ContractPositionB.jsx';
 import ContractModal from '@/components/contracts/ContractModal.jsx';
 import RiderSelect from '@/components/RiderSelect.jsx';
-import axios from 'axios';
 
 import {
   BACKEND,
-  Api
+  Api,
 } from '@/utils/transportFunctions.jsx';
 
 class ContractPosition extends Component {
@@ -35,7 +35,7 @@ class ContractPosition extends Component {
       this.state.perPositionSelection.slice(0, position - 1),
     );
     const newEntry = [].concat(this.state.perPositionSelection[position - 1]);
-    console.log(position, sequence, event.target.value)
+    console.log(position, sequence, event.target.value);
     newEntry[sequence] = Number.parseInt(event.target.value, 10);
     newPerPositionSelection.push(newEntry);
     newPerPositionSelection = newPerPositionSelection.concat(
@@ -216,6 +216,8 @@ class ContractPosition extends Component {
             <Col xs={12} md={4}>
               <Row>
                 <Col xs={1}>
+                  #
+                  {contract.id}
                   <DeleteContractModal
                     update={updateContracts}
                     url={contract.url}
@@ -283,12 +285,6 @@ class ContractPosition extends Component {
                   </Col>
                 ) : (
                   <Col xs={2}>
-                    <Row>
-                      <Col xs={12}>&nbsp;</Col>
-                    </Row>
-                    <Row>
-                      <Col xs={12}>&nbsp;</Col>
-                    </Row>
                     <Row>
                       <Col xs={12}>
                         {this.props.riders !== null ? (

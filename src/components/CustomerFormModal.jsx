@@ -29,16 +29,17 @@ class CustomerFormModal extends Component {
   open() {
     this.setState({ showModal: true });
   }
-  show
+
+  show;
 
   delete() {
     // trigger confirmation popup
 
-
     deleteCustomer(this.props.customer.id, this.props.refresh);
-    
+
     this.setState({ showModal: false });
   }
+
   showDeleteModalFunc() {
     this.setState({ showDeleteModal: true });
   }
@@ -71,7 +72,12 @@ class CustomerFormModal extends Component {
             <Modal.Title>KundIn löschen</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>Wollen Sie {customer.name} wirklich löschen?</p>
+            <p>
+              Wollen Sie
+              {customer.name}
+              {' '}
+              wirklich löschen?
+            </p>
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.delete}>Delete</Button>

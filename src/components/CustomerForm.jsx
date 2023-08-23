@@ -14,9 +14,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AsyncSelect from 'react-select/async';
 import * as R from 'ramda';
 import {
-  faSearch, faFloppyDisk, faFileCircleCheck, faTriangleExclamation, faHourglass,
+  faSearch,
+  faFloppyDisk,
+  faFileCircleCheck,
+  faTriangleExclamation,
+  faHourglass,
 } from '@fortawesome/free-solid-svg-icons';
-import { getStreetNamesFast, putCustomer2 } from '@/utils/transportFunctions.jsx';
+import {
+  getStreetNamesFast,
+  putCustomer2,
+} from '@/utils/transportFunctions.jsx';
 import DeleteDelayedPaymentModal from '@/components/DeleteDelayedPaymentModal.jsx';
 
 const initialAddress = {
@@ -72,12 +79,13 @@ class CustomerForm extends Component {
 
   componentDidMount() {
     const address = this.props.customer.addresses[0] !== undefined
-      ? this.props.customer.addresses[0] : initialAddress;
+      ? this.props.customer.addresses[0]
+      : initialAddress;
     const { customer } = this.props;
     this.setState((prevState) => R.mergeDeepRight(prevState, { customer, address }));
   }
 
-  setStateOfCustomer(event, callback) {
+  setStateOfCustomer(event, _) {
     this.setState((prevState) => R.mergeDeepRight(
       prevState,
       R.mergeDeepRight(
@@ -85,25 +93,6 @@ class CustomerForm extends Component {
         { saved: 'unsaved' },
       ),
     ));
-  }
-
-  setStateOfAddress(event, callback) {
-    this.setState((prevState) => R.mergeDeepRight(
-      prevState,
-      R.mergeDeepRight(
-        { address: { [event.target.name]: event.target.value } },
-        { saved: 'unsaved' },
-      ),
-    ));
-  }
-
-  selectStreetLoadOptions(input, callback) {
-    setTimeout(() => {
-      getStreetNamesFast(input)
-        .then((resp) => {
-          callback(resp.data);
-        });
-    }, 200);
   }
 
   handleStreetSelect(value) {
@@ -122,7 +111,28 @@ class CustomerForm extends Component {
         lon,
       };
     }
-    this.setState((prevState) => R.mergeDeepRight(prevState, { address: newPositionObject, showStreetSelect: false }));
+    this.setState((prevState) => R.mergeDeepRight(prevState, {
+      address: newPositionObject,
+      showStreetSelect: false,
+    }));
+  }
+
+  setStateOfAddress(event, _) {
+    this.setState((prevState) => R.mergeDeepRight(
+      prevState,
+      R.mergeDeepRight(
+        { address: { [event.target.name]: event.target.value } },
+        { saved: 'unsaved' },
+      ),
+    ));
+  }
+
+  selectStreetLoadOptions(input, callback) {
+    setTimeout(() => {
+      getStreetNamesFast(input).then((resp) => {
+        callback(resp.data);
+      });
+    }, 200);
   }
 
   streetFilter(option, filter) {
@@ -138,13 +148,14 @@ class CustomerForm extends Component {
 
   save() {
     this.setState({ saved: 'saving' }, () => {
-      const payload = R.mergeDeepRight(this.state.customer, { addresses: [this.state.address] });
+      const payload = R.mergeDeepRight(this.state.customer, {
+        addresses: [this.state.address],
+      });
       if (this.state.customer.url !== '') {
-        putCustomer2(this.state.customer.url, payload)
-          .then((result) => {
-            if (result.status === 200) this.setState({ saved: 'saved' });
-            else this.setState({ saved: 'error' });
-          });
+        putCustomer2(this.state.customer.url, payload).then((result) => {
+          if (result.status === 200) this.setState({ saved: 'saved' });
+          else this.setState({ saved: 'error' });
+        });
       } else this.setState({ saved: 'error' });
     });
   }
@@ -256,16 +267,16 @@ class CustomerForm extends Component {
               <Row>
                 <FormGroup>
                   <Col xs={FIRSTCOLWIDTH} className="boldf">
-                    <FormLabel>
-                      Zahlungsart:
-                    </FormLabel>
+                    <FormLabel>Zahlungsart:</FormLabel>
                   </Col>
                   <Col xs={SECONDCOLWIDTH}>
                     <DropdownButton
                       size="sm"
-                      title={(this.state.customer.payment === ''
-                        ? 'Zahlungsart'
-                        : this.state.customer.payment)}
+                      title={
+                        this.state.customer.payment === ''
+                          ? 'Zahlungsart'
+                          : this.state.customer.payment
+                      }
                       id="dropdown-size-small"
                       onSelect={(event) => this.setStateOfCustomer({
                         target: {
@@ -292,105 +303,104 @@ class CustomerForm extends Component {
                     <Col xs={2}>
                       <Button
                         active={this.state.customer.has_delayed_payment}
-                        onClick={() => this.setStateOfCustomer(
-                          {
-                            target:
-                            {
-                              name: 'has_delayed_payment',
-                              value: !this.state.customer.has_delayed_payment,
-                            },
+                        onClick={() => this.setStateOfCustomer({
+                          target: {
+                            name: 'has_delayed_payment',
+                            value: !this.state.customer.has_delayed_payment,
                           },
-                        )}
+                        })}
                       >
-                        {this.state.customer.has_delayed_payment ? 'Ja' : 'Nein'}
+                        {this.state.customer.has_delayed_payment
+                          ? 'Ja'
+                          : 'Nein'}
                       </Button>
                     </Col>
-                    {this.state.customer.has_delayed_payment
-                      ? (
-                        <Col xs={2}>
-                          <DeleteDelayedPaymentModal customer={this.state.customer} update={update} />
-                        </Col>
-                      )
-                      : ''}
+                    {this.state.customer.has_delayed_payment ? (
+                      <Col xs={2}>
+                        <DeleteDelayedPaymentModal
+                          customer={this.state.customer}
+                          update={update}
+                        />
+                      </Col>
+                    ) : (
+                      ''
+                    )}
                   </Row>
                 </FormGroup>
               </Row>
 
-              {this.state.customer.has_delayed_payment
-                ? (
-                  <Row>
-                    <Col xs={FIRSTCOLWIDTH} className="boldf">
-                      Nachzahlungsmemo:
-                    </Col>
-                    <Col xs={SECONDCOLWIDTH}>
-                      <FormGroup>
-                        <Form.Control
-                          as="textarea"
-                          placeholder="Memo"
-                          value={this.state.customer.has_delayed_payment_memo}
-                          name="has_delayed_payment_memo"
-                          onChange={(event) => {
-                            event.persist();
-                            this.setStateOfCustomer(event);
-                          }}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                )
-                : ''}
+              {this.state.customer.has_delayed_payment ? (
+                <Row>
+                  <Col xs={FIRSTCOLWIDTH} className="boldf">
+                    Nachzahlungsmemo:
+                  </Col>
+                  <Col xs={SECONDCOLWIDTH}>
+                    <FormGroup>
+                      <Form.Control
+                        as="textarea"
+                        placeholder="Memo"
+                        value={this.state.customer.has_delayed_payment_memo}
+                        name="has_delayed_payment_memo"
+                        onChange={(event) => {
+                          event.persist();
+                          this.setStateOfCustomer(event);
+                        }}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+              ) : (
+                ''
+              )}
             </Col>
 
             <Col xs={5}>
-
               <Row>
                 <Col xs={FIRSTCOLWIDTH} className="boldf">
                   Strasse:
                 </Col>
                 <Col xs={12}>
-                  {this.state.showStreetSelect
-                    ? (
-                      <FormGroup>
-                        <AsyncSelect
-                          name="street_select"
+                  {this.state.showStreetSelect ? (
+                    <FormGroup>
+                      <AsyncSelect
+                        name="street_select"
+                        value={this.state.address.street}
+                        loadOptions={this.selectStreetLoadOptions}
+                        autoload={false}
+                        filterOption={this.streetFilter}
+                        onChange={(val) => {
+                          this.handleStreetSelect(val);
+                        }}
+                        ignoreCase={false}
+                        ignoreAccents={false}
+                        cacheOptions
+                        defaultOptions
+                        placeholder="Straße"
+                      />
+                    </FormGroup>
+                  ) : (
+                    <FormGroup>
+                      <InputGroup>
+                        <Form.Control
+                          type="text"
+                          placeholder="Strasse"
+                          name="street"
                           value={this.state.address.street}
-                          loadOptions={this.selectStreetLoadOptions}
-                          autoload={false}
-                          filterOption={this.streetFilter}
-                          onChange={(val) => {
-                            this.handleStreetSelect(val);
+                          onChange={(event) => {
+                            event.persist();
+                            this.setStateOfAddress(event);
                           }}
-                          ignoreCase={false}
-                          ignoreAccents={false}
-                          cacheOptions
-                          defaultOptions
-                          placeholder="Straße"
                         />
-                      </FormGroup>
-                    )
-                    : (
-                      <FormGroup>
                         <InputGroup>
-                          <Form.Control
-                            type="text"
-                            placeholder="Strasse"
-                            name="street"
-                            value={this.state.address.street}
-                            onChange={(event) => {
-                              event.persist();
-                              this.setStateOfAddress(event);
-                            }}
-                          />
-                          <InputGroup>
-                            <Button
-                              onClick={() => this.setState({ showStreetSelect: true })}
-                            >
-                              <FontAwesomeIcon icon={faSearch} />
-                            </Button>
-                          </InputGroup>
+                          <Button
+                            onClick={() => this.setState({ showStreetSelect: true })}
+                          >
+                            <FontAwesomeIcon icon={faSearch} />
+                          </Button>
                         </InputGroup>
-                      </FormGroup>
-                    )}
+                      </InputGroup>
+                    </FormGroup>
+                  )}
                 </Col>
               </Row>
 
@@ -399,7 +409,6 @@ class CustomerForm extends Component {
                   Hausnummer:
                 </Col>
                 <Col xs={9}>
-
                   <FormGroup>
                     <Form.Control
                       type="text"
@@ -412,7 +421,6 @@ class CustomerForm extends Component {
                       }}
                     />
                   </FormGroup>
-
                 </Col>
               </Row>
 
@@ -500,22 +508,16 @@ class CustomerForm extends Component {
                   </Col>
                 </FormGroup>
               </Row>
-
             </Col>
 
             <Col xs={2}>
-              <Button
-                size="large"
-                onClick={this.save}
-              >
+              <Button size="large" onClick={this.save}>
                 <FontAwesomeIcon icon={this.saveIcons[this.state.saved]} />
               </Button>
             </Col>
           </Row>
           <Row>
-            <Col xs={12}>
-              &nbsp;
-            </Col>
+            <Col xs={12}>&nbsp;</Col>
           </Row>
         </Col>
       </Row>

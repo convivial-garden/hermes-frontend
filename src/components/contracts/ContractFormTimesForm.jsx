@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Col, ToggleButtonGroup, ToggleButton, Button,
-} from 'react-bootstrap';
+import { Col, Row, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import TimeInput from '@/components/TimeInput';
@@ -31,65 +29,45 @@ class ContractFormTimesForm extends Component {
   render() {
     return (
       <div>
-        <Col xs={2} style={{ paddingTop: '5px' }}>
-          <ToggleButtonGroup
-            type="radio"
-            size="xsmall"
-            value={this.props.mode}
-            name="start_mode"
-          >
-            <ToggleButton
-              value="ab"
-              id={`radio-${this.uniqueId()}`}
-              onChange={(event) => {
-                this.props.setStateOfPosition(this.props.id, { start_mode: event.target.value }, this.focusStartRef);
+        <Row>
+          <Col xs={6}>
+            Von
+            <TimeInput
+              time={this.props.start_time}
+              callback={(value) => {
+                if (value > this.props.start_time_to || this.props.start_time_to === '') {
+                  this.props.setStateOfPosition(this.props.id, {
+                    start_time: value,
+                    start_time_to: value,
+                  });
+                } else {
+                  this.props.setStateOfPosition(this.props.id, {
+                    start_time: value,
+                  });
+                }
               }}
-            >
-              Ab
-            </ToggleButton>
-            <ToggleButton
-              value="um"
-              id={`radio-${this.uniqueId()}`}
-              onChange={(event) => {
-                this.props.setStateOfPosition(this.props.id, { start_mode: event.target.value }, this.focusStartRef);
+              irefSetter={this.setStartRef}
+              iref={this.startRef}
+              next={() => 0}
+              size="sm"
+            />
+          </Col>
+          <Col xs={6}>
+            Bis
+            <TimeInput
+              time={this.props.start_time_to}
+              callback={(value) => {
+                this.props.setStateOfPosition(this.props.id, {
+                  start_time_to: value,
+                });
               }}
-            >
-              Um
-            </ToggleButton>
-            <ToggleButton
-              value="bis"
-              id={`radio-${this.uniqueId()}`}
-              onChange={(event) => {
-                this.props.setStateOfPosition(this.props.id, { start_mode: event.target.value }, this.focusStartRef);
-              }}
-            >
-              Bis
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Col>
-        <Col xs={3}>
-          {this.props.mode !== ''
-            ? (
-              <TimeInput
-                time={this.props.time}
-                callback={(value) => { this.props.setStateOfPosition(this.props.id, { start_time: value }); }}
-                irefSetter={this.setStartRef}
-                iref={this.startRef}
-                next={() => 0}
-                size="sm"
-              />
-            )
-            : ''}
-        </Col>
-        <Col xs={1}>
-          {this.props.mode !== ''
-            ? (
-              <Button size="sm" onClick={(event) => this.props.setStateOfPosition(this.props.id, { start_mode: '' })}>
-                <FontAwesomeIcon icon={faCircleMinus} />
-              </Button>
-            )
-            : ''}
-        </Col>
+              irefSetter={this.setStartRef}
+              iref={this.startRef}
+              next={() => 0}
+              size="sm"
+            />
+          </Col>
+        </Row>
       </div>
     );
   }

@@ -9,15 +9,15 @@ console.log('say hy from index.jsx');
 
 export function render() {
   const App = React.lazy(() => import('./App'));
-  const el = document.getElementById("disposerv");
+  const el = document.getElementById('disposerv');
   const root = createRoot(el);
   root.render(<App />);
 }
 
-let M = {}
+const M = {};
 M.setup = (container) => {
   console.log('setup', container);
-}
+};
 
 M.render = render;
 

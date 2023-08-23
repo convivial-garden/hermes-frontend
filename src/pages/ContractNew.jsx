@@ -13,10 +13,10 @@ import {
   Card,
 } from 'react-bootstrap';
 import * as R from 'ramda';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus,
-  faTimes,
   faExchange,
   faArrowDown,
   faBicycle,
@@ -26,7 +26,7 @@ import {
 
 import DatePicker from 'react-datepicker';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { NETTOBRUTTOFACTOR } from '@/constants/prices';
 import {
@@ -34,8 +34,7 @@ import {
   apiResponseToInitialState,
 } from '@/constants/initialStates';
 import MapModal from '@/components/MapModal';
-import ContractBonusButtons from '@/components/contracts/ContractBonusButtons.jsx';
-import Contractor from '@/components/contracts/Contractor.jsx';
+import Costumer from '@/components/contracts/Costumer.jsx';
 import { ContractFormRepresentational } from '@/components/contracts/ContractFormRepresentational.jsx';
 import {
   getAnon,
@@ -47,7 +46,13 @@ import {
   Api,
 } from '@/utils/transportFunctions.jsx';
 
-import { haversine, zoneFromDistance, markenFromPrice } from '@/utils/helper.js';
+import {
+  haversine,
+  zoneFromDistance,
+  markenFromPrice,
+} from '@/utils/helper.js';
+import { initial_contract_state } from '../constants/initialStates';
+import MapComponent from '@/components/MapComponent';
 
 const SAVEICONS = {
   unsaved: faBicycle,
@@ -63,11 +68,9 @@ class ContractNew extends Component {
     this.handleCreatedDateChange = this.handleCreatedDateChange.bind(this);
     this.onContractSaveClick = this.onContractSaveClick.bind(this);
     this.setStateOfContract = this.setStateOfContract.bind(this);
-    this.handleBonusButtonChange = this.handleBonusButtonChange.bind(this);
     this.setStateOfPosition = this.setStateOfPosition.bind(this);
     this.calcDistanceAndZone = this.calcDistanceAndZone.bind(this);
-    this.setBonussesForAllPositions =
-      this.setBonussesForAllPositions.bind(this);
+    this.setBonussesForAllPositions = this.setBonussesForAllPositions.bind(this);
     this.setDate = this.setDate.bind(this);
     this.Selects = [null, null];
     this.fcSelects = [null, null];
@@ -85,6 +88,7 @@ class ContractNew extends Component {
     this.setRepeatedStartDate = this.setRepeatedStartDate.bind(this);
     this.setRepeatedEndDate = this.setRepeatedEndDate.bind(this);
     this.focusFcSelect = this.focusFcSelect.bind(this);
+    this.setCustomer = this.setCustomer.bind(this);
     window.removePosition = this.removePosition;
     window.curElement = -1;
 
@@ -110,15 +114,15 @@ class ContractNew extends Component {
       }
 
       if (
-        (event.ctrlKey && event.key === 'ArrowRight') ||
-        (event.ctrlKey && event.key === 'j')
+        (event.ctrlKey && event.key === 'ArrowRight')
+        || (event.ctrlKey && event.key === 'j')
       ) {
         event.preventDefault();
         this.nameSelect(1);
       }
       if (
-        (event.ctrlKey && event.key === 'ArrowLeft') ||
-        (event.ctrlKey && event.key === 'k')
+        (event.ctrlKey && event.key === 'ArrowLeft')
+        || (event.ctrlKey && event.key === 'k')
       ) {
         event.preventDefault();
         this.nameSelect(-1);
@@ -127,53 +131,17 @@ class ContractNew extends Component {
     getSettings().then((response) => this.setState({ settings: response }));
   }
 
-  state = {
-    saved: 'unsaved',
-    date: new Date(),
-    url: '',
-    id: '',
-    zone: 0,
-    distance: 0,
-    price: 0,
-    marken: 0,
-    extra: 0,
-    extra2: 0,
-    extra2_string: '',
-    customer: '',
-    weightValue: '',
-    getThereValue: '',
-    waitingTimeValue: '',
-    hasDelayedPayment: false,
-    isCargo: false,
-    isBigBuilding: false,
-    isProvisionally: false,
-    isExpress: false,
-    type: '',
-    isRepeated: false,
-    repeatedstartdate: new Date(),
-    repeatedenddate: null,
-    positionsDeleteRequests: [],
-    repeated: {
-      days_of_the_week: '',
-    },
-    settings: null,
-    contractForms: [
-      {
-        id: 0,
-        data: INITIAL_CONTRACT_FORM_STATE,
-      },
-      {
-        id: 1,
-        data: INITIAL_CONTRACT_FORM_STATE,
-      },
-    ],
-  };
+  state = initial_contract_state;
 
   onRetourButtonClick() {
     this.addWeiterfahrtForm((id) => {
       this.setStateOfPosition(
         id,
-        R.mergeDeepRight(this.state.contractForms[0].data, { start_mode: '' }),
+        R.mergeDeepRight(this.state.contractForms[0].data, {
+          customer_is_drop_off: true,
+          // start_time: moment(),
+          // start_time_to: moment(),
+        }),
         () => {},
       );
     });
@@ -207,7 +175,6 @@ class ContractNew extends Component {
         contract.positions.forEach((pos, index) => {
           newPositions[index].data = apiResponseToInitialState(pos);
         });
-        console.log(contract)
         newState = {
           contractForms: newPositions,
           url: contract.url,
@@ -243,7 +210,7 @@ class ContractNew extends Component {
           this.Selects.push(0);
         }
         this.setState(newState, () => {
-          this.calcDistanceAndZone();
+          this.calcDistanceAndZone(this.state);
           this.focusFcSelect(0);
         });
       }
@@ -257,24 +224,20 @@ class ContractNew extends Component {
 
   changeRepeatedWeekdays(day, checked) {
     if (this.state.repeated.days_of_the_week.includes(day)) {
-      this.setState((prevState) =>
-        R.mergeDeepRight(prevState, {
-          repeated: {
-            days_of_the_week: prevState.repeated.days_of_the_week.replace(
-              `${day},`,
-              '',
-            ),
-          },
-        }),
-      );
+      this.setState((prevState) => R.mergeDeepRight(prevState, {
+        repeated: {
+          days_of_the_week: prevState.repeated.days_of_the_week.replace(
+            `${day},`,
+            '',
+          ),
+        },
+      }));
     } else {
-      this.setState((prevState) =>
-        R.mergeDeepRight(prevState, {
-          repeated: {
-            days_of_the_week: `${prevState.repeated.days_of_the_week + day},`,
-          },
-        }),
-      );
+      this.setState((prevState) => R.mergeDeepRight(prevState, {
+        repeated: {
+          days_of_the_week: `${prevState.repeated.days_of_the_week + day},`,
+        },
+      }));
     }
   }
 
@@ -338,7 +301,9 @@ class ContractNew extends Component {
         if (callback === 'stop') {
         } else if (callback !== undefined) {
           callback();
-          this.calcDistanceAndZone();
+          this.calcDistanceAndZone(this.state);
+        } else {
+          this.calcDistanceAndZone(this.state);
         }
       },
     );
@@ -366,7 +331,7 @@ class ContractNew extends Component {
           contractForms: newContractForms,
           positionsDeleteRequests: newPositionDeleteRequests,
         });
-      }, this.calcDistanceAndZone);
+      }, this.calcDistanceAndZone(this.state));
     }
   }
 
@@ -409,22 +374,13 @@ class ContractNew extends Component {
 
   focusFcSelect(id) {
     if (
-      this.fcSelects[id] !== null &&
-      typeof this.fcSelects[id] !== 'undefined'
-    )
-      this.fcSelects[id].focus();
+      this.fcSelects[id] !== null
+      && typeof this.fcSelects[id] !== 'undefined'
+    ) this.fcSelects[id].focus();
     else if (
-      this.Selects[id] !== null &&
-      typeof this.Selects[id] !== 'undefined'
-    )
-      this.Selects[id].focus();
-  }
-
-  handleBonusButtonChange(id, event, buttonState) {
-    const value =
-      buttonState !== undefined ? buttonState : String(event.target.value);
-    const { name } = event.target;
-    this.setStateOfPosition(id, { [name]: value }, () => {});
+      this.Selects[id] !== null
+      && typeof this.Selects[id] !== 'undefined'
+    ) this.Selects[id].focus();
   }
 
   saveAllCustomers(callback) {
@@ -535,60 +491,80 @@ class ContractNew extends Component {
     this.setState({ date });
   }
 
-  calcDistanceAndZone() {
+  calcDistanceAndZone(data) {
     let totalDistance = 0;
     let totalPrice = 0;
     let totalExtra = 0;
+    const filteredPositionsForMap = [];
     let prevCoords = {
-      lat: this.state.contractForms[0].data.lat,
-      long: this.state.contractForms[0].data.long,
+      lat: data.contractForms[0].data.lat,
+      long: data.contractForms[0].data.long,
     };
-    if (this.state.settings !== null) {
-      this.state.contractForms.slice(1).forEach((pos, index) => {
-        const hasCoords =
-          prevCoords.lat !== null &&
-          prevCoords.long !== null &&
-          pos.data.lat !== null &&
-          pos.data.long !== null;
+    if (data.contractForms[0].data.customer_is_pick_up) {
+      prevCoords = {
+        lat: data.customer.lat,
+        long: data.customer.long,
+      };
+    }
+    if (
+      prevCoords.lat
+      && prevCoords.lat !== null
+      && prevCoords.long !== null
+    ) {
+      filteredPositionsForMap.push([prevCoords.lat, prevCoords.long]);
+    }
+    let hasCustomerCoords = false;
+    if (data.customer.lat !== null && data.customer.long !== null) {
+      hasCustomerCoords = true;
+    }
+    if (data.settings !== null) {
+      data.contractForms.slice(1).forEach((pos, index) => {
+        let hasCoords = prevCoords.lat !== null
+          && prevCoords.long !== null
+          && pos.data.lat !== null
+          && pos.data.long !== null;
+        let coords = {
+          lat: pos.data.lat,
+          long: pos.data.long,
+        };
+        // customer is dropoff
+        if (pos.id > 0 && pos.data.customer_is_drop_off) {
+          hasCoords = hasCustomerCoords;
+          coords = {
+            lat: data.customer.lat,
+            long: data.customer.long,
+          };
+        }
+        if (hasCoords) filteredPositionsForMap.push([coords.lat, coords.long]);
         const distance = hasCoords
-          ? haversine(
-              prevCoords.lat,
-              prevCoords.long,
-              pos.data.lat,
-              pos.data.long,
-            )
+          ? haversine(prevCoords.lat, prevCoords.long, coords.lat, coords.long)
           : 0;
         const zone = zoneFromDistance(
           distance,
-          this.state.settings.zone_size,
-          this.state.settings.addzone_size,
+          data.settings.zone_size,
+          data.settings.addzone_size,
         );
-        const basePrice =
-          zone > 0
-            ? this.state.settings.basezone_price +
-              (zone - 1) * this.state.settings.addzone_price
-            : 0;
+        const basePrice = zone > 0
+          ? data.settings.basezone_price
+              + (zone - 1) * data.settings.addzone_price
+          : 0;
         let actualPrice = basePrice;
         if (pos.data.is_cargo) actualPrice += basePrice;
         if (pos.data.is_express) {
-          const addPrice = this.state.settings.addzone_price;
+          const addPrice = data.settings.addzone_price;
           if (zone <= 2) actualPrice += addPrice;
           else if (zone <= 4) actualPrice += addPrice * 2;
           else if (zone <= 6) actualPrice += addPrice * 3;
           else if (zone <= 8) actualPrice += addPrice * 4;
           else if (zone > 8) actualPrice * 2;
         }
-        if (pos.data.weight_size_bonus !== '' && !pos.data.is_cargo)
-          actualPrice += this.state.settings.addzone_price;
-        if (pos.data.is_bigbuilding)
-          actualPrice += this.state.settings.addzone_price;
-        if (pos.data.waiting_bonus !== 0)
-          actualPrice +=
-            this.state.settings.addzone_price *
-            parseInt(pos.data.waiting_bonus, 10);
-        if (pos.data.get_there_bonus !== 0)
-          actualPrice += parseFloat(pos.data.get_there_bonus);
-
+        if (pos.data.weight_size_bonus !== '' && !pos.data.is_cargo) actualPrice += data.settings.addzone_price;
+        if (pos.data.is_bigbuilding) actualPrice += data.settings.addzone_price;
+        if (pos.data.waiting_bonus !== 0) {
+          actualPrice
+            += data.settings.addzone_price * parseInt(pos.data.waiting_bonus, 10);
+        }
+        if (pos.data.get_there_bonus !== 0) actualPrice += parseFloat(pos.data.get_there_bonus);
         this.setStateOfPosition(
           index + 1,
           {
@@ -603,7 +579,7 @@ class ContractNew extends Component {
         totalDistance += distance;
         totalPrice += actualPrice;
         totalExtra += actualPrice - basePrice;
-        if (this.state.type === 'weiterfahrt') {
+        if (data.type === 'weiterfahrt') {
           prevCoords = {
             lat: pos.data.lat,
             long: pos.data.long,
@@ -611,21 +587,22 @@ class ContractNew extends Component {
         }
       });
 
-      if (!Number.isNaN(this.state.extra2)) {
-        totalExtra += this.state.extra2;
-        totalPrice += this.state.extra2;
+      if (!Number.isNaN(data.extra2)) {
+        totalExtra += data.extra2;
+        totalPrice += data.extra2;
       }
       const zone = zoneFromDistance(
         totalDistance,
-        this.state.settings.zone_size,
-        this.state.settings.addzone_size,
+        data.settings.zone_size,
+        data.settings.addzone_size,
       );
       this.setState({
         zone,
+        filteredPositions: filteredPositionsForMap,
         distance: totalDistance,
         price: totalPrice - totalExtra,
         extra: totalExtra,
-        marken: markenFromPrice(totalPrice, this.state.settings.addzone_price),
+        marken: markenFromPrice(totalPrice, data.settings.addzone_price),
       });
     }
   }
@@ -633,29 +610,24 @@ class ContractNew extends Component {
   nextNameSelect(id) {
     if (id < this.state.contractForms.length - 1) {
       window.curElement += 1;
-      if (window.curElement >= this.state.contractForms.length - 1)
-        window.curElement = -1;
+      if (window.curElement >= this.state.contractForms.length - 1) window.curElement = -1;
     }
   }
 
   nameSelect(dir) {
     window.curElement += dir;
-    if (window.curElement > this.state.contractForms.length - 1)
-      window.curElement = 0;
+    if (window.curElement > this.state.contractForms.length - 1) window.curElement = 0;
 
-    if (window.curElement < 0)
-      window.curElement = this.state.contractForms.length - 1;
+    if (window.curElement < 0) window.curElement = this.state.contractForms.length - 1;
 
-    if (this.Selects[window.curElement] !== null)
-      this.Selects[window.curElement].focusNameSelect();
+    if (this.Selects[window.curElement] !== null) this.Selects[window.curElement].focusNameSelect();
   }
 
   prevNameSelect(id) {
     if (id >= 0) {
       this.Selects[id].focusNameSelect();
       window.curElement -= 1;
-      if (window.curElement < 0)
-        window.curElement = this.state.contractForms.length - 1;
+      if (window.curElement < 0) window.curElement = this.state.contractForms.length - 1;
     }
   }
 
@@ -671,7 +643,8 @@ class ContractNew extends Component {
 
   renderToggleButton(day, cont) {
     return (
-      <ToggleButton
+      <Button
+        className="me-2"
         checked
         onClick={(event) => {
           event.persist();
@@ -679,7 +652,7 @@ class ContractNew extends Component {
         }}
       >
         {cont}
-      </ToggleButton>
+      </Button>
     );
   }
 
@@ -693,8 +666,12 @@ class ContractNew extends Component {
     this.setState(obj);
   }
 
+  setCustomer(customer) {
+    const obj = { customer };
+    this.setState(obj);
+  }
+
   render() {
-    console.log("contractprize",this.state.id,this.state.price, this.state.extra, this.contract);
     const nettoPrice = this.state.price + this.state.extra;
     const bruttoPrice = nettoPrice * NETTOBRUTTOFACTOR;
     const emphasizedBorder = '1px #555 solid';
@@ -703,105 +680,128 @@ class ContractNew extends Component {
       form.data.long,
     ]);
     return (
-      <Container fluid className='ContractFormContainer'>
+      <Container fluid className="ContractFormContainer">
         <Row>
-          <Col xs={12} className='mb-5'>
-          Neuer Auftrag
+          <Col xs={12} className="mb-1">
+            <h1>Neuer Auftrag</h1>
           </Col>
         </Row>
         <Row>
-          <Col xs={12} className='contractor-wrapper'>
-            {JSON.stringify(this.state)}
-            <Contractor
-              customer={this.state.customer}
-            ></Contractor>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} xl={2} className='mb-5'>
-            <ListGroup>
-              <ListGroupItem style={{ border: emphasizedBorder }}>
-                {this.state.id !== ''
-                  ? `Auftragsnummer  #${this.state.id}`
-                  : 'Neuer Auftrag'}
-              </ListGroupItem>
-              <ListGroupItem style={{ border: emphasizedBorder }}>
-                {/* {this.state.date.format("dd.MM.yyyy")} */}
-                <DatePicker
-                  onChange={(event) => this.setDate(event)}
-                  className='form-control'
-                  selected={this.state.date}
-                  dateFormat='dd.MM.yyyy'
-                  // style={{zIndex: 5000}}
-                  popperPlacement='right-start'
-                  calendarStartDay={1}
+          <Col xs={12} xl={4} className="costumer-wrapper">
+            <Row>
+              <Col xs={12} xl={12} className="mb-2">
+                <div>Auftraggeber:in</div>
+                <Costumer
+                  customer={this.state.customer}
+                  setCustomer={this.setCustomer}
                 />
-              </ListGroupItem>
-              <ListGroupItem style={{ border: emphasizedBorder }}>
-                <Button
-                  active={this.state.isRepeated}
-                  onClick={this.handleRepeatedContract}
-                >
-                  Dauerauftrag
-                </Button>
-                {this.state.isRepeated ? (
-                  <div>
-                    <FormGroup>
-                      <DatePicker
-                        onChange={(date) => this.setRepeatedStartDate(date)}
-                        className='form-control'
-                        selected={this.state.repeatedstartdate}
-                        dateFormat='dd.MM.yyyy'
-                        popperPlacement='right-end'
-                        calendarStartDay={1}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <ToggleButton
-                        checked={this.state.repeatedenddate}
-                        onClick={() => {
-                          if (!this.state.repeatedenddate)
-                            this.setState({ repeatedenddate: new Date() });
-                          else this.setState({ repeatedenddate: null });
-                        }}
+              </Col>
+              <Col xs={12} xl={12} className="mb-2">
+                <ListGroup>
+                  <ListGroupItem>
+                    {/* {this.state.date.format("dd.MM.yyyy")} */}
+                    <DatePicker
+                      onChange={(event) => this.setDate(event)}
+                      className="form-control"
+                      selected={this.state.date}
+                      dateFormat="dd.MM.yyyy"
+                      // style={{zIndex: 5000}}
+                      popperPlacement="right-start"
+                      calendarStartDay={1}
+                    />
+                  </ListGroupItem>
+                  <ListGroupItem>
+                    <div>
+                      <Button
+                        active={this.state.isRepeated}
+                        onClick={this.handleRepeatedContract}
+                        className="me-2"
                       >
-                        Enddatum?
-                      </ToggleButton>
-                      {this.state.repeatedenddate ? (
-                        <DatePicker
-                          onChange={(date) => this.setRepeatedEndDate(date)}
-                          className='form-control'
-                          selected={this.state.repeatedenddate}
-                          dateFormat='dd.MM.yyyy'
-                          popperPlacement='right-end'
-                          calendarStartDay={1}
-                        />
+                        Dauerauftrag
+                      </Button>
+                      {this.state.isRepeated ? (
+                        <Button
+                          active={this.state.repeatedenddate}
+                          onClick={() => {
+                            if (!this.state.repeatedenddate) {
+                              this.setState({
+                                repeatedenddate: new Date(),
+                              });
+                            } else this.setState({ repeatedenddate: null });
+                          }}
+                        >
+                          Enddatum?
+                        </Button>
                       ) : (
                         ''
                       )}
-                    </FormGroup>
-                    <FormGroup>
-                      {this.renderToggleButton('Monday', 'MO')}
-                      {this.renderToggleButton('Tuesday', 'DI')}
-                      {this.renderToggleButton('Wednesday', 'MI')}
-                      {this.renderToggleButton('Thursday', 'DO')}
-                      {this.renderToggleButton('Friday', 'FR')}
-                      {this.renderToggleButton('Saturday', 'SA')}
-                      {this.renderToggleButton('Sunday', 'SO')}
-                    </FormGroup>
-                    {this.state.repeated.days_of_the_week}
-                  </div>
-                ) : (
-                  ''
-                )}
-              </ListGroupItem>
-              <ListGroupItem style={{ border: emphasizedBorder }}>
-                Distanz {this.state.distance.toFixed(2)} km
-              </ListGroupItem>
-            </ListGroup>
-          </Col>
+                    </div>
+                    {this.state.isRepeated ? (
+                      <div>
+                        <Row className="mb-2">
+                          <Col xs={12} xl={6}>
+                            <FormGroup>
+                              {/* label */}
+                              <Form.Label>Startdatum</Form.Label>
+                              <DatePicker
+                                onChange={(date) => this.setRepeatedStartDate(date)}
+                                className="form-control"
+                                selected={this.state.repeatedstartdate}
+                                dateFormat="dd.MM.yyyy"
+                                popperPlacement="right-end"
+                                calendarStartDay={1}
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col xs={12} xl={6}>
+                            {this.state.repeatedenddate ? (
+                              <FormGroup>
+                                <Form.Label>Enddatum</Form.Label>
 
-          <Col xs={12} xl={2} className='group'>
+                                <DatePicker
+                                  onChange={(date) => this.setRepeatedEndDate(date)}
+                                  className="form-control"
+                                  selected={this.state.repeatedenddate}
+                                  dateFormat="dd.MM.yyyy"
+                                  popperPlacement="right-end"
+                                  calendarStartDay={1}
+                                />
+                              </FormGroup>
+                            ) : (
+                              ''
+                            )}
+                          </Col>
+                        </Row>
+
+                        <FormGroup>
+                          {this.renderToggleButton('Monday', 'MO')}
+                          {this.renderToggleButton('Tuesday', 'DI')}
+                          {this.renderToggleButton('Wednesday', 'MI')}
+                          {this.renderToggleButton('Thursday', 'DO')}
+                          {this.renderToggleButton('Friday', 'FR')}
+                          {this.renderToggleButton('Saturday', 'SA')}
+                          {this.renderToggleButton('Sunday', 'SO')}
+                        </FormGroup>
+                        {this.state.repeated.days_of_the_week}
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                  </ListGroupItem>
+                </ListGroup>
+              </Col>
+            </Row>
+          </Col>
+          <Col xs={12} xl={4} className="mb-2">
+            <MapComponent
+              viewport={{ center: this.state.filteredPositions[0], zoom: 13 }}
+              height="217px"
+              width="100%"
+              position={this.state.filteredPositions[0]}
+              positions={this.state.filteredPositions}
+            />
+          </Col>
+          <Col xs={12} xl={2} className="mb-2">
             <Card>
               <ListGroup>
                 <ListGroupItem style={{ border: emphasizedBorder }}>
@@ -812,7 +812,7 @@ class ContractNew extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className='boldf'
+                    className="boldf"
                   >
                     Zone:
                   </div>
@@ -826,13 +826,17 @@ class ContractNew extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className='boldf'
+                    className="boldf"
                   >
                     Netto/Brutto:
                   </div>
                   <span style={{ fontWeight: '600' }}>
-                    {nettoPrice.toFixed(2)} €/
-                    {bruttoPrice.toFixed(2)} €
+                    {nettoPrice.toFixed(2)}
+                    {' '}
+                    €/
+                    {bruttoPrice.toFixed(2)}
+                    {' '}
+                    €
                   </span>
                 </ListGroupItem>
                 <ListGroupItem
@@ -849,7 +853,7 @@ class ContractNew extends Component {
                       height: '100%',
                       margin: '0',
                     }}
-                    className='boldf'
+                    className="boldf"
                   >
                     Zuschlag:
                   </div>
@@ -861,12 +865,12 @@ class ContractNew extends Component {
                       // validationState={
                       //   Number.isNaN(this.state.extra2) ? "error" : "success"
                       // }
-                      size='sm'
+                      size="sm"
                       style={{ marginBottom: '0' }}
                     >
                       <Form.Control
-                        type='text'
-                        name='extra2'
+                        type="text"
+                        name="extra2"
                         value={this.state.extra2_string}
                         onChange={({ target }) => {
                           this.setState(
@@ -892,40 +896,23 @@ class ContractNew extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className='boldf'
+                    className="boldf"
                   >
                     Marken:
                   </div>
                   {this.state.marken}
                 </ListGroupItem>
+                <ListGroupItem style={{ border: emphasizedBorder }}>
+                  Distanz
+                  {' '}
+                  {this.state.distance.toFixed(2)}
+                  {' '}
+                  km
+                </ListGroupItem>
               </ListGroup>
             </Card>
           </Col>
-          <Col xs={12} xl={3}>
-            <ContractBonusButtons
-              handler={this.handleBonusButtonChange}
-              id={1}
-              position={this.state.contractForms[1].data}
-            />
-            <Row>
-              <Col xs={6}>&nbsp;</Col>
-              <Col xs={6}>
-                <ButtonGroup vertical>
-                  <Button
-                    style={{
-                      fontSize: 'large',
-                      border: emphasizedBorder,
-                      marginTop: '40px',
-                    }}
-                    onClick={() => this.setBonussesForAllPositions()}
-                  >
-                    Auf alle Positionen
-                  </Button>
-                </ButtonGroup>
-              </Col>
-            </Row>
-          </Col>
-          <Col xs={1}>
+          <Col xs={2}>
             <div>
               <Button
                 style={{
@@ -939,19 +926,35 @@ class ContractNew extends Component {
                 <span className={this.state.saved}>
                   <FontAwesomeIcon
                     icon={SAVEICONS[this.state.saved]}
-                    size='4x'
+                    size="4x"
                   />
                 </span>
               </Button>
             </div>
             <div>
-              <MapModal id='map-modal' positions={markerPositions} />
+              <MapModal
+                id="map-modal"
+                positions={this.state.filteredPositions}
+              />
             </div>
+            <ButtonGroup vertical>
+              <Button
+                style={{
+                  border: emphasizedBorder,
+                  marginTop: '20px',
+                }}
+                onClick={() => this.setBonussesForAllPositions()}
+              >
+                Bonus auf alle Positionen
+              </Button>
+            </ButtonGroup>
           </Col>
         </Row>
+
         <hr />
         <Row>
           <Col xs={12} xl={5}>
+            <h3>Abholen</h3>
             <ContractFormRepresentational
               contract={this.state}
               position={this.state.contractForms.find(
@@ -970,15 +973,15 @@ class ContractNew extends Component {
               next={this.nextNameSelect}
             />
           </Col>
-          <Col xs={12} xl={1} style={{ marginTop: '200px' }}>
+          <Col xs={12} xl={1} style={{ marginTop: '50px' }}>
             <div>
               {this.state.contractForms.length < 3 ? (
                 <Button
-                  size='large'
+                  size="large"
                   style={{ border: emphasizedBorder }}
                   onClick={this.onSwitchButtonClick}
                 >
-                  <FontAwesomeIcon icon={faExchange} size='3x' />
+                  <FontAwesomeIcon icon={faExchange} size="3x" />
                 </Button>
               ) : (
                 ''
@@ -986,15 +989,16 @@ class ContractNew extends Component {
             </div>
             <div>
               <Button
-                size='large'
+                size="large"
                 style={{ border: emphasizedBorder }}
                 onClick={this.onRetourButtonClick}
               >
-                Retour
+                + Retour
               </Button>
             </div>
           </Col>
           <Col xl={6} xs={12}>
+            <h3>Zustellen</h3>
             <ContractFormRepresentational
               contract={this.state}
               position={this.state.contractForms.find(
@@ -1016,97 +1020,83 @@ class ContractNew extends Component {
         </Row>
         {this.state.contractForms.length > 2
           ? this.state.contractForms
-              .slice(2)
-              .sort((a, b) => a.id - b.id)
-              .map((position) => (
-                <Row key={position.id}>
-                  <Col xs={12}>
-                    {this.state.type === 'weiterfahrt' ? (
-                      <Row>
-                        <Col xs={0} xl={9} />
-                        <Col xs={12} xl={3}>
-                          <FontAwesomeIcon icon={faArrowDown} size='2x' />
-                        </Col>
-                      </Row>
-                    ) : (
-                      ''
-                    )}
+            .slice(2)
+            .sort((a, b) => a.id - b.id)
+            .map((position) => (
+              <Row key={position.id}>
+                <Col xs={12}>
+                  {this.state.type === 'weiterfahrt' ? (
                     <Row>
-                      <Col xs={3}>&nbsp;</Col>
-                      <Col xs={3}>
-                        <div
-                          style={{ marginTop: '200px', marginLeft: '50px' }}
-                        >
-                          <ContractBonusButtons
-                            handler={this.handleBonusButtonChange}
-                            id={position.id}
-                            position={position.data}
-                          />
-                        </div>
-                      </Col>
-                      <Col xl={6} xs={12}>
-                        <ContractFormRepresentational
-                          contract={this.state}
-                          position={position}
-                          date={this.state.date}
-                          setStateOfContract={this.setStateOfContract}
-                          setStateOfPosition={this.setStateOfPosition}
-                          removePosition={this.removePosition}
-                          inputRef={(contractForm) =>
-                            (this.Selects[position.id] = contractForm)
-                          }
-                          getInputRef={this.Selects[position.id]}
-                          nextRef={this.Selects[position.id + 1]}
-                          next={this.nextNameSelect}
-                          inputRefTwo={(ref) =>
-                            (this.fcSelects[position.id] = ref)
-                          }
-                          getInputRefTwo={this.fcSelects[position.id]}
-                          focus={this.focusFcSelect}
-                        />
+                      <Col xs={0} xl={9} />
+                      <Col xs={12} xl={3}>
+                        <FontAwesomeIcon icon={faArrowDown} size="2x" />
                       </Col>
                     </Row>
-                  </Col>
-                </Row>
-              ))
+                  ) : (
+                    ''
+                  )}
+                  <Row>
+                    <Col xs={3}>&nbsp;</Col>
+                    <Col xs={3} />
+                    <Col xl={6} xs={12}>
+                      <ContractFormRepresentational
+                        contract={this.state}
+                        position={position}
+                        date={this.state.date}
+                        setStateOfContract={this.setStateOfContract}
+                        setStateOfPosition={this.setStateOfPosition}
+                        removePosition={this.removePosition}
+                        inputRef={(contractForm) => (this.Selects[position.id] = contractForm)}
+                        getInputRef={this.Selects[position.id]}
+                        nextRef={this.Selects[position.id + 1]}
+                        next={this.nextNameSelect}
+                        inputRefTwo={(ref) => (this.fcSelects[position.id] = ref)}
+                        getInputRefTwo={this.fcSelects[position.id]}
+                        focus={this.focusFcSelect}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            ))
           : ''}
         <Row>
           <Col xs={6} />
           <Col xs={3} style={{ textAlign: 'center' }}>
-            {this.state.type === '' ||
-            this.state.type === 'weiterfahrt' ||
-            this.state.contractForms.length === 2 ? (
+            {this.state.type === ''
+            || this.state.type === 'weiterfahrt'
+            || this.state.contractForms.length === 2 ? (
               <Button
                 style={{ margin: '10px' }}
-                size='large'
+                size="large"
                 onClick={this.addWeiterfahrtForm}
               >
-                <FontAwesomeIcon icon={faArrowDown} size='4x' />
+                <FontAwesomeIcon icon={faArrowDown} size="4x" />
               </Button>
-            ) : (
-              ''
-            )}
+              ) : (
+                ''
+              )}
           </Col>
           <Col xs={3} style={{ textAlign: 'center' }}>
-            {this.state.type === 'einzelfahrt' ||
-            this.state.type === '' ||
-            this.state.contractForms.length === 2 ? (
+            {this.state.type === 'einzelfahrt'
+            || this.state.type === ''
+            || this.state.contractForms.length === 2 ? (
               <Button
                 style={{ margin: '10px' }}
-                size='large'
+                size="large"
                 onClick={this.addContractForm}
               >
-                <FontAwesomeIcon icon={faPlus} size='4x' />
+                <FontAwesomeIcon icon={faPlus} size="4x" />
               </Button>
-            ) : (
-              ''
-            )}
+              ) : (
+                ''
+              )}
           </Col>
         </Row>
         <Link
-          className='d-none'
-          to='/'
-          id='navToContractArchive'
+          className="d-none"
+          to="/"
+          id="navToContractArchive"
           ref={(btn) => (this.navToContractArchive = btn)}
         >
           Auftragsarchiv

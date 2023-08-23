@@ -32,8 +32,6 @@ class ContractList extends Component {
     this.setDateToToday = this.setDateToToday.bind(this);
   }
 
-
-
   updateRidersFromDB(callback) {
     getStaffByDate(
       this.state.date,

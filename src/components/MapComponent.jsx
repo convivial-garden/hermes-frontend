@@ -6,7 +6,9 @@ import {
 export default class MapComponent extends Component {
   render() {
     return (
-      <MapContainer center={this.props.viewport.center} zoom={17} style={{ height: this.props.height, width: this.props.width }}>
+      this.props.positions.length > 0
+      && (
+      <MapContainer center={this.props.position} zoom={this.props.viewport.zoom} style={{ height: this.props.height, width: this.props.width }}>
         <TileLayer
           url="https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png"
           subdomains={['maps', 'maps1', 'maps2', 'maps3']}
@@ -26,6 +28,7 @@ export default class MapComponent extends Component {
         <Circle center={this.props.viewport.center} radius={17000} fill={false} weight={2} color="#5e0004" />
         <Polyline positions={this.props.positions} color="#67ff38" opacity={0.5} />
       </MapContainer>
+      )
     );
   }
 }

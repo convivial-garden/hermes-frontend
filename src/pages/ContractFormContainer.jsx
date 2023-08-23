@@ -47,7 +47,6 @@ import {
   Api,
 } from '@/utils/transportFunctions.jsx';
 
-
 const SAVEICONS = {
   unsaved: faBicycle,
   saving: faClock,
@@ -61,12 +60,11 @@ function haversine(lat1, lon1, lat2, lon2) {
   const dLat = toRad(x1);
   const x2 = lon2 - lon1;
   const dLon = toRad(x2);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+    + Math.cos(toRad(lat1))
+      * Math.cos(toRad(lat2))
+      * Math.sin(dLon / 2)
+      * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
@@ -100,8 +98,7 @@ class ContractFormContainer extends Component {
     this.handleBonusButtonChange = this.handleBonusButtonChange.bind(this);
     this.setStateOfPosition = this.setStateOfPosition.bind(this);
     this.calcDistanceAndZone = this.calcDistanceAndZone.bind(this);
-    this.setBonussesForAllPositions =
-      this.setBonussesForAllPositions.bind(this);
+    this.setBonussesForAllPositions = this.setBonussesForAllPositions.bind(this);
     this.setDate = this.setDate.bind(this);
     this.Selects = [null, null];
     this.fcSelects = [null, null];
@@ -144,15 +141,15 @@ class ContractFormContainer extends Component {
       }
 
       if (
-        (event.ctrlKey && event.key === 'ArrowRight') ||
-        (event.ctrlKey && event.key === 'j')
+        (event.ctrlKey && event.key === 'ArrowRight')
+        || (event.ctrlKey && event.key === 'j')
       ) {
         event.preventDefault();
         this.nameSelect(1);
       }
       if (
-        (event.ctrlKey && event.key === 'ArrowLeft') ||
-        (event.ctrlKey && event.key === 'k')
+        (event.ctrlKey && event.key === 'ArrowLeft')
+        || (event.ctrlKey && event.key === 'k')
       ) {
         event.preventDefault();
         this.nameSelect(-1);
@@ -207,7 +204,7 @@ class ContractFormContainer extends Component {
     this.addWeiterfahrtForm((id) => {
       this.setStateOfPosition(
         id,
-        R.mergeDeepRight(this.state.contractForms[0].data, { start_mode: '' }),
+        R.mergeDeepRight(this.state.contractForms[0].data, { }),
         () => {},
       );
     });
@@ -241,7 +238,7 @@ class ContractFormContainer extends Component {
         contract.positions.forEach((pos, index) => {
           newPositions[index].data = apiResponseToInitialState(pos);
         });
-        console.log(contract)
+        console.log(contract);
         newState = {
           contractForms: newPositions,
           url: contract.url,
@@ -291,24 +288,20 @@ class ContractFormContainer extends Component {
 
   changeRepeatedWeekdays(day, checked) {
     if (this.state.repeated.days_of_the_week.includes(day)) {
-      this.setState((prevState) =>
-        R.mergeDeepRight(prevState, {
-          repeated: {
-            days_of_the_week: prevState.repeated.days_of_the_week.replace(
-              `${day},`,
-              '',
-            ),
-          },
-        }),
-      );
+      this.setState((prevState) => R.mergeDeepRight(prevState, {
+        repeated: {
+          days_of_the_week: prevState.repeated.days_of_the_week.replace(
+            `${day},`,
+            '',
+          ),
+        },
+      }));
     } else {
-      this.setState((prevState) =>
-        R.mergeDeepRight(prevState, {
-          repeated: {
-            days_of_the_week: `${prevState.repeated.days_of_the_week + day},`,
-          },
-        }),
-      );
+      this.setState((prevState) => R.mergeDeepRight(prevState, {
+        repeated: {
+          days_of_the_week: `${prevState.repeated.days_of_the_week + day},`,
+        },
+      }));
     }
   }
 
@@ -443,20 +436,17 @@ class ContractFormContainer extends Component {
 
   focusFcSelect(id) {
     if (
-      this.fcSelects[id] !== null &&
-      typeof this.fcSelects[id] !== 'undefined'
-    )
-      this.fcSelects[id].focus();
+      this.fcSelects[id] !== null
+      && typeof this.fcSelects[id] !== 'undefined'
+    ) this.fcSelects[id].focus();
     else if (
-      this.Selects[id] !== null &&
-      typeof this.Selects[id] !== 'undefined'
-    )
-      this.Selects[id].focus();
+      this.Selects[id] !== null
+      && typeof this.Selects[id] !== 'undefined'
+    ) this.Selects[id].focus();
   }
 
   handleBonusButtonChange(id, event, buttonState) {
-    const value =
-      buttonState !== undefined ? buttonState : String(event.target.value);
+    const value = buttonState !== undefined ? buttonState : String(event.target.value);
     const { name } = event.target;
     this.setStateOfPosition(id, { [name]: value }, () => {});
   }
@@ -579,29 +569,27 @@ class ContractFormContainer extends Component {
     };
     if (this.state.settings !== null) {
       this.state.contractForms.slice(1).forEach((pos, index) => {
-        const hasCoords =
-          prevCoords.lat !== null &&
-          prevCoords.long !== null &&
-          pos.data.lat !== null &&
-          pos.data.long !== null;
+        const hasCoords = prevCoords.lat !== null
+          && prevCoords.long !== null
+          && pos.data.lat !== null
+          && pos.data.long !== null;
         const distance = hasCoords
           ? haversine(
-              prevCoords.lat,
-              prevCoords.long,
-              pos.data.lat,
-              pos.data.long,
-            )
+            prevCoords.lat,
+            prevCoords.long,
+            pos.data.lat,
+            pos.data.long,
+          )
           : 0;
         const zone = zoneFromDistance(
           distance,
           this.state.settings.zone_size,
           this.state.settings.addzone_size,
         );
-        const basePrice =
-          zone > 0
-            ? this.state.settings.basezone_price +
-              (zone - 1) * this.state.settings.addzone_price
-            : 0;
+        const basePrice = zone > 0
+          ? this.state.settings.basezone_price
+              + (zone - 1) * this.state.settings.addzone_price
+          : 0;
         let actualPrice = basePrice;
         if (pos.data.is_cargo) actualPrice += basePrice;
         if (pos.data.is_express) {
@@ -612,16 +600,14 @@ class ContractFormContainer extends Component {
           else if (zone <= 8) actualPrice += addPrice * 4;
           else if (zone > 8) actualPrice * 2;
         }
-        if (pos.data.weight_size_bonus !== '' && !pos.data.is_cargo)
-          actualPrice += this.state.settings.addzone_price;
-        if (pos.data.is_bigbuilding)
-          actualPrice += this.state.settings.addzone_price;
-        if (pos.data.waiting_bonus !== 0)
-          actualPrice +=
-            this.state.settings.addzone_price *
-            parseInt(pos.data.waiting_bonus, 10);
-        if (pos.data.get_there_bonus !== 0)
-          actualPrice += parseFloat(pos.data.get_there_bonus);
+        if (pos.data.weight_size_bonus !== '' && !pos.data.is_cargo) actualPrice += this.state.settings.addzone_price;
+        if (pos.data.is_bigbuilding) actualPrice += this.state.settings.addzone_price;
+        if (pos.data.waiting_bonus !== 0) {
+          actualPrice
+            += this.state.settings.addzone_price
+            * parseInt(pos.data.waiting_bonus, 10);
+        }
+        if (pos.data.get_there_bonus !== 0) actualPrice += parseFloat(pos.data.get_there_bonus);
 
         this.setStateOfPosition(
           index + 1,
@@ -667,29 +653,24 @@ class ContractFormContainer extends Component {
   nextNameSelect(id) {
     if (id < this.state.contractForms.length - 1) {
       window.curElement += 1;
-      if (window.curElement >= this.state.contractForms.length - 1)
-        window.curElement = -1;
+      if (window.curElement >= this.state.contractForms.length - 1) window.curElement = -1;
     }
   }
 
   nameSelect(dir) {
     window.curElement += dir;
-    if (window.curElement > this.state.contractForms.length - 1)
-      window.curElement = 0;
+    if (window.curElement > this.state.contractForms.length - 1) window.curElement = 0;
 
-    if (window.curElement < 0)
-      window.curElement = this.state.contractForms.length - 1;
+    if (window.curElement < 0) window.curElement = this.state.contractForms.length - 1;
 
-    if (this.Selects[window.curElement] !== null)
-      this.Selects[window.curElement].focusNameSelect();
+    if (this.Selects[window.curElement] !== null) this.Selects[window.curElement].focusNameSelect();
   }
 
   prevNameSelect(id) {
     if (id >= 0) {
       this.Selects[id].focusNameSelect();
       window.curElement -= 1;
-      if (window.curElement < 0)
-        window.curElement = this.state.contractForms.length - 1;
+      if (window.curElement < 0) window.curElement = this.state.contractForms.length - 1;
     }
   }
 
@@ -728,7 +709,7 @@ class ContractFormContainer extends Component {
   }
 
   render() {
-    console.log("contractprize",this.state.id,this.state.price, this.state.extra, this.contract);
+    console.log('contractprize', this.state.id, this.state.price, this.state.extra, this.contract);
     const nettoPrice = this.state.price + this.state.extra;
     const bruttoPrice = nettoPrice * NETTOBRUTTOFACTOR;
     const emphasizedBorder = '1px #555 solid';
@@ -737,9 +718,9 @@ class ContractFormContainer extends Component {
       form.data.long,
     ]);
     return (
-      <Container fluid className='ContractFormContainer'>
+      <Container fluid className="ContractFormContainer">
         <Row>
-          <Col xs={12} xl={2} className='mb-5'>
+          <Col xs={12} xl={2} className="mb-5">
             <ListGroup>
               <ListGroupItem style={{ border: emphasizedBorder }}>
                 {this.state.id !== ''
@@ -750,11 +731,11 @@ class ContractFormContainer extends Component {
                 {/* {this.state.date.format("dd.MM.yyyy")} */}
                 <DatePicker
                   onChange={(event) => this.setDate(event)}
-                  className='form-control'
+                  className="form-control"
                   selected={this.state.date}
-                  dateFormat='dd.MM.yyyy'
+                  dateFormat="dd.MM.yyyy"
                   // style={{zIndex: 5000}}
-                  popperPlacement='right-start'
+                  popperPlacement="right-start"
                   calendarStartDay={1}
                 />
               </ListGroupItem>
@@ -770,10 +751,10 @@ class ContractFormContainer extends Component {
                     <FormGroup>
                       <DatePicker
                         onChange={(date) => this.setRepeatedStartDate(date)}
-                        className='form-control'
+                        className="form-control"
                         selected={this.state.repeatedstartdate}
-                        dateFormat='dd.MM.yyyy'
-                        popperPlacement='right-end'
+                        dateFormat="dd.MM.yyyy"
+                        popperPlacement="right-end"
                         calendarStartDay={1}
                       />
                     </FormGroup>
@@ -781,8 +762,7 @@ class ContractFormContainer extends Component {
                       <ToggleButton
                         checked={this.state.repeatedenddate}
                         onClick={() => {
-                          if (!this.state.repeatedenddate)
-                            this.setState({ repeatedenddate: new Date() });
+                          if (!this.state.repeatedenddate) this.setState({ repeatedenddate: new Date() });
                           else this.setState({ repeatedenddate: null });
                         }}
                       >
@@ -791,10 +771,10 @@ class ContractFormContainer extends Component {
                       {this.state.repeatedenddate ? (
                         <DatePicker
                           onChange={(date) => this.setRepeatedEndDate(date)}
-                          className='form-control'
+                          className="form-control"
                           selected={this.state.repeatedenddate}
-                          dateFormat='dd.MM.yyyy'
-                          popperPlacement='right-end'
+                          dateFormat="dd.MM.yyyy"
+                          popperPlacement="right-end"
                           calendarStartDay={1}
                         />
                       ) : (
@@ -817,12 +797,16 @@ class ContractFormContainer extends Component {
                 )}
               </ListGroupItem>
               <ListGroupItem style={{ border: emphasizedBorder }}>
-                Distanz {this.state.distance.toFixed(2)} km
+                Distanz
+                {' '}
+                {this.state.distance.toFixed(2)}
+                {' '}
+                km
               </ListGroupItem>
             </ListGroup>
           </Col>
 
-          <Col xs={12} xl={2} className='group'>
+          <Col xs={12} xl={2} className="group">
             <Card>
               <ListGroup>
                 <ListGroupItem style={{ border: emphasizedBorder }}>
@@ -833,7 +817,7 @@ class ContractFormContainer extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className='boldf'
+                    className="boldf"
                   >
                     Zone:
                   </div>
@@ -847,13 +831,17 @@ class ContractFormContainer extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className='boldf'
+                    className="boldf"
                   >
                     Netto/Brutto:
                   </div>
                   <span style={{ fontWeight: '600' }}>
-                    {nettoPrice.toFixed(2)} €/
-                    {bruttoPrice.toFixed(2)} €
+                    {nettoPrice.toFixed(2)}
+                    {' '}
+                    €/
+                    {bruttoPrice.toFixed(2)}
+                    {' '}
+                    €
                   </span>
                 </ListGroupItem>
                 <ListGroupItem
@@ -870,7 +858,7 @@ class ContractFormContainer extends Component {
                       height: '100%',
                       margin: '0',
                     }}
-                    className='boldf'
+                    className="boldf"
                   >
                     Zuschlag:
                   </div>
@@ -882,12 +870,12 @@ class ContractFormContainer extends Component {
                       // validationState={
                       //   Number.isNaN(this.state.extra2) ? "error" : "success"
                       // }
-                      size='sm'
+                      size="sm"
                       style={{ marginBottom: '0' }}
                     >
                       <Form.Control
-                        type='text'
-                        name='extra2'
+                        type="text"
+                        name="extra2"
                         value={this.state.extra2_string}
                         onChange={({ target }) => {
                           this.setState(
@@ -913,7 +901,7 @@ class ContractFormContainer extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className='boldf'
+                    className="boldf"
                   >
                     Marken:
                   </div>
@@ -960,13 +948,13 @@ class ContractFormContainer extends Component {
                 <span className={this.state.saved}>
                   <FontAwesomeIcon
                     icon={SAVEICONS[this.state.saved]}
-                    size='4x'
+                    size="4x"
                   />
                 </span>
               </Button>
             </div>
             <div>
-              <MapModal id='map-modal' positions={markerPositions} />
+              <MapModal id="map-modal" positions={markerPositions} />
             </div>
           </Col>
         </Row>
@@ -995,11 +983,11 @@ class ContractFormContainer extends Component {
             <div>
               {this.state.contractForms.length < 3 ? (
                 <Button
-                  size='large'
+                  size="large"
                   style={{ border: emphasizedBorder }}
                   onClick={this.onSwitchButtonClick}
                 >
-                  <FontAwesomeIcon icon={faExchange} size='3x' />
+                  <FontAwesomeIcon icon={faExchange} size="3x" />
                 </Button>
               ) : (
                 ''
@@ -1007,7 +995,7 @@ class ContractFormContainer extends Component {
             </div>
             <div>
               <Button
-                size='large'
+                size="large"
                 style={{ border: emphasizedBorder }}
                 onClick={this.onRetourButtonClick}
               >
@@ -1037,97 +1025,93 @@ class ContractFormContainer extends Component {
         </Row>
         {this.state.contractForms.length > 2
           ? this.state.contractForms
-              .slice(2)
-              .sort((a, b) => a.id - b.id)
-              .map((position) => (
-                <Row key={position.id}>
-                  <Col xs={12}>
-                    {this.state.type === 'weiterfahrt' ? (
-                      <Row>
-                        <Col xs={0} xl={9} />
-                        <Col xs={12} xl={3}>
-                          <FontAwesomeIcon icon={faArrowDown} size='2x' />
-                        </Col>
-                      </Row>
-                    ) : (
-                      ''
-                    )}
+            .slice(2)
+            .sort((a, b) => a.id - b.id)
+            .map((position) => (
+              <Row key={position.id}>
+                <Col xs={12}>
+                  {this.state.type === 'weiterfahrt' ? (
                     <Row>
-                      <Col xs={3}>&nbsp;</Col>
-                      <Col xs={3}>
-                        <div
-                          style={{ marginTop: '200px', marginLeft: '50px' }}
-                        >
-                          <ContractBonusButtons
-                            handler={this.handleBonusButtonChange}
-                            id={position.id}
-                            position={position.data}
-                          />
-                        </div>
-                      </Col>
-                      <Col xl={6} xs={12}>
-                        <ContractFormRepresentational
-                          contract={this.state}
-                          position={position}
-                          date={this.state.date}
-                          setStateOfContract={this.setStateOfContract}
-                          setStateOfPosition={this.setStateOfPosition}
-                          removePosition={this.removePosition}
-                          inputRef={(contractForm) =>
-                            (this.Selects[position.id] = contractForm)
-                          }
-                          getInputRef={this.Selects[position.id]}
-                          nextRef={this.Selects[position.id + 1]}
-                          next={this.nextNameSelect}
-                          inputRefTwo={(ref) =>
-                            (this.fcSelects[position.id] = ref)
-                          }
-                          getInputRefTwo={this.fcSelects[position.id]}
-                          focus={this.focusFcSelect}
-                        />
+                      <Col xs={0} xl={9} />
+                      <Col xs={12} xl={3}>
+                        <FontAwesomeIcon icon={faArrowDown} size="2x" />
                       </Col>
                     </Row>
-                  </Col>
-                </Row>
-              ))
+                  ) : (
+                    ''
+                  )}
+                  <Row>
+                    <Col xs={3}>&nbsp;</Col>
+                    <Col xs={3}>
+                      <div
+                        style={{ marginTop: '200px', marginLeft: '50px' }}
+                      >
+                        <ContractBonusButtons
+                          handler={this.handleBonusButtonChange}
+                          id={position.id}
+                          position={position.data}
+                        />
+                      </div>
+                    </Col>
+                    <Col xl={6} xs={12}>
+                      <ContractFormRepresentational
+                        contract={this.state}
+                        position={position}
+                        date={this.state.date}
+                        setStateOfContract={this.setStateOfContract}
+                        setStateOfPosition={this.setStateOfPosition}
+                        removePosition={this.removePosition}
+                        inputRef={(contractForm) => (this.Selects[position.id] = contractForm)}
+                        getInputRef={this.Selects[position.id]}
+                        nextRef={this.Selects[position.id + 1]}
+                        next={this.nextNameSelect}
+                        inputRefTwo={(ref) => (this.fcSelects[position.id] = ref)}
+                        getInputRefTwo={this.fcSelects[position.id]}
+                        focus={this.focusFcSelect}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            ))
           : ''}
         <Row>
           <Col xs={6} />
           <Col xs={3} style={{ textAlign: 'center' }}>
-            {this.state.type === '' ||
-            this.state.type === 'weiterfahrt' ||
-            this.state.contractForms.length === 2 ? (
+            {this.state.type === ''
+            || this.state.type === 'weiterfahrt'
+            || this.state.contractForms.length === 2 ? (
               <Button
                 style={{ margin: '10px' }}
-                size='large'
+                size="large"
                 onClick={this.addWeiterfahrtForm}
               >
-                <FontAwesomeIcon icon={faArrowDown} size='4x' />
+                <FontAwesomeIcon icon={faArrowDown} size="4x" />
               </Button>
-            ) : (
-              ''
-            )}
+              ) : (
+                ''
+              )}
           </Col>
           <Col xs={3} style={{ textAlign: 'center' }}>
-            {this.state.type === 'einzelfahrt' ||
-            this.state.type === '' ||
-            this.state.contractForms.length === 2 ? (
+            {this.state.type === 'einzelfahrt'
+            || this.state.type === ''
+            || this.state.contractForms.length === 2 ? (
               <Button
                 style={{ margin: '10px' }}
-                size='large'
+                size="large"
                 onClick={this.addContractForm}
               >
-                <FontAwesomeIcon icon={faPlus} size='4x' />
+                <FontAwesomeIcon icon={faPlus} size="4x" />
               </Button>
-            ) : (
-              ''
-            )}
+              ) : (
+                ''
+              )}
           </Col>
         </Row>
         <Link
-          className='d-none'
-          to='/'
-          id='navToContractArchive'
+          className="d-none"
+          to="/"
+          id="navToContractArchive"
           ref={(btn) => (this.navToContractArchive = btn)}
         >
           Auftragsarchiv
