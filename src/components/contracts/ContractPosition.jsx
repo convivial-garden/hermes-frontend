@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown, faBicycle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faBicycle, faRepeat } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import DeleteContractModal from '@/components/contracts/DeleteContractModal.jsx';
 import ContractPositionA from '@/components/contracts/ContractPositionA.jsx';
@@ -215,11 +215,16 @@ class ContractPosition extends Component {
                 <Col xs={1}>
                   #
                   {contract.id}
+                  {contract.fromrepeated ? (
+                    <div>
+                      <FontAwesomeIcon icon={faRepeat} />
+                      {contract.repeated_id}
+                  </div> ): ''}
                   <DeleteContractModal
                     update={updateContracts}
                     url={contract.url}
                     id={contract.id}
-                  />
+                    />
                 </Col>
                 <Col xs={11}>
                   {typeof positions[0] !== 'undefined' ? (
@@ -391,15 +396,9 @@ class ContractPosition extends Component {
                     </Col>
 
                     {this.props.archive ? (
-                      <Col xs={3}>
+                      <Col xs={4}>
                         <Row>
                           <Col xs={12}>
-                            <Row>
-                              <Col xs={12}>&nbsp;</Col>
-                            </Row>
-                            <Row>
-                              <Col xs={12}>&nbsp;</Col>
-                            </Row>
                             {position.dispo.map((entry) => (
                               <Row key={entry.url}>
                                 <Col xs={12}>

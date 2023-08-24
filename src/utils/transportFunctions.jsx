@@ -21,30 +21,31 @@ const DELAYEDPAYMENT = 'delayedpayment';
 const ANON = 'anon/';
 const SETTINGS = `${BACKEND}settings/`;
 
-
 const Api = axios.create({
   baseURL: BACKEND,
   timeout: 10000,
 });
 
-Api.interceptors.request.use((config) => {
-  console.log('interceptor request', config.url);
-  console.log('interceptor request', keycloak?.authenticated);
-  if(!keycloak)throw new axios.Cancel('Keycloak not ready.');
-  if (keycloak?.authenticated) {
-    config.headers.Authorization = `Token ${keycloak.token}`;
-  } else if (localStorage.getItem('token')!== null){
-    const token = localStorage.getItem('token');
-    config.headers.Authorization = `Token ${token}`;
-  } else{
-    throw new axios.Cancel('Keycloak not ready.');
-  }
-  config.headers['Accept'] = 'application/json; version=0.1.0';
-  return config;
-}, function (error) {
-  return Promise.reject(error);
-});
-
+Api.interceptors.request.use(
+  (config) => {
+    console.log('interceptor request', config.url);
+    console.log('interceptor request', keycloak?.authenticated);
+    const controller = new AbortController();
+    if (keycloak?.authenticated) {
+      config.headers.Authorization = `Token ${keycloak.token}`;
+    } else if (localStorage.getItem('token') !== null) {
+      const token = localStorage.getItem('token');
+      config.headers.Authorization = `Token ${token}`;
+    } else {
+      // throw new axios.Cancel('Keycloak not ready.');
+    }
+    config.headers['Accept'] = 'application/json; version=0.1.0';
+    return { ...config, signal: controller.signal };
+  },
+  function (error) {
+    return Promise.reject(error);
+  },
+);
 
 Api.interceptors.response.use(
   function (response) {
@@ -65,11 +66,7 @@ Api.interceptors.response.use(
   },
 );
 
-
-
 const CONTRACTS_BY_DATE = CONTRACTSBYDATE;
-
-const GENERATEREPEATEDCONTRACTS = GENERATEREPEATED;
 
 const CONTRACTS_BY_DATE_AND_RIDER = CONTRACTSBYRIDER;
 
@@ -216,14 +213,14 @@ function getAssignedContractSelfByDate(date, callback) {
   );
 }
 function getCustomer(id, callback) {
-  console.log('getCustomer', CUSTOMERS_ENDPOINT, id)
+  console.log('getCustomer', CUSTOMERS_ENDPOINT, id);
   Api.get(`${CUSTOMERS_ENDPOINT}${id}/`).then((customerResp) => {
     callback(customerResp.data);
   });
 }
 
 function getCustomer2(id) {
-  console.log('getCustomer2', CUSTOMERS_ENDPOINT, id)
+  console.log('getCustomer2', CUSTOMERS_ENDPOINT, id);
   return Api.get(`${CUSTOMERS_ENDPOINT}${id}/`);
 }
 
@@ -235,7 +232,9 @@ function getSettings() {
   return Api.get(`${BACKEND}settings/1/`).then((response) => response.data);
 }
 function saveSettings(settings) {
-  return Api.put(`${SETTINGS}${settings.id}/`, settings).then((response) => response.data);
+  return Api.put(`${SETTINGS}${settings.id}/`, settings).then(
+    (response) => response.data,
+  );
 }
 function deleteCustomer2(id) {
   return Api.delete(`${CUSTOMERS_ENDPOINT}${id}/`);
@@ -266,7 +265,7 @@ function deleteAddress(url) {
 function contractPayloadFromFrontend(contract) {
   return getAnon().then((resp) => {
     const { contractForms: contractPositions } = contract;
-    console.log(contract)
+    console.log(contract);
     const newContract = {
       customer: contract.customer.customer_url,
       zone: contract.zone,
@@ -287,9 +286,9 @@ function contractPayloadFromFrontend(contract) {
     contractPositions.forEach((entry) => {
       const { data: position, id: pos } = entry;
       let customerUrl = position.customer_anon
-      ? resp.data.url
-      : position.customer_url;
-      console.log(position, pos)
+        ? resp.data.url
+        : position.customer_url;
+      console.log(position, pos);
       if (position.customer_is_pick_up && pos === 0) {
         customerUrl = newContract.customer;
       }
@@ -347,8 +346,7 @@ function prepareNewContract(contract) {
 
 function putContract(contract, callback) {
   prepareNewContract(contract).then((payload) =>
-    Api
-      .put(contract.url, payload)
+    Api.put(contract.url, payload)
       .then((response) => {
         callback(response);
       })
@@ -396,7 +394,7 @@ function customerPayloadFromContractform(formData) {
 }
 
 function putCustomer(data, callback) {
-  console.log('putCustomer', data)
+  console.log('putCustomer', data);
   Api.put(
     `${CUSTOMERS_ENDPOINT}
     data.customer_url`,
@@ -405,7 +403,7 @@ function putCustomer(data, callback) {
 }
 
 function putCustomer2(url, payload) {
-  console.log('putCustomer2', url, payload)
+  console.log('putCustomer2', url, payload);
   return Api.put(`${url}`, payload);
 }
 
@@ -415,7 +413,8 @@ function postNewCustomer(data) {
     customerPayloadFromContractform(data),
   ).then((response) => {
     toast.success('Kunde gespeichert');
-    return response.data;});
+    return response.data;
+  });
 }
 
 function getAnon() {
@@ -429,11 +428,9 @@ function getStaffByDate(date, callback) {
   const year = date.format('YYYY');
   const month = date.format('MM');
   const day = date.format('DD');
-  Api.get(`staff/date/${year}/${month}/${day}/`).then((response) =>{
-    return callback(response.data)
-
-  }
-  );
+  Api.get(`staff/date/${year}/${month}/${day}/`).then((response) => {
+    return callback(response.data);
+  });
 }
 
 function getActiveStaffByDate(date, callback) {
@@ -456,11 +453,19 @@ function getTimesByDate(date, callback) {
   );
 }
 
+function getTimesByMonth(date, callback) {
+  date = moment(date);
+  const year = date.format('YYYY');
+  const month = date.format('MM');
+  Api.get(`times/date/${year}/${month}/`).then((response) =>
+    callback(response.data.results),
+  );
+}
+
 function getStaffNames(callback) {
-  Api.get(`staffnames/`)
-    .then((response) => {
-      callback(response.data);
-    })
+  Api.get(`staffnames/`).then((response) => {
+    callback(response.data);
+  });
 }
 
 function postNewStaffMember(newStaffMember) {
@@ -500,9 +505,7 @@ function getContracts() {
 
 function getRepeatedContracts(weekday) {
   const endpoint = weekday !== 'All' ? `repeated/${weekday}/` : 'repeatedall';
-  return Api
-    .get(endpoint)
-    .then((response) => response.data.results);
+  return Api.get(endpoint).then((response) => response.data.results);
 }
 
 function getTerminatedRepeatedContracts(weekday) {
@@ -550,6 +553,7 @@ export {
   getTerminatedRepeatedContracts,
   putDelayedPayment,
   getTimesByDate,
+  getTimesByMonth,
   getDelayedPaymentCustomers,
   generateRepeatedContracts,
   getSettings,

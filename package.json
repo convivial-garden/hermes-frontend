@@ -41,13 +41,16 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
+    "cypress": "^12.17.4",
     "eslint": "^7.32.0 || ^8.2.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "sass": "^1.51.0"
+    "sass": "^1.51.0",
+    "start-server-and-test": "^2.0.0",
+    "typescript": "^5.1.6"
   },
   "scripts": {
     "dev": "vite",
@@ -55,7 +58,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "test": "react-scripts test --env=jsdom --transformIgnorePatterns \"node_modules/(?!your-module-name)/\""
+    "test": "react-scripts test --env=jsdom --transformIgnorePatterns \"node_modules/(?!your-module-name)/\"",
+    "test:e2e": "start-server-and-test preview http://127.0.0.1:4173/ 'cypress open --e2e'",
+    "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:4173/ 'cypress run --e2e'"
   },
   "browserslist": {
     "production": [

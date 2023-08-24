@@ -44,7 +44,9 @@ class ContractList extends Component {
 
   updateContractsFromDB() {
     if (this.state.selectedRider === -1 || !this.state.selectedRider) {
-      getUnassignedContractByDate(this.state.date, (response) => this.setState({ currentContracts: response }));
+      getUnassignedContractByDate(this.state.date, (response) =>
+        this.setState({ currentContracts: response }),
+      );
     } else if (this.state.selectedRider !== -1) {
       getAssignedContractByDate(
         this.state.date,
@@ -52,25 +54,31 @@ class ContractList extends Component {
         (response) => this.setState({ currentContracts: response }),
       );
     } else if (this.state.selectedRider !== -2) {
-      getStaffByDate(this.state.date, (response) => this.setState({ currentRiders: response || [], selectedRider: -2 }));
+      getStaffByDate(this.state.date, (response) =>
+        this.setState({ currentRiders: response || [], selectedRider: -2 }),
+      );
     }
 
     this.props.appUpdate(this.state.date);
   }
 
   updateRidersFromDB(callback) {
-    getStaffByDate(this.state.date, (response) => this.setState(
-      { currentRiders: response || [], selectedRider: -1 },
-      () => {
-        if (callback !== undefined) callback();
-      },
-    ));
+    getStaffByDate(this.state.date, (response) =>
+      this.setState(
+        { currentRiders: response || [], selectedRider: -1 },
+        () => {
+          if (callback !== undefined) callback();
+        },
+      ),
+    );
   }
 
   updateActiveRidersFromDB(callback) {
-    return getActiveStaffByDate(this.state.date, (response) => this.setState({ activeRiders: response, selectedRider: -1 }, () => {
-      if (callback !== undefined) callback();
-    }));
+    return getActiveStaffByDate(this.state.date, (response) =>
+      this.setState({ activeRiders: response, selectedRider: -1 }, () => {
+        if (callback !== undefined) callback();
+      }),
+    );
   }
 
   componentDidMount() {
@@ -113,10 +121,10 @@ class ContractList extends Component {
 
   render() {
     return (
-      <Container fluid className="contractList bbott">
+      <Container fluid className='contractList bbott'>
         <Row>
           <Col xs={2}>
-            <h3 className="def-headline">Auftragsübersicht</h3>
+            <h3 className='def-headline'>Auftragsübersicht</h3>
           </Col>
           <Col xs={3}>
             <Row>
@@ -127,8 +135,8 @@ class ContractList extends Component {
               </Col>
               <Col xs={7}>
                 <DatePicker
-                  dateFormat="dd.MM.yyyy"
-                  className="form-control"
+                  dateFormat='dd.MM.yyyy'
+                  className='form-control'
                   selected={this.state.date}
                   onChange={this.dateChange}
                   calendarStartDay={1}
@@ -144,85 +152,86 @@ class ContractList extends Component {
           </Col>
 
           <Col xs={7}>
-            <ToggleButtonGroup name="riders" value={this.state.selectedRider}>
+            <ToggleButtonGroup name='riders' value={this.state.selectedRider}>
               <ToggleButton value={-1} onClick={() => this.setRider(-1)}>
                 Unzugeordnet
               </ToggleButton>
-              {this.state.currentRiders
-              && this.state.currentRiders.length > 0 ? (
-                  this.state.currentRiders.map((rider) => (
-                    <ToggleButton
-                      key={rider.user}
-                      value={rider.user}
-                      onClick={() => this.setRider(rider.user)}
-                      style={{
-                        backgroundColor:
+              {this.state.currentRiders &&
+              this.state.currentRiders.length > 0 ? (
+                this.state.currentRiders.map((rider) => (
+                  <ToggleButton
+                    key={rider.user}
+                    value={rider.user}
+                    onClick={() => this.setRider(rider.user)}
+                    style={{
+                      backgroundColor:
                         this.state.selectedRider === rider.user
                           ? 'mistyrose'
                           : '',
-                      }}
-                    >
-                      {rider.times[0].staff_member.user__first_name}
-                    </ToggleButton>
-                  ))
-                ) : (
-                  <ToggleButton disabled value={-2}>
-                    Zur Zeit keine Fahrer
+                    }}
+                  >
+                    {rider.times[0].staff_member.user__first_name}
                   </ToggleButton>
-                )}
+                ))
+              ) : (
+                <ToggleButton disabled value={-2}>
+                  Zur Zeit keine Fahrer
+                </ToggleButton>
+              )}
               <ToggleButton value={-2} onClick={() => this.setRider(-2)}>
                 Alle
               </ToggleButton>
             </ToggleButtonGroup>
           </Col>
         </Row>
-        {this.state.currentContracts
-        && this.state.currentContracts.length === 0 ? (
+        {this.state.currentContracts &&
+        this.state.currentContracts.length === 0 ? (
           <ListGroupItem>Zur Zeit keine Auftraege vorhanden</ListGroupItem>
-          ) : (
-            <Row>
-              <Col xl={4}>
-                <Row>
-                  <Col xl={1}>A</Col>
-                  <Col xl={11}>
-                    <Row>
-                      <Col xl={3}>Auftrageber:in</Col>
-                      <Col xl={6}>Von</Col>
-                      <Col xl={3}>Abholzeit</Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </Col>
-              <Col xl={8}>
-                <Row>
-                  <Col xl={9}>
-                    <Row>
-                      <Col xl={3}>Ziel</Col>
-                      <Col xl={3}>Bringzeit</Col>
-                      <Col xl={2}>Bonus</Col>
-                      <Col xl={4}>Preis</Col>
-                    </Row>
-                  </Col>
-                  <Col xl={3}>Zuweisen</Col>
-                </Row>
-              </Col>
-            </Row>
-          )}
-
-        {this.state.currentContracts
-          ? this.state.currentContracts
-            .sort((a, b) => b.id - a.id)
-            .map((contract, index) => (
-              <ContractPosition
-                key={contract.id}
-                contract={contract}
-                updateContracts={this.updateContractsFromDB}
-                riders={this.state.activeRiders}
-                date={this.state.date}
-                idx={index}
-              />
-            ))
-          : ''}
+        ) : (
+          <Row>
+            <Col xl={4}>
+              <Row>
+                <Col xl={1}>A</Col>
+                <Col xl={11}>
+                  <Row>
+                    <Col xl={3}>Auftrageber:in</Col>
+                    <Col xl={6}>Von</Col>
+                    <Col xl={3}>Abholzeit</Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Col>
+            <Col xl={8}>
+              <Row>
+                <Col xl={8}>
+                  <Row>
+                    <Col xl={4}>Ziel</Col>
+                    <Col xl={2}>Bringzeit</Col>
+                    <Col xl={2}>Bonus</Col>
+                    <Col xl={4}>Preis</Col>
+                  </Row>
+                </Col>
+                <Col xl={4}>Zuweisen</Col>
+              </Row>
+            </Col>
+          </Row>
+        )}
+        <div className='contractListScroll'>
+          {this.state.currentContracts
+            ? this.state.currentContracts
+                .sort((a, b) => b.id - a.id)
+                .map((contract, index) => (
+                  <ContractPosition
+                    key={contract.id}
+                    contract={contract}
+                    updateContracts={this.updateContractsFromDB}
+                    riders={this.state.activeRiders}
+                    date={this.state.date}
+                    idx={index}
+                  />
+                ))
+            : ''}
+        </div>
       </Container>
     );
   }

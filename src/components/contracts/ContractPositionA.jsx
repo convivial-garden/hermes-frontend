@@ -36,14 +36,12 @@ class ContractPositionA extends Component {
         ''
       );
       let address_tmp = address[0];
-      console.log(this.props.customer);
       if (this.props.position.customer_is_pick_up && this.props.contract.customer) {
         address_tmp = this.props.contract.customer.addresses?this.props.contract.customer.addresses[0]:null;
       }
       const {
         street, number, stair, level, door, postal_code,
       } = address_tmp || {};
-      console.log(address_tmp);
       const sameDay = moment(start_time).isSame(this.props.date, 'day');
       const name = customer !== null
         ? customer.name === '_anon'
@@ -115,8 +113,7 @@ class ContractPositionA extends Component {
           <Col xs={3} className="timec">
             {positionDate ? `${positionDate}: ` : ''}
             {positionTime}
-            -
-            {positionTimeTo}
+            {positionTimeTo !== positionTime ? ' - '+positionTimeTo : ''} 
           </Col>
           <Col xs={12}>{memoWarning}</Col>
         </Row>

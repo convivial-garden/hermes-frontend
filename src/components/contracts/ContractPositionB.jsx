@@ -23,30 +23,31 @@ class ContractPositionB extends Component {
       anon_name,
     } = this.props.position;
     if (address[0]) {
-      const delayedWarning = this.props.position
-        && this.props.position.customer
-        && this.props.position.customer.has_delayed_payment
-        ? 'Kund*In hat Nachzahlung!'
-        : '';
-      const memoWarning = this.props.position.memo !== '' ? (
-        <span>
-          <span className="boldf">MEMO:</span>
+      const delayedWarning =
+        this.props.position &&
+        this.props.position.customer &&
+        this.props.position.customer.has_delayed_payment
+          ? 'Kund*In hat Nachzahlung!'
+          : '';
+      const memoWarning =
+        this.props.position.memo !== '' ? (
+          <span>
+            <span className='boldf'>MEMO:</span>
             &nbsp;
-          <span>{`${this.props.position.memo.slice(0, 50)}...`}</span>
-        </span>
-      ) : (
-        ''
-      );
+            <span>{`${this.props.position.memo.slice(0, 50)}...`}</span>
+          </span>
+        ) : (
+          ''
+        );
 
-      const {
-        street, number, stair, level, door, postal_code,
-      } = address[0];
+      const { street, number, stair, level, door, postal_code } = address[0];
 
-      const name = customer !== null
-        ? customer.name === '_anon'
-          ? anon_name
-          : customer.name
-        : '';
+      const name =
+        customer !== null
+          ? customer.name === '_anon'
+            ? anon_name
+            : customer.name
+          : '';
       const weightOrSize = weightsize === 'weight' ? 'GZ' : 'GZ';
       const sameDay = moment(start_time).isSame(this.props.date, 'day');
       const cargoStr = cargo ? 'C' : '';
@@ -81,52 +82,47 @@ class ContractPositionB extends Component {
       }
 
       return (
-        <Row className="contract-position-b">
-          <Col xs={3}>
+        <Row className='contract-position-b'>
+          <Col xs={4}>
             <Row>
-              <Col xs={2} className="mh boldf">
+              <Col xs={2} className='mh boldf'>
                 {postal_code}
               </Col>
-              <Col xs={6} className="mh">
+              <Col xs={6} className='mh'>
                 {street}
               </Col>
               <Col xs={4}>
                 <Row>
-                  <Col xs={4} className="mh">
+                  <Col xs={4} className='mh'>
                     {number}
                   </Col>
-                  <Col xs={1} className="mh">
+                  <Col xs={1} className='mh'>
                     {stair ? `/${stair}` : ''}
                   </Col>
-                  <Col xs={1} className="mh">
+                  <Col xs={1} className='mh'>
                     {level ? `/${level}` : ''}
                   </Col>
-                  <Col xs={1} className="mh">
+                  <Col xs={1} className='mh'>
                     {door ? `/${door}` : ''}
                   </Col>
                 </Row>
               </Col>
             </Row>
           </Col>
-          <Col xs={3} className="timec">
+          <Col xs={2} className='timec'>
             {positionDate ? `${positionDate}: ` : ''}
             {positionTime}
-            -
-            {positionTimeTo}
+            {positionTimeTo !== positionTime ? ' - ' + positionTimeTo : ''}
           </Col>
-          <Col xs={2} className="bonu_s">
+          <Col xs={2} className='bonu_s'>
             {extraStr}
           </Col>
           <Col xs={4}>
-            <Row className="minmarg">
+            <Row className='minmarg'>
               {this.props.first ? (
-                <div className="gesamt">
+                <div className='gesamt'>
                   <span>Gesamt: </span>
-                  <span className="boldf">
-                    {this.props.contract.price}
-                    {' '}
-                    €
-                  </span>
+                  <span className='boldf'>{this.props.contract.price} €</span>
                 </div>
               ) : (
                 ''
@@ -134,8 +130,8 @@ class ContractPositionB extends Component {
             </Row>
             <Row
               className={
-                (this.props.idx % 2 === 0 ? 'blgg' : 'blg')
-                + (this.props.exprs ? ' red' : '')
+                (this.props.idx % 2 === 0 ? 'blgg' : 'blg') +
+                (this.props.exprs ? ' red' : '')
               }
             >
               <Col xs={12} md={12}>
@@ -150,7 +146,7 @@ class ContractPositionB extends Component {
                   >
                     {this.props.first ? (
                       <Row>
-                        <Col xs={12} className="bbo" />
+                        <Col xs={12} className='bbo' />
                       </Row>
                     ) : (
                       ''
@@ -160,19 +156,14 @@ class ContractPositionB extends Component {
                         xs={4}
                         className={`bro bbo${this.props.first ? ' bto' : ''}`}
                       >
-                        Zn
-                        {' '}
-                        {pos_zone}
+                        Zn {pos_zone}
                       </Col>
                       <Col
                         xs={8}
                         className={`blo bbo${this.props.first ? ' bto' : ''}`}
                       >
-                        {(pos_price + pos_bonus).toFixed(2)}
-                        {' '}
-                        € /
-                        {Math.floor((pos_price + pos_bonus) / ADDZONEPRICE)}
-                        {' '}
+                        {(pos_price + pos_bonus).toFixed(2)} € /
+                        {Math.floor((pos_price + pos_bonus) / ADDZONEPRICE)}{' '}
                         Mark.
                       </Col>
                     </Row>
@@ -181,7 +172,7 @@ class ContractPositionB extends Component {
               </Col>
               <Col xs={12}>
                 <Row>
-                  <Col xs={12} className="mh red boldf">
+                  <Col xs={12} className='mh red boldf'>
                     {delayedWarning}
                   </Col>
                 </Row>
@@ -197,7 +188,7 @@ class ContractPositionB extends Component {
     return (
       <Row>
         <Col xs={12}>
-          <div className="warning">
+          <div className='warning'>
             <b> Falsche Adresse/ Lieferadresse existiert nicht (mehr).</b>
           </div>
         </Col>

@@ -24,6 +24,9 @@ export default class MapModal extends Component {
   }
 
   render() {
+    if (!this.props.positions) {
+      return null;
+    }
     const filteredPositions = this.props.positions.filter((pos) => pos[0] && pos[1]);
     return (
       <div className="modal-z">

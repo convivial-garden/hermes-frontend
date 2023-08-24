@@ -16,7 +16,7 @@ import {
   getCustomer,
 } from '@/utils/transportFunctions.jsx';
 
-class Costumer extends Component {
+class Customer extends Component {
   constructor() {
     super();
     this.selectLoadOptions = this.selectLoadOptions.bind(this);
@@ -41,18 +41,21 @@ class Costumer extends Component {
       });
     }, 100);
   }
-
+  componentDidMount() {
+    if (this.props.customer) {
+      this.setState({ customer: this.props.customer });
+    }
+  }
   componentDidUpdate(prevProps) {
     if (this.props.customer !== null && this.props.customer !== '') {
       if (
-        this.props.customer
-        && this.props.customer.customer_name !== this.state.customer.customer_name
+        this.props.customer &&
+        this.props.customer.customer_name !== this.state.customer.customer_name
       ) {
         this.setState({ customer: this.props.customer });
       }
     }
   }
-
 
   selectChangeHandler(val) {
     if (val === null || val.value === 'neu' || val.value === 'anon') {
@@ -73,9 +76,7 @@ class Costumer extends Component {
         },
       });
     } else {
-      const {
-        value, label, url, name,
-      } = val;
+      const { value, label, url, name } = val;
       getCustomer(value, (response) => {
         const address = response.addresses[0];
         const obj = {
@@ -123,92 +124,71 @@ class Costumer extends Component {
         ? 'Kund*In hat Nachzahlung!'
         : '';
       return (
-        <Row className="Costumer2">
-          <FormGroup controlId="firstRow" className="row customer-search">
-            <Col xs={8}>
-              <Row>
-                {this.state.customer.new_customer
-                || this.state.customer.customer_url !== ''
-                || this.state.customer.customer_anon ? (
-                  <InputGroup style={{ width: '85%' }}>
-                    <Form.Control
-                      type="text"
-                      placeholder="Name"
-                      name="customer_name"
-                      value={this.state.customer.customer_name}
-                      ref={this.props.inputRef}
-                      onChange={(event) => {
-                        this.state.customer.customer_name = event.target.value;
-                        setCustomer(this.state.customer);
-                        console.log('event.target.value', event.target.value);
-                      }}
-                      style={{ width: '85%' }}
-                    />
-                    <Button
-                      onClick={() => setCustomer({
-                        new_customer: false,
-                        customer_anon: name.prop === 'anon_name',
-                        anon_name: '',
-                        customer_url: '',
-                      })}
-                    >
-                      <FontAwesomeIcon icon={faCircleMinus} />
-                    </Button>
-                  </InputGroup>
-                  ) : (
-                    <InputGroup className="highest-z" style={{ width: '100%' }}>
-                      <AsyncSelect
-                        name="customer_name"
-                        value={this.state.customer.customer_name}
-                        loadOptions={this.selectLoadOptions}
-                        ignoreAccents={false}
-                        ignoreCase={false}
-                        ref={this.props.inputRef}
-                        filterOption={this.nameFilter}
-                        onInputKeyDown={this.onCustomerSelectInputKeyDown}
-                        onChange={this.selectChangeHandler}
-                        style={{ width: '100%' }}
-                        cacheOptions
-                        defaultOptions
-                        placeholder="Kundenname"
-                      />
-                    </InputGroup>
-                  )}
-              </Row>
+        <Row className='Customer2'>
+          <Col xs={12}>Auftraggeber:in</Col>
+          <Col xs={2} className='boldf'>
+            Name:
+          </Col>
+          <Col xs={10}>{this.state.customer.name}</Col>
+          <Col xs={2} className='boldf'>
+            Adresse:
+          </Col>
+          <Col xs={10}>
+            {this.state.customer.addresses ? (
+              <div>
+                {this.state.customer.addresses[0].street}{' '}
+                {this.state.customer.addresses[0].number}{' '}
+                {this.state.customer.addresses[0].level}{' '}
+                {this.state.customer.addresses[0].door}{' '}
+              </div>
+            ) : (
+              ''
+            )}
+          </Col>
+          <Col xs={2} className='boldf'> 
+            Telefon:
+          </Col>
+          <Col xs={10}>
+            {this.state.customer.phone_1?
+            <a href='tel:{this.state.customer.phone_1}'>{this.state.customer.phone_1}</a>:''}
+            {this.state.customer.phone_2?
+            <a href='tel:{this.state.customer.phone_2}'>{this.state.customer.phone_2}</a>:''}
+          </Col>
+          <Col xs={2} className='boldf'>
+              E-Mail:
+          </Col>
+          <Col xs={10}>
+            {this.state.customer.email_1?
+            <a href='mailto:{this.state.customer.email_1}'>{this.state.customer.email_1}</a>:''}
+           </Col>
+           <Col xs={2} className='boldf'>
+             Extra:
             </Col>
-            <Col xs={3}>
-              {this.state.customer.new_customer ? (
-                <InputGroup>
-                  <Form.Control
-                    type="text"
-                    placeholder="Kd-Nr"
-                    name="customer_number"
-                    value={this.state.customer.customer_number}
-                    onChange={this.handleNewId}
-                  />
-                </InputGroup>
-              ) : (
-                <AsyncSelect
-                  name="customer_number"
-                  value={{ label: this.state.customer.customer_number }}
-                  loadOptions={this.selectbyIdLoadOptions}
-                  filterOption={this.idFilter}
-                  onChange={this.selectChangeHandler}
-                  cacheOptions
-                  defaultOptions
-                  placeholder="KDN-NR"
-                />
-              )}
+            <Col xs={10}>
+              {this.state.customer.talk_to}
+              {this.state.customer.talk_to_extra}
+              {this.state.customer.extra}
             </Col>
-          </FormGroup>
-          <Col xs={4} className="red boldf">
+            <Col xs={2} className='boldf'>
+              Zahlung:
+            </Col>
+            <Col xs={10}>
+              {this.state.customer.payment}
+            </Col>
+            {this.state.customer.has_delayed_payment ? (
+              <Col xs={12} className='red boldf'>
+                Kund*In hat Nachzahlung! <br />
+                {this.state.customer.has_delayed_payment_memo}
+              </Col>
+            ) : ''}
+          <Col xs={4} className='red boldf'>
             {delayedWarning}
           </Col>
         </Row>
       );
     }
-    return <div>costumer missing</div>;
+    return <div>customer missing</div>;
   }
 }
 
-export default Costumer;
+export default Customer;

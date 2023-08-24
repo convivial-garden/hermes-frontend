@@ -16,7 +16,7 @@ import AsyncSelect from 'react-select/async';
 import { faTrash, faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ContractFormTimesForm from '@/components/contracts/ContractFormTimesForm.jsx';
-import Costumer from '@/components/contracts/Costumer.jsx';
+import Customer from '@/components/contracts/Customer.jsx';
 import ContractBonusButtons from '@/components/contracts/ContractBonusButtons.jsx';
 import { INITIAL_CONTRACT_FORM_STATE, emptyContractForm } from '@/constants/initialStates.js';
 import {
@@ -226,32 +226,7 @@ class ContractFormRepresentational extends Component {
     }
   }
 
-  selectbyIdLoadOptions(input, callback) {
-    setTimeout(() => {
-      const options = [];
-      if (input.length > 2) {
-        getCustomersByExternalIdList(input, (response) => {
-          response.forEach((customer) => {
-            const {
-              id, external_id, name, url,
-            } = customer;
-            options.push({
-              value: id,
-              label: `${external_id} ${name}`,
-              url,
-              name,
-              external_id,
-            });
-          });
-          options.push({ value: 'neu', label: 'Neuer Kunde' });
-          callback(options);
-        });
-      } else {
-        options.push({ value: 'neu', label: 'Neuer Kunde' });
-        callback(options);
-      }
-    }, 100);
-  }
+
 
   idFilter(option, filter) {
     return true;
@@ -323,7 +298,7 @@ class ContractFormRepresentational extends Component {
                 || (data.customer_is_drop_off && position.id !== 0) ? (
                     ''
                   ) : (
-                    <Costumer
+                    <Customer
                       setCustomer={this.setCustomer}
                       customer={data}
                     />

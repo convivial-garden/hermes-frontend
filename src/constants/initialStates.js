@@ -71,8 +71,8 @@ function apiResponseToInitialState(apiResponse) {
     stair: hasAddress ? address.stair : '',
     level: hasAddress ? address.level : '',
     door: hasAddress ? address.door : '',
-    customer_is_pick_up: apiResponse.costumer_is_pickup,
-    customer_is_drop_off: apiResponse.costumer_is_dropoff,
+    customer_is_pick_up: apiResponse.customer_is_pickup,
+    customer_is_drop_off: apiResponse.customer_is_dropoff,
 
     start_time: moment(apiResponse.start_time),
     start_time_to: moment(apiResponse.start_time_to),

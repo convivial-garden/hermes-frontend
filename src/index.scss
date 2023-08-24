@@ -232,3 +232,11 @@ body {
   background-color: #69c84e;
   border-color: var(--bs-btn-active-border-color);
 }
+.contractListScroll{
+  height:80vh;
+  overflow-y:scroll;
+  overflow-x: hidden;
+}
+.modal-dialog.modal-xl {
+  max-width: 90%;
+}

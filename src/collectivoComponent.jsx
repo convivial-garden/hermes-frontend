@@ -5,7 +5,7 @@ import './index.scss';
 import 'moment/locale/de-at';
 import 'leaflet/dist/leaflet.css';
 
-console.log('say hy from index.jsx');
+console.log('say hy from component.jsx');
 
 export function render() {
   const App = React.lazy(() => import('./App'));

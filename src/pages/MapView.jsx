@@ -40,7 +40,6 @@ export default class MapView extends Component {
         },
         lat: response.gps_lat,
         lng: response.gps_lon,
-        map,
       });
       console.log(response);
     });
