@@ -53,10 +53,6 @@ class Costumer extends Component {
     }
   }
 
-  componentDidMount() {
-    // this.state.customer = this.props.customer;
-    console.log('componentDidMount', this.props);
-  }
 
   selectChangeHandler(val) {
     if (val === null || val.value === 'neu' || val.value === 'anon') {
@@ -64,12 +60,16 @@ class Costumer extends Component {
         ...INITIAL_CONTRACT_FORM_STATE,
         new_customer: val.value === 'neu',
         customer_anon: val.value === 'anon',
+        customer_is_pick_up: false,
+        customer_is_drop_off: false,
       });
       this.setState({
         customer: {
           ...INITIAL_CONTRACT_FORM_STATE,
           new_customer: val.value === 'neu',
           customer_anon: val.value === 'anon',
+          customer_is_pick_up: false,
+          customer_is_drop_off: false,
         },
       });
     } else {
@@ -101,6 +101,8 @@ class Costumer extends Component {
           status: 'saved',
           hasDelayedPayment: response.has_delayed_payment,
           hasDelayedPaymentMemo: response.has_delayed_payment_memo,
+          customer_is_pick_up: false,
+          customer_is_drop_off: false,
         };
         if (response.has_delayed_payment) this.open();
 

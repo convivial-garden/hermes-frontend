@@ -3,6 +3,7 @@ import {
   Row, Col, Container, Form, Button,
 } from 'react-bootstrap';
 import { getSettings, saveSettings } from '@/utils/transportFunctions.jsx';
+import { toast } from 'react-toastify';
 
 export default class SettingsView extends Component {
   state = {
@@ -25,7 +26,9 @@ export default class SettingsView extends Component {
   }
 
   saveSettings() {
-    saveSettings(this.state.settings);
+    saveSettings(this.state.settings).then((response) => {
+      toast.success('Einstellungen gespeichert');
+    });
   }
 
   getTableBodyFromSettings() {

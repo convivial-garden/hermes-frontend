@@ -42,10 +42,10 @@ import {
   putContract,
   postNewCustomer,
   putDelayedPayment,
-  PUBHOST,
   getSettings,
   Api,
 } from '@/utils/transportFunctions.jsx';
+import { toast } from 'react-toastify';
 
 const SAVEICONS = {
   unsaved: faBicycle,
@@ -530,6 +530,10 @@ class ContractFormContainer extends Component {
                 payload = { ...this.state, type: finalType };
               }
               postNewContract(payload, (response) => {
+
+                if (response.status === 201) {
+                  toast.success('Vertrag erfolgreich gespeichert');
+                }
                 this.setState({
                   saved: response.status === 201 ? 'saved' : 'unsaved',
                 });

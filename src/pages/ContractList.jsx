@@ -118,14 +118,14 @@ class ContractList extends Component {
           <Col xs={2}>
             <h3 className="def-headline">Auftragsübersicht</h3>
           </Col>
-          <Col xs={6}>
+          <Col xs={3}>
             <Row>
-              <Col xs={3}>
+              <Col xs={1}>
                 <Button onClick={this.handleDayBack}>
                   <FontAwesomeIcon icon={faChevronLeft} />
                 </Button>
               </Col>
-              <Col xs={4}>
+              <Col xs={7}>
                 <DatePicker
                   dateFormat="dd.MM.yyyy"
                   className="form-control"
@@ -140,11 +140,10 @@ class ContractList extends Component {
                   <FontAwesomeIcon icon={faChevronRight} />
                 </Button>
               </Col>
-              <Col xs={1} />
             </Row>
           </Col>
 
-          <Col xs={4}>
+          <Col xs={7}>
             <ToggleButtonGroup name="riders" value={this.state.selectedRider}>
               <ToggleButton value={-1} onClick={() => this.setRider(-1)}>
                 Unzugeordnet

@@ -319,6 +319,7 @@ class ContractFormRepresentational extends Component {
                   />
                 )}
                 {(data.customer_is_pick_up && position.id == 0)
+      
                 || (data.customer_is_drop_off && position.id !== 0) ? (
                     ''
                   ) : (

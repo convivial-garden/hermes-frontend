@@ -25,6 +25,7 @@ import {
   putCustomer2,
 } from '@/utils/transportFunctions.jsx';
 import DeleteDelayedPaymentModal from '@/components/DeleteDelayedPaymentModal.jsx';
+import { toast } from 'react-toastify';
 
 const initialAddress = {
   street: '',
@@ -78,29 +79,33 @@ class CustomerForm extends Component {
   }
 
   componentDidMount() {
-    const address = this.props.customer.addresses[0] !== undefined
-      ? this.props.customer.addresses[0]
-      : initialAddress;
+    const address =
+      this.props.customer.addresses[0] !== undefined
+        ? this.props.customer.addresses[0]
+        : initialAddress;
     const { customer } = this.props;
-    this.setState((prevState) => R.mergeDeepRight(prevState, { customer, address }));
+    this.setState((prevState) =>
+      R.mergeDeepRight(prevState, { customer, address }),
+    );
   }
 
   setStateOfCustomer(event, _) {
-    this.setState((prevState) => R.mergeDeepRight(
-      prevState,
+    this.setState((prevState) =>
       R.mergeDeepRight(
-        { customer: { [event.target.name]: event.target.value } },
-        { saved: 'unsaved' },
+        prevState,
+        R.mergeDeepRight(
+          { customer: { [event.target.name]: event.target.value } },
+          { saved: 'unsaved' },
+        ),
       ),
-    ));
+    );
   }
 
   handleStreetSelect(value) {
     let newPositionObject = {};
     if (value !== null) {
-      const {
-        nr_bis, nr_von, name_street, postal_code, lat, lon,
-      } = value.data;
+      const { nr_bis, nr_von, name_street, postal_code, lat, lon } =
+        value.data;
       const nr = nr_bis !== null ? `${nr_von}-${nr_bis}` : nr_von;
       newPositionObject = {
         street: name_street,
@@ -111,20 +116,24 @@ class CustomerForm extends Component {
         lon,
       };
     }
-    this.setState((prevState) => R.mergeDeepRight(prevState, {
-      address: newPositionObject,
-      showStreetSelect: false,
-    }));
+    this.setState((prevState) =>
+      R.mergeDeepRight(prevState, {
+        address: newPositionObject,
+        showStreetSelect: false,
+      }),
+    );
   }
 
   setStateOfAddress(event, _) {
-    this.setState((prevState) => R.mergeDeepRight(
-      prevState,
+    this.setState((prevState) =>
       R.mergeDeepRight(
-        { address: { [event.target.name]: event.target.value } },
-        { saved: 'unsaved' },
+        prevState,
+        R.mergeDeepRight(
+          { address: { [event.target.name]: event.target.value } },
+          { saved: 'unsaved' },
+        ),
       ),
-    ));
+    );
   }
 
   selectStreetLoadOptions(input, callback) {
@@ -140,9 +149,11 @@ class CustomerForm extends Component {
     if (filter.includes(' ')) {
       const parts = filter.split(' ');
       parts.forEach((part) => {
-        if (option.label.toLowerCase().includes(part.toLowerCase())) hasSubstring = true;
+        if (option.label.toLowerCase().includes(part.toLowerCase()))
+          hasSubstring = true;
       });
-    } else if (option.label.toLowerCase().includes(filter.toLowerCase())) hasSubstring = true;
+    } else if (option.label.toLowerCase().includes(filter.toLowerCase()))
+      hasSubstring = true;
     return hasSubstring;
   }
 
@@ -153,8 +164,13 @@ class CustomerForm extends Component {
       });
       if (this.state.customer.url !== '') {
         putCustomer2(this.state.customer.url, payload).then((result) => {
-          if (result.status === 200) this.setState({ saved: 'saved' });
-          else this.setState({ saved: 'error' });
+          if (result.status === 200) {
+            toast.success('Kunde gespeichert');
+            this.setState({ saved: 'saved' });
+          } else {
+            toast.error('Fehler beim Speichern');
+            this.setState({ saved: 'error' });
+          }
         });
       } else this.setState({ saved: 'error' });
     });
@@ -166,19 +182,19 @@ class CustomerForm extends Component {
     const SECONDCOLWIDTH = 12;
     return (
       <Row>
-        <Col xs={12} className="expad">
+        <Col xs={12} className='expad'>
           <Row>
             <Col xs={5}>
               <Row>
-                <Col xs={FIRSTCOLWIDTH} className="boldf">
+                <Col xs={FIRSTCOLWIDTH} className='boldf'>
                   Kundennummer:
                 </Col>
                 <Col xs={SECONDCOLWIDTH}>
                   <FormGroup>
                     <Form.Control
-                      type="text"
-                      placeholder="Kundennummer"
-                      name="external_id"
+                      type='text'
+                      placeholder='Kundennummer'
+                      name='external_id'
                       value={this.state.customer.external_id}
                       onChange={(event) => {
                         event.persist();
@@ -190,15 +206,15 @@ class CustomerForm extends Component {
               </Row>
 
               <Row>
-                <Col xs={FIRSTCOLWIDTH} className="boldf">
+                <Col xs={FIRSTCOLWIDTH} className='boldf'>
                   Name:
                 </Col>
                 <Col xs={SECONDCOLWIDTH}>
                   <FormGroup>
                     <Form.Control
-                      type="text"
-                      placeholder="Name"
-                      name="name"
+                      type='text'
+                      placeholder='Name'
+                      name='name'
                       value={this.state.customer.name}
                       onChange={(event) => {
                         event.persist();
@@ -210,15 +226,15 @@ class CustomerForm extends Component {
               </Row>
 
               <Row>
-                <Col xs={FIRSTCOLWIDTH} className="boldf">
+                <Col xs={FIRSTCOLWIDTH} className='boldf'>
                   Telefon 1:
                 </Col>
                 <Col xs={SECONDCOLWIDTH}>
                   <FormGroup>
                     <Form.Control
-                      type="text"
-                      placeholder="Telefon 1"
-                      name="phone_1"
+                      type='text'
+                      placeholder='Telefon 1'
+                      name='phone_1'
                       value={this.state.customer.phone_1}
                       onChange={(event) => {
                         event.persist();
@@ -230,14 +246,14 @@ class CustomerForm extends Component {
               </Row>
 
               <Row>
-                <Col xs={FIRSTCOLWIDTH} className="boldf">
+                <Col xs={FIRSTCOLWIDTH} className='boldf'>
                   Telefon 2:
                 </Col>
                 <Col xs={SECONDCOLWIDTH}>
                   <Form.Control
-                    type="text"
-                    placeholder="Telefon 2"
-                    name="phone_2"
+                    type='text'
+                    placeholder='Telefon 2'
+                    name='phone_2'
                     value={this.state.customer.phone_2}
                     onChange={(event) => {
                       event.persist();
@@ -247,14 +263,14 @@ class CustomerForm extends Component {
                 </Col>
               </Row>
               <Row>
-                <Col xs={FIRSTCOLWIDTH} className="boldf">
+                <Col xs={FIRSTCOLWIDTH} className='boldf'>
                   Email:
                 </Col>
                 <Col xs={SECONDCOLWIDTH}>
                   <Form.Control
-                    type="text"
-                    placeholder="Email"
-                    name="email"
+                    type='text'
+                    placeholder='Email'
+                    name='email'
                     value={this.state.customer.email}
                     onChange={(event) => {
                       event.persist();
@@ -266,29 +282,31 @@ class CustomerForm extends Component {
 
               <Row>
                 <FormGroup>
-                  <Col xs={FIRSTCOLWIDTH} className="boldf">
+                  <Col xs={FIRSTCOLWIDTH} className='boldf'>
                     <FormLabel>Zahlungsart:</FormLabel>
                   </Col>
                   <Col xs={SECONDCOLWIDTH}>
                     <DropdownButton
-                      size="sm"
+                      size='sm'
                       title={
                         this.state.customer.payment === ''
                           ? 'Zahlungsart'
                           : this.state.customer.payment
                       }
-                      id="dropdown-size-small"
-                      onSelect={(event) => this.setStateOfCustomer({
-                        target: {
-                          name: 'payment',
-                          value: event,
-                        },
-                      })}
+                      id='dropdown-size-small'
+                      onSelect={(event) =>
+                        this.setStateOfCustomer({
+                          target: {
+                            name: 'payment',
+                            value: event,
+                          },
+                        })
+                      }
                     >
-                      <Nav.Link eventKey="Scheck">Scheck</Nav.Link>
-                      <Nav.Link eventKey="Marken">Marken</Nav.Link>
-                      <Nav.Link eventKey="Bar">Bar</Nav.Link>
-                      <Nav.Link eventKey="Liste">Liste</Nav.Link>
+                      <Nav.Link eventKey='Scheck'>Scheck</Nav.Link>
+                      <Nav.Link eventKey='Marken'>Marken</Nav.Link>
+                      <Nav.Link eventKey='Bar'>Bar</Nav.Link>
+                      <Nav.Link eventKey='Liste'>Liste</Nav.Link>
                     </DropdownButton>
                   </Col>
                 </FormGroup>
@@ -297,18 +315,20 @@ class CustomerForm extends Component {
               <Row>
                 <FormGroup>
                   <Row>
-                    <Col xs={FIRSTCOLWIDTH} className="boldf">
+                    <Col xs={FIRSTCOLWIDTH} className='boldf'>
                       Nachzahlung?:
                     </Col>
                     <Col xs={2}>
                       <Button
                         active={this.state.customer.has_delayed_payment}
-                        onClick={() => this.setStateOfCustomer({
-                          target: {
-                            name: 'has_delayed_payment',
-                            value: !this.state.customer.has_delayed_payment,
-                          },
-                        })}
+                        onClick={() =>
+                          this.setStateOfCustomer({
+                            target: {
+                              name: 'has_delayed_payment',
+                              value: !this.state.customer.has_delayed_payment,
+                            },
+                          })
+                        }
                       >
                         {this.state.customer.has_delayed_payment
                           ? 'Ja'
@@ -331,16 +351,16 @@ class CustomerForm extends Component {
 
               {this.state.customer.has_delayed_payment ? (
                 <Row>
-                  <Col xs={FIRSTCOLWIDTH} className="boldf">
+                  <Col xs={FIRSTCOLWIDTH} className='boldf'>
                     Nachzahlungsmemo:
                   </Col>
                   <Col xs={SECONDCOLWIDTH}>
                     <FormGroup>
                       <Form.Control
-                        as="textarea"
-                        placeholder="Memo"
+                        as='textarea'
+                        placeholder='Memo'
                         value={this.state.customer.has_delayed_payment_memo}
-                        name="has_delayed_payment_memo"
+                        name='has_delayed_payment_memo'
                         onChange={(event) => {
                           event.persist();
                           this.setStateOfCustomer(event);
@@ -356,14 +376,14 @@ class CustomerForm extends Component {
 
             <Col xs={5}>
               <Row>
-                <Col xs={FIRSTCOLWIDTH} className="boldf">
+                <Col xs={FIRSTCOLWIDTH} className='boldf'>
                   Strasse:
                 </Col>
                 <Col xs={12}>
                   {this.state.showStreetSelect ? (
                     <FormGroup>
                       <AsyncSelect
-                        name="street_select"
+                        name='street_select'
                         value={this.state.address.street}
                         loadOptions={this.selectStreetLoadOptions}
                         autoload={false}
@@ -375,16 +395,16 @@ class CustomerForm extends Component {
                         ignoreAccents={false}
                         cacheOptions
                         defaultOptions
-                        placeholder="Straße"
+                        placeholder='Straße'
                       />
                     </FormGroup>
                   ) : (
                     <FormGroup>
                       <InputGroup>
                         <Form.Control
-                          type="text"
-                          placeholder="Strasse"
-                          name="street"
+                          type='text'
+                          placeholder='Strasse'
+                          name='street'
                           value={this.state.address.street}
                           onChange={(event) => {
                             event.persist();
@@ -393,7 +413,9 @@ class CustomerForm extends Component {
                         />
                         <InputGroup>
                           <Button
-                            onClick={() => this.setState({ showStreetSelect: true })}
+                            onClick={() =>
+                              this.setState({ showStreetSelect: true })
+                            }
                           >
                             <FontAwesomeIcon icon={faSearch} />
                           </Button>
@@ -405,15 +427,15 @@ class CustomerForm extends Component {
               </Row>
 
               <Row>
-                <Col xs={FIRSTCOLWIDTH} className="boldf">
+                <Col xs={FIRSTCOLWIDTH} className='boldf'>
                   Hausnummer:
                 </Col>
                 <Col xs={9}>
                   <FormGroup>
                     <Form.Control
-                      type="text"
-                      placeholder="Hausnummer"
-                      name="number"
+                      type='text'
+                      placeholder='Hausnummer'
+                      name='number'
                       value={this.state.address.number}
                       onChange={(event) => {
                         event.persist();
@@ -427,15 +449,15 @@ class CustomerForm extends Component {
               <Row>
                 <Col xs={4}>
                   <Row>
-                    <Col xs={FIRSTCOLWIDTH} className="boldf">
+                    <Col xs={FIRSTCOLWIDTH} className='boldf'>
                       Stiege:
                     </Col>
                     <Col xs={12}>
                       <FormGroup>
                         <Form.Control
-                          type="text"
-                          placeholder="Stiege"
-                          name="stair"
+                          type='text'
+                          placeholder='Stiege'
+                          name='stair'
                           value={this.state.address.stair}
                           onChange={(event) => {
                             event.persist();
@@ -448,15 +470,15 @@ class CustomerForm extends Component {
                 </Col>
                 <Col xs={4}>
                   <Row>
-                    <Col xs={FIRSTCOLWIDTH} className="boldf">
+                    <Col xs={FIRSTCOLWIDTH} className='boldf'>
                       Stockwerk:
                     </Col>
                     <Col xs={12}>
                       <FormGroup>
                         <Form.Control
-                          type="text"
-                          placeholder="Stock"
-                          name="level"
+                          type='text'
+                          placeholder='Stock'
+                          name='level'
                           value={this.state.address.level}
                           onChange={(event) => {
                             event.persist();
@@ -469,15 +491,15 @@ class CustomerForm extends Component {
                 </Col>
                 <Col xs={4}>
                   <Row>
-                    <Col xs={FIRSTCOLWIDTH} className="boldf">
+                    <Col xs={FIRSTCOLWIDTH} className='boldf'>
                       Tuer:
                     </Col>
                     <Col xs={12}>
                       <FormGroup>
                         <Form.Control
-                          type="text"
-                          placeholder="Tuer"
-                          name="door"
+                          type='text'
+                          placeholder='Tuer'
+                          name='door'
                           value={this.state.address.door}
                           onChange={(event) => {
                             event.persist();
@@ -496,9 +518,9 @@ class CustomerForm extends Component {
                   </Col>
                   <Col xs={9}>
                     <Form.Control
-                      type="text"
-                      placeholder="Postleitzahl"
-                      name="postal_code"
+                      type='text'
+                      placeholder='Postleitzahl'
+                      name='postal_code'
                       value={this.state.address.postal_code}
                       onChange={(event) => {
                         event.persist();
@@ -511,7 +533,7 @@ class CustomerForm extends Component {
             </Col>
 
             <Col xs={2}>
-              <Button size="large" onClick={this.save}>
+              <Button size='large' onClick={this.save}>
                 <FontAwesomeIcon icon={this.saveIcons[this.state.saved]} />
               </Button>
             </Col>

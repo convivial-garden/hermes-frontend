@@ -35,7 +35,6 @@ class ContractPosition extends Component {
       this.state.perPositionSelection.slice(0, position - 1),
     );
     const newEntry = [].concat(this.state.perPositionSelection[position - 1]);
-    console.log(position, sequence, event.target.value);
     newEntry[sequence] = Number.parseInt(event.target.value, 10);
     newPerPositionSelection.push(newEntry);
     newPerPositionSelection = newPerPositionSelection.concat(
@@ -73,7 +72,6 @@ class ContractPosition extends Component {
   // TODO default case  should be to take rider id of first selection, sequence zero and assign it to all sequence zero selections
   assignRider(callback) {
     this.props.contract.positions.slice(1).forEach((position, index) => {
-      // console.log("Assigning selection from pos ", 1, " to ", index + 1);
       this.assignRiderToSinglePosition(1, () => {}, index + 1);
     });
     callback();
@@ -82,7 +80,6 @@ class ContractPosition extends Component {
   assignRiderToSinglePosition(positionIndex, callback, differentPos = null) {
     const posI = differentPos || positionIndex;
     const thisPosition = this.props.contract.positions[posI];
-    // console.log(thisPosition.id);
     this.state.perPositionSelection[positionIndex - 1].forEach(
       (selection, index) => {
         const matchingDispo = thisPosition.dispo.find(
@@ -193,7 +190,7 @@ class ContractPosition extends Component {
     const {
       contract, updateContracts, riders, date,
     } = this.props;
-    const positions = contract.positions.sort(
+    const positions = contract.positions?.sort(
       (position1, position2) => position1.id - position2.id,
     );
     const anyisExpress = contract.positions.some(

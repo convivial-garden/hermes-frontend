@@ -53,6 +53,7 @@ import {
 } from '@/utils/helper.js';
 import { initial_contract_state } from '../constants/initialStates';
 import MapComponent from '@/components/MapComponent';
+import { toast } from 'react-toastify';
 
 const SAVEICONS = {
   unsaved: faBicycle,
@@ -462,6 +463,9 @@ class ContractNew extends Component {
                 payload = { ...this.state, type: finalType };
               }
               postNewContract(payload, (response) => {
+                if (response.status === 201) {
+                  toast.success('Vertrag erfolgreich gespeichert');
+                }
                 this.setState({
                   saved: response.status === 201 ? 'saved' : 'unsaved',
                 });
@@ -470,7 +474,7 @@ class ContractNew extends Component {
               });
             }
           });
-        });
+        }).catch((error) => {toast.error(error.response.data);})
     });
   }
 
@@ -535,7 +539,7 @@ class ContractNew extends Component {
             long: data.customer.long,
           };
         }
-        if (hasCoords) filteredPositionsForMap.push([coords.lat, coords.long]);
+        if (coords.lat && coords.long) filteredPositionsForMap.push([coords.lat, coords.long]);
         const distance = hasCoords
           ? haversine(prevCoords.lat, prevCoords.long, coords.lat, coords.long)
           : 0;
@@ -681,11 +685,6 @@ class ContractNew extends Component {
     ]);
     return (
       <Container fluid className="ContractFormContainer">
-        <Row>
-          <Col xs={12} className="mb-1">
-            <h1>Neuer Auftrag</h1>
-          </Col>
-        </Row>
         <Row>
           <Col xs={12} xl={4} className="costumer-wrapper">
             <Row>

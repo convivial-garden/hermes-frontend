@@ -27,6 +27,8 @@ import DelayedPaymentList from './pages/DelayedPaymentList';
 import { getSales, PUBHOST } from './utils/transportFunctions.jsx';
 import initKeycloak, { keycloak } from '@/utils/keycloak.js';
 import registerServiceWorker from './utils/registerServiceWorker';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function CustomLink({ children, to, ...props }) {
   const resolved = useResolvedPath(to);
@@ -68,9 +70,7 @@ class App extends Component {
     });
 
     registerServiceWorker();
-    if (
-      keycloak == null || !keycloak.authenticated
-    ) {
+    if (keycloak == null || !keycloak.authenticated) {
       initKeycloak();
     }
   }
@@ -92,162 +92,156 @@ class App extends Component {
     }
     return (
       <BrowserRouter>
+        <ToastContainer />
         {/* <main> */}
-        <Navbar className="main-navigation">
-          <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar className='main-navigation'>
+          <Navbar.Collapse id='basic-navbar-nav'>
             <Nav>
               <CustomLink
-                className="nav-link btn btn-primary text-white ms-3"
-                to="disposerv/disposerv/newcontract"
+                className='nav-link btn btn-primary text-white ms-3'
+                to='disposerv/disposerv/newcontract'
               >
                 <Nav>Neuer Auftrag</Nav>
               </CustomLink>
             </Nav>
             <Nav>
-              <CustomLink
-                className="nav-link"
-                to="disposerv/disposerv/staff"
-              >
+              <CustomLink className='nav-link' to='disposerv/disposerv/staff'>
                 <Nav>Personaleinsatz</Nav>
               </CustomLink>
             </Nav>
             <Nav>
-              <CustomLink className="nav-link" to="disposerv/disposerv/">
+              <CustomLink className='nav-link' to='disposerv/disposerv/'>
                 <Nav>Auftragsübersicht</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
-                className="nav-link"
-                to="disposerv/disposerv/preorders"
+                className='nav-link'
+                to='disposerv/disposerv/preorders'
               >
                 <Nav>Vorbestellungen</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
-                className="nav-link"
-                to="disposerv/disposerv/repeated"
+                className='nav-link'
+                to='disposerv/disposerv/repeated'
               >
                 <Nav>Daueraufträge</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
-                className="nav-link"
-                to="disposerv/disposerv/customers"
+                className='nav-link'
+                to='disposerv/disposerv/customers'
               >
                 <Nav>Kundensuche</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
-                className="nav-link"
-                to="disposerv/disposerv/allcustomers"
+                className='nav-link'
+                to='disposerv/disposerv/allcustomers'
               >
                 <Nav>Kundenliste</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
-                className="nav-link"
-                to="disposerv/disposerv/archive"
+                className='nav-link'
+                to='disposerv/disposerv/archive'
               >
                 <Nav>Auftragsarchiv</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
-                className="nav-link"
-                to="disposerv/disposerv/delayedcustomers"
+                className='nav-link'
+                to='disposerv/disposerv/delayedcustomers'
               >
                 <Nav>Nachzahlungen</Nav>
               </CustomLink>
             </Nav>
             <Nav>
-              <CustomLink className="nav-link" to="disposerv/disposerv/self">
+              <CustomLink className='nav-link' to='disposerv/disposerv/self'>
                 <Nav>Meine Aufträge</Nav>
               </CustomLink>
             </Nav>
             <Nav>
-              <CustomLink className="nav-link" to="disposerv/disposerv/map">
+              <CustomLink className='nav-link' to='disposerv/disposerv/map'>
                 <Nav>Karte</Nav>
               </CustomLink>
             </Nav>
             <Nav>
               <CustomLink
-                className="nav-link"
-                to="disposerv/disposerv/settings"
+                className='nav-link'
+                to='disposerv/disposerv/settings'
               >
                 <Nav>
                   <FontAwesomeIcon icon={faCog} />
                 </Nav>
               </CustomLink>
             </Nav>
-            <Nav className="ml-auto">
+            <Nav className='ml-auto'>
               <span style={{ color: '#000000' }}>
-                Tagesumsatz
-                {' '}
-                {this.state.totalSales}
-                {' '}
-                €
+                Tagesumsatz {this.state.totalSales} €
               </span>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        <div className="content-wrapper mt-4">
-          <Routes className="mt-2">
+        <div className='content-wrapper mt-4'>
+          <Routes className='mt-2'>
             <Route
-              path="/"
+              path='/'
               element={<ContractList appUpdate={this.update} />}
             />
             <Route
-              path="disposerv/disposerv/"
+              path='disposerv/disposerv/'
               element={<ContractList appUpdate={this.update} />}
             />
             <Route
-              path="disposerv/disposerv/self/"
+              path='disposerv/disposerv/self/'
               element={<ContractSelfList appUpdate={this.update} />}
             />
             <Route
-              path="disposerv/disposerv/newcontract"
+              path='disposerv/disposerv/newcontract'
               element={<ContractNew />}
             />
             <Route
-              path="disposerv/disposerv/customers"
+              path='disposerv/disposerv/customers'
               element={<CustomerList />}
             />
             <Route
-              path="disposerv/disposerv/allcustomers"
+              path='disposerv/disposerv/allcustomers'
               element={<AllCustomers />}
             />
             <Route
-              path="disposerv/disposerv/staff"
+              path='disposerv/disposerv/staff'
               element={<ActiveStaff />}
             />
             <Route
-              path="disposerv/disposerv/test/:id"
+              path='disposerv/disposerv/test/:id'
               element={<AddressDetail />}
             />
             <Route
-              path="disposerv/disposerv/archive"
+              path='disposerv/disposerv/archive'
               element={<ContractArchive />}
             />
             <Route
-              path="disposerv/disposerv/preorders"
+              path='disposerv/disposerv/preorders'
               element={<Preorders />}
             />
             <Route
-              path="disposerv/disposerv/delayedcustomers"
+              path='disposerv/disposerv/delayedcustomers'
               element={<DelayedPaymentList />}
             />
-            <Route path="disposerv/disposerv/map" element={<MapView />} />
+            <Route path='disposerv/disposerv/map' element={<MapView />} />
             <Route
-              path="disposerv/disposerv/settings"
+              path='disposerv/disposerv/settings'
               element={<SettingsView />}
             />
             <Route
-              path="disposerv/disposerv/repeated"
+              path='disposerv/disposerv/repeated'
               element={<RepeatedContractList />}
             />
           </Routes>

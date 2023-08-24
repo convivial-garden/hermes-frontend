@@ -14,6 +14,7 @@ class CustomerFormModal extends Component {
     this.close = this.close.bind(this);
     this.open = this.open.bind(this);
     this.delete = this.delete.bind(this);
+    this.showDeleteModalFunc = this.showDeleteModalFunc.bind(this);
   }
 
   state = {

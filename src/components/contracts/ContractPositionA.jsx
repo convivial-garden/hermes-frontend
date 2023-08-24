@@ -38,7 +38,7 @@ class ContractPositionA extends Component {
       let address_tmp = address[0];
       console.log(this.props.customer);
       if (this.props.position.customer_is_pick_up && this.props.contract.customer) {
-        address_tmp = this.props.contract.customer.addresses[0];
+        address_tmp = this.props.contract.customer.addresses?this.props.contract.customer.addresses[0]:null;
       }
       const {
         street, number, stair, level, door, postal_code,
