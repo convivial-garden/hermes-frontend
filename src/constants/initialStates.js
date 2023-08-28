@@ -56,6 +56,7 @@ function apiResponseToInitialState(apiResponse) {
   const address = apiResponse.address[0];
   const hasAddress = address !== undefined;
   return {
+    response: apiResponse,
     new_customer: false,
     date_time_created: moment(apiResponse.start_time),
     customer_name,

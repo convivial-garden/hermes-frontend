@@ -203,7 +203,7 @@ class ContractList extends Component {
             </Col>
             <Col xl={8}>
               <Row>
-                <Col xl={8}>
+                <Col xl={9}>
                   <Row>
                     <Col xl={4}>Ziel</Col>
                     <Col xl={2}>Bringzeit</Col>
@@ -211,7 +211,7 @@ class ContractList extends Component {
                     <Col xl={4}>Preis</Col>
                   </Row>
                 </Col>
-                <Col xl={4}>Zuweisen</Col>
+                <Col xl={3}>Zuweisen</Col>
               </Row>
             </Col>
           </Row>

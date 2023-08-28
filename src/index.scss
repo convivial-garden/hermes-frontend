@@ -240,3 +240,16 @@ body {
 .modal-dialog.modal-xl {
   max-width: 90%;
 }
+.customer-view .title{
+  align-items: center;
+  justify-content: space-between;
+
+}
+.space-between{
+  display: flex;
+  justify-content: space-between;
+}
+.contract-costumer, .position-view {
+  border: 1px solid gray;
+  border-radius: 5px;
+}

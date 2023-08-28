@@ -35,7 +35,7 @@ class ContractModal extends Component {
 
         <Modal show={this.state.showModal} onHide={this.close} dialogClassName="wideModal contract-modal" size="xl">
           <Modal.Header closeButton>
-            <Modal.Title>Auftrag bearbeiten</Modal.Title>
+            <Modal.Title>Auftrag {this.props.contract.id}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <ContractView contract={this.props.contract} add={this.props.add} close={this.close} />

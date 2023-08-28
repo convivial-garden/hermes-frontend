@@ -78,7 +78,7 @@ class AllCustomers extends Component {
               loading: false,
               customers: R.update(
                 index,
-                response.data.results,
+                response.data,
                 prevState.customers,
               ),
             }));
@@ -117,8 +117,15 @@ class AllCustomers extends Component {
 
   selectChangeHandler(val) {
     console.log(val);
-    this.setState({ customers: [val] });
-
+    getCustomer2(val.customer_id).then((response) => {
+      if (response.status === 200) {
+        console.log(response.data)
+        this.setState((prevState) => ({
+          loading: false,
+          customers: [response.data],
+        }));
+      }
+    });
   }
 
   render() {

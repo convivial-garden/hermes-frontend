@@ -108,10 +108,11 @@ class ContractFormRepresentational extends Component {
     let newPositionObject = {};
     let nr = '';
     if (val !== null) {
-      if (val.data.nr_bis !== null) nr = `${val.data.nr_von}-${val.data.nr_bis}`;
-      else nr = val.data.nr_von;
+      console.log('val', val);
+      if (val.data.nr !== null) nr = `${val.data.nr}`;
+      else nr = '-1';
       newPositionObject = {
-        street_name: val.data.name_street,
+        street_name: val.data.name,
         number: nr,
         postal_code: val.data.postal_code,
         lat: val.data.lat,
@@ -505,15 +506,16 @@ class ContractFormRepresentational extends Component {
                       </Button>
                     )}
                     {!data.hasDelayedPayment ? (
-                      <Button
-                        name="hasDelayedPayment"
-                        active={data.hasDelayedPayment}
-                        onClick={() => {
-                          this.handleDelayedPayement();
-                        }}
-                      >
-                        + Nachzahlung
-                      </Button>
+                      <div></div>
+                      // <Button
+                      //   name="hasDelayedPayment"
+                      //   active={data.hasDelayedPayment}
+                      //   onClick={() => {
+                      //     this.handleDelayedPayement();
+                      //   }}
+                      // >
+                      //   + Nachzahlung
+                      // </Button>
                     ) : (
                       <Button
                         name="hasDelayedPayment"
@@ -558,7 +560,7 @@ class ContractFormRepresentational extends Component {
                         as="textarea"
                         placeholder="MEMO"
                         name="notes"
-                        value={data.memo}
+                        // value={data.memo}
                         onChange={({ target }) => setStateOfPosition(id, {
                           [target.name]: target.value,
                         })}

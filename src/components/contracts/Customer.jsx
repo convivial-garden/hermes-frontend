@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleMinus } from '@fortawesome/free-solid-svg-icons';
+import { faCircleMinus, faUserNinja } from '@fortawesome/free-solid-svg-icons';
 import AsyncSelect from 'react-select/async';
 import { INITIAL_CONTRACT_FORM_STATE } from '@/constants/initialStates';
 import {
@@ -16,6 +16,7 @@ import {
   getCustomer,
   getCustomersByExternalIdList,
 } from '@/utils/transportFunctions.jsx';
+import CustomerFormModal from '../CustomerFormModal';
 
 class Customer extends Component {
   constructor() {
@@ -34,9 +35,7 @@ class Customer extends Component {
       if (input.length > 0) {
         getCustomersByExternalIdList(input, (response) => {
           response.forEach((customer) => {
-            const {
-              id, external_id, name, url,
-            } = customer;
+            const { id, external_id, name, url } = customer;
             options.push({
               value: id,
               label: `${external_id} ${name}`,
@@ -73,8 +72,8 @@ class Customer extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.customer !== null && this.props.customer !== '') {
       if (
-        this.props.customer
-        && this.props.customer.customer_name !== this.state.customer.customer_name
+        this.props.customer &&
+        this.props.customer.customer_name !== this.state.customer.customer_name
       ) {
         this.setState({ customer: this.props.customer });
       }
@@ -100,9 +99,7 @@ class Customer extends Component {
         },
       });
     } else {
-      const {
-        value, label, url, name,
-      } = val;
+      const { value, label, url, name } = val;
       getCustomer(value, (response) => {
         const address = response.addresses[0];
         const obj = {
@@ -150,18 +147,18 @@ class Customer extends Component {
         ? 'Kund*In hat Nachzahlung!'
         : '';
       return (
-        <Row className="Customer2">
-          <FormGroup controlId="firstRow" className="row customer-search">
-            <Col xs={8}>
-              <Row>
-                {this.state.customer.new_customer
-                || this.state.customer.customer_url !== ''
-                || this.state.customer.customer_anon ? (
-                  <InputGroup style={{ width: '85%' }}>
+        <Row className='Customer2'>
+          <FormGroup controlId='firstRow' className='row customer-search'>
+            <Col xs={9}>
+              <div>
+                {this.state.customer.new_customer ||
+                this.state.customer.customer_url !== '' ||
+                this.state.customer.customer_anon ? (
+                  <InputGroup style={{ flexWrap: 'nowrap' }}>
                     <Form.Control
-                      type="text"
-                      placeholder="Name"
-                      name="customer_name"
+                      type='text'
+                      placeholder='Neue:r Kund:in Name'
+                      name='customer_name'
                       value={this.state.customer.customer_name}
                       ref={this.props.inputRef}
                       onChange={(event) => {
@@ -171,61 +168,89 @@ class Customer extends Component {
                       }}
                       style={{ width: '85%' }}
                     />
-                    <Button
-                      onClick={() => setCustomer({
-                        ...INITIAL_CONTRACT_FORM_STATE
-                      })}
-                    >
-                      <FontAwesomeIcon icon={faCircleMinus} />
-                    </Button>
+                    <div className='d-flex'>
+                      {this.state.customer.customer_anon ? (
+                        <Button>
+                          <FontAwesomeIcon icon={faUserNinja} />
+                        </Button>
+                      ) : (
+                        <div>
+                          {!this.state.customer.new_customer ? (
+                            <CustomerFormModal
+                              customer={this.state.customer}
+                            />
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      )}
+                      <Button
+                        variant='danger'
+                        className='ms-1'
+                        onClick={() => {
+                          setCustomer({
+                            ...INITIAL_CONTRACT_FORM_STATE,
+                            customer_anon: false,
+                          });
+                          this.setState({
+                            customer: {
+                              ...INITIAL_CONTRACT_FORM_STATE,
+                              customer_anon: false,
+                            },
+                          });
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faCircleMinus} />
+                      </Button>
+                    </div>
                   </InputGroup>
-                  ) : (
-                    <InputGroup className="highest-z" style={{ width: '100%' }}>
-                      <AsyncSelect
-                        name="customer_name"
-                        value={this.state.customer.customer_name}
-                        loadOptions={this.selectLoadOptions}
-                        ignoreAccents={false}
-                        ignoreCase={false}
-                        ref={this.props.inputRef}
-                        filterOption={this.nameFilter}
-                        onInputKeyDown={this.onCustomerSelectInputKeyDown}
-                        onChange={this.selectChangeHandler}
-                        style={{ width: '100%' }}
-                        cacheOptions
-                        defaultOptions
-                        placeholder="Kund:innenname"
-                      />
-                    </InputGroup>
-                  )}
-              </Row>
+                ) : (
+                  <InputGroup className='highest-z' style={{ width: '100%' }}>
+                    <AsyncSelect
+                      name='customer_name'
+                      value={this.state.customer.customer_name}
+                      loadOptions={this.selectLoadOptions}
+                      ignoreAccents={false}
+                      ignoreCase={false}
+                      ref={this.props.inputRef}
+                      filterOption={this.nameFilter}
+                      onInputKeyDown={this.onCustomerSelectInputKeyDown}
+                      onChange={this.selectChangeHandler}
+                      style={{ width: '100%' }}
+                      cacheOptions
+                      defaultOptions
+                      placeholder='Kund:innenname'
+                    />
+                  </InputGroup>
+                )}
+              </div>
             </Col>
             <Col xs={3}>
               {this.state.customer.new_customer ? (
                 <InputGroup>
                   <Form.Control
-                    type="text"
-                    placeholder="Kd-Nr"
-                    name="customer_number"
+                    type='text'
+                    placeholder='Kd-Nr'
+                    name='customer_number'
                     value={this.state.customer.customer_number}
                     onChange={this.handleNewId}
                   />
                 </InputGroup>
               ) : (
                 <AsyncSelect
-                  name="customer_number"
+                  name='customer_number'
                   value={{ label: this.state.customer.customer_number }}
                   loadOptions={this.selectbyIdLoadOptions}
                   filterOption={this.idFilter}
                   onChange={this.selectChangeHandler}
                   cacheOptions
                   defaultOptions
-                  placeholder="KDN-NR"
+                  placeholder='KDN-NR'
                 />
               )}
             </Col>
           </FormGroup>
-          <Col xs={4} className="red boldf">
+          <Col xs={4} className='red boldf'>
             {delayedWarning}
           </Col>
         </Row>

@@ -672,7 +672,11 @@ class ContractNew extends Component {
 
   setCustomer(customer) {
     const obj = { customer };
-    this.setState(obj);
+    console.log("c",customer)
+    this.setState(obj, () => {
+      console.log(this.state);
+      this.calcDistanceAndZone(this.state);
+    });
   }
 
   render() {
@@ -689,7 +693,7 @@ class ContractNew extends Component {
           <Col xs={12} xl={4} className="customer-wrapper">
             <Row>
               <Col xs={12} xl={12} className="mb-2">
-                <div>Auftraggeber:in</div>
+                <div><h5>Auftraggeber:in</h5></div>
                 <Customer
                   customer={this.state.customer}
                   setCustomer={this.setCustomer}

@@ -9,7 +9,6 @@ class ContractPositionB extends Component {
     const {
       start_time,
       start_time_to,
-      address,
       customer,
       is_cargo: cargo,
       is_express: express,
@@ -22,7 +21,14 @@ class ContractPositionB extends Component {
       bonus: pos_bonus,
       anon_name,
     } = this.props.position;
-    if (address[0]) {
+    let address = this.props.position.address;
+    if(this.props.position.customer_is_drop_off){
+      address = this.props.contract.customer.addresses
+    } else{
+      address = this.props.position.customer.addresses
+    }
+
+    if (address[0]||customer.addresses[0]) {
       const delayedWarning =
         this.props.position &&
         this.props.position.customer &&

@@ -101,7 +101,7 @@ class App extends Component {
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav>
               <CustomLink
-                className='nav-link btn btn-primary text-white ms-3'
+                className='btn btn-primary ms-3'
                 to='disposerv/disposerv/newcontract'
               >
                 <Nav>Neuer Auftrag</Nav>

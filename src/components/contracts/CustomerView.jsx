@@ -1,27 +1,23 @@
 import React, { Component } from 'react';
-import {
-  Row,
-  Col,
-  FormGroup,
-  InputGroup,
-  Form,
-  Button,
-} from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleMinus } from '@fortawesome/free-solid-svg-icons';
-import AsyncSelect from 'react-select/async';
+import { faCircleMinus, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { INITIAL_CONTRACT_FORM_STATE } from '@/constants/initialStates';
+import CustomerFormModal from '@/components/CustomerFormModal.jsx';
 import {
   getCustomersByNameList,
   getCustomer,
 } from '@/utils/transportFunctions.jsx';
 
-class Customer extends Component {
+class CustomerView extends Component {
   constructor() {
     super();
     this.selectLoadOptions = this.selectLoadOptions.bind(this);
     this.selectChangeHandler = this.selectChangeHandler.bind(this);
     this.open = this.open.bind(this);
+    this.close = this.close.bind(this);
+    this.update = this.update.bind(this);
+    this.refresh = this.refresh.bind(this);
     this.state = {
       customer: INITIAL_CONTRACT_FORM_STATE,
     };
@@ -116,6 +112,18 @@ class Customer extends Component {
     this.setState({ showModal: true });
   }
 
+  update() {
+    this.setState({ showModal: false });
+  }
+
+  refresh() {
+    this.setState({ showModal: false });
+  }
+
+  close() {
+    this.setState({ showModal: false });
+  }
+
   render() {
     // get the neccessary data
     if (this.state.customer || this.state.customer !== null) {
@@ -124,8 +132,28 @@ class Customer extends Component {
         ? 'Kund*In hat Nachzahlung!'
         : '';
       return (
-        <Row className='Customer2'>
-          <Col xs={12}>Auftraggeber:in</Col>
+        <Row className='Customer2 customer-view'>
+          <Col xs={12} className='d-flex title'>
+            {this.props.hideEditButton ? (
+              <></>
+            ) : (
+              <div className='d-flex'>
+                <CustomerFormModal
+                  customer={this.state.customer}
+                  cl={this.close}
+                  update={this.update}
+                  refresh={this.refresh}
+                />
+                <Button
+                  onClick={this.props.clearCustomer}
+                  variant='danger'
+                  className='ms-3'
+                >
+                  <FontAwesomeIcon icon={faCircleMinus} />
+                </Button>
+              </div>
+            )}
+          </Col>
           <Col xs={2} className='boldf'>
             Name:
           </Col>
@@ -145,44 +173,93 @@ class Customer extends Component {
               ''
             )}
           </Col>
-          <Col xs={2} className='boldf'> 
-            Telefon:
-          </Col>
-          <Col xs={10}>
-            {this.state.customer.phone_1?
-            <a href='tel:{this.state.customer.phone_1}'>{this.state.customer.phone_1}</a>:''}
-            {this.state.customer.phone_2?
-            <a href='tel:{this.state.customer.phone_2}'>{this.state.customer.phone_2}</a>:''}
-          </Col>
-          <Col xs={2} className='boldf'>
-              E-Mail:
-          </Col>
-          <Col xs={10}>
-            {this.state.customer.email_1?
-            <a href='mailto:{this.state.customer.email_1}'>{this.state.customer.email_1}</a>:''}
-           </Col>
-           <Col xs={2} className='boldf'>
-             Extra:
+          {this.state.customer.addresses && this.state.customer.addresses[0].opening_hours ? (
+            <Col xs={2} className='boldf'>
+              Öffnungszeiten:
             </Col>
+          ) : (
+            ''
+          )}
+          {this.state.customer.addresses && this.state.customer.addresses[0].opening_hours ? (
+            <Col xs={10}>{this.state.customer.addresses[0].opening_hours}</Col>
+          ) : (
+            ''
+          )}
+          {this.state.customer.phone_1 || this.state.customer.phone_2 ? (
+            <Col xs={2} className='boldf'>
+              Telefon:
+            </Col>
+          ) : (
+            ''
+          )}
+          {this.state.customer.phone_1 || this.state.customer.phone_2 ? (
             <Col xs={10}>
-              {this.state.customer.talk_to}
-              {this.state.customer.talk_to_extra}
-              {this.state.customer.extra}
+              {this.state.customer.phone_1 ? (
+                <a href='tel:{this.state.customer.phone_1}'>
+                  {this.state.customer.phone_1}
+                </a>
+              ) : (
+                ''
+              )}
+              {this.state.customer.phone_2 ? (
+                <div>
+                  <a href='tel:{this.state.customer.phone_2}'>
+                    {this.state.customer.phone_2}
+                  </a>
+                </div>
+              ) : (
+                ''
+              )}
             </Col>
+          ) : (
+            ''
+          )}
+          {this.state.customer.email_1 ? (
+            <Col xs={2} className='boldf'>
+              E-Mail:
+            </Col>
+          ) : (
+            ''
+          )}
+          {this.state.customer.email_1 ? (
+            <Col xs={10}>
+              <a href='mailto:{this.state.customer.email_1}'>
+                {this.state.customer.email_1}
+              </a>
+            </Col>
+          ) : (
+            ''
+          )}
+          <Col xs={2} className='boldf'>
+            Extra:
+          </Col>
+          <Col xs={10}>
+            {this.state.customer.talk_to}
+            {this.state.customer.talk_to_extra}
+            {this.state.customer.extra}
+          </Col>
+          {!this.props.hidePayment ? (
             <Col xs={2} className='boldf'>
               Zahlung:
             </Col>
-            <Col xs={10}>
-              {this.state.customer.payment}
+          ) : (
+            ''
+          )}
+          {!this.props.hidePayment ? (
+            <Col xs={10}>{this.state.customer.payment}</Col>
+          ) : (
+            ''
+          )}
+          {this.state.customer.has_delayed_payment ? (
+            <Col xs={12} className='red boldf'>
+              Kund*In hat Nachzahlung! <br />
+              {this.state.customer.has_delayed_payment_memo}
             </Col>
-            {this.state.customer.has_delayed_payment ? (
-              <Col xs={12} className='red boldf'>
-                Kund*In hat Nachzahlung! <br />
-                {this.state.customer.has_delayed_payment_memo}
-              </Col>
-            ) : ''}
-          <Col xs={4} className='red boldf'>
-            {delayedWarning}
+          ) : (
+            ''
+          )}
+          <Col xs={12} className='boldf'>
+            {this.state.customer.memo}
           </Col>
         </Row>
       );
@@ -191,4 +268,4 @@ class Customer extends Component {
   }
 }
 
-export default Customer;
+export default CustomerView;

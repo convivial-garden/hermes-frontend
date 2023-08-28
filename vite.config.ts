@@ -1,12 +1,12 @@
 import { defineConfig } from 'vite';
-import reactRefresh from '@vitejs/plugin-react-refresh';
+import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgrPlugin from 'vite-plugin-svgr';
 import federation from '@originjs/vite-plugin-federation';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [reactRefresh(), viteTsconfigPaths(), svgrPlugin(),
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin(),
     federation({
       name: 'disposerv',
       filename: 'disposerv.js',

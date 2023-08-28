@@ -102,11 +102,12 @@ class CustomerForm extends Component {
   }
 
   handleStreetSelect(value) {
+    console.log("handleStreetSelect", value)
     let newPositionObject = {};
     if (value !== null) {
-      const { nr_bis, nr_von, name_street, postal_code, lat, lon } =
+      const { name_street, nr, postal_code, lat, lon } =
         value.data;
-      const nr = nr_bis !== null ? `${nr_von}-${nr_bis}` : nr_von;
+      // const nr = nr_bis !== null ? `${nr_von}-${nr_bis}` : nr_von;
       newPositionObject = {
         street: name_street,
         number: nr,
@@ -125,6 +126,8 @@ class CustomerForm extends Component {
   }
 
   setStateOfAddress(event, _) {
+    console.log("handleStreetSelect", event)
+
     this.setState((prevState) =>
       R.mergeDeepRight(
         prevState,
@@ -407,6 +410,7 @@ class CustomerForm extends Component {
                           name='street'
                           value={this.state.address.street}
                           onChange={(event) => {
+                            console.log("event", event)
                             event.persist();
                             this.setStateOfAddress(event);
                           }}
@@ -514,7 +518,7 @@ class CustomerForm extends Component {
               <Row>
                 <FormGroup>
                   <Col xs={FIRSTCOLWIDTH}>
-                    <FormLabel>Postleitzahl:</FormLabel>
+                    <FormLabel className='boldf'>Postleitzahl:</FormLabel>
                   </Col>
                   <Col xs={9}>
                     <Form.Control
@@ -533,7 +537,7 @@ class CustomerForm extends Component {
             </Col>
 
             <Col xs={2}>
-              <Button size='large' onClick={this.save}>
+              <Button size='large' onClick={this.save} variant="success">
                 <FontAwesomeIcon icon={this.saveIcons[this.state.saved]} />
               </Button>
             </Col>
