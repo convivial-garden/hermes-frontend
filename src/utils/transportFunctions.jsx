@@ -197,7 +197,7 @@ function getAssignedContractSelfByDate(date, callback) {
   const year = date_moment.format('YYYY');
   const month = date_moment.format('MM');
   const day = date_moment.format('D');
-  Api.get(`${CONTRACTS_SELF}/${year}/${month}/${day}/`).then(
+  Api.get(`${CONTRACTS_SELF}${year}/${month}/${day}/`).then(
     (response) => {
       callback(response.data.results ? response.data.results : []);
     },
