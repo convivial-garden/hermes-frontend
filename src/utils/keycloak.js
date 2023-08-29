@@ -5,7 +5,7 @@ export let keycloak = null;
 function initKeycloak() {
   console.log('initKeycloak');
   const initOptions = {
-    url: 'http://keycloak:8080/',
+    url:import.meta.env.DEV?'http://keycloak:8080/':'http://login.hermes/',
     realm: 'collectivo',
     clientId: 'collectivo-ux',
     onLoad: 'login-required',
