@@ -348,11 +348,16 @@ function prepareNewContract(contract) {
 
 function putContract(contract, callback) {
   prepareNewContract(contract).then((payload) =>
-    Api.put(contract.url, payload)
+  {
+    let url = contract.url;
+    if (BACKEND.includes('https:') && url.includes('http:')) {
+      url = url.replace('http:', 'https:');
+    }
+    Api.put(url, payload)
       .then((response) => {
         callback(response);
       })
-      .catch((error) => console.log(error)),
+      .catch((error) => console.log(error))},
   );
 }
 
@@ -406,6 +411,9 @@ function putCustomer(data, callback) {
 
 function putCustomer2(url, payload) {
   console.log('putCustomer2', url, payload);
+  if (BACKEND.includes('https:') && url.includes('http:')) {
+    url = url.replace('http:', 'https:');
+  }
   return Api.put(`${url}`, payload);
 }
 

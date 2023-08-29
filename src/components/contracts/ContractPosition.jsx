@@ -87,10 +87,14 @@ class ContractPosition extends Component {
         );
         if (selection !== -1) {
           if (matchingDispo !== undefined) {
+            let url = matchingDispo.url;
+            if (BACKEND.includes('https:') && url.includes('http:')) {
+              url = url.replace('http:', 'https:');
+            }
             if (matchingDispo.dispatched_to === selection) {
-              Api.put(matchingDispo.url, { preliminary: false });
+              Api.put(url, { preliminary: false });
             } else {
-              Api.delete(matchingDispo.url).then(() => {
+              Api.delete(url).then(() => {
                 Api
                   .post(`${BACKEND}dispo/`, {
                     dispatched_to: selection,
