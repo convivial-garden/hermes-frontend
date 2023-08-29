@@ -107,11 +107,11 @@ class CustomerForm extends Component {
     console.log("handleStreetSelect", value)
     let newPositionObject = {};
     if (value !== null) {
-      const { name_street, nr, postal_code, lat, lon } =
+      const { name, nr, postal_code, lat, lon } =
         value.data;
       // const nr = nr_bis !== null ? `${nr_von}-${nr_bis}` : nr_von;
       newPositionObject = {
-        street: name_street,
+        street: name,
         number: nr,
         postal_code,
         lat,
