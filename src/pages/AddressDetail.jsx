@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import {
-  Container, Row, Col, FormGroup, FormControl, FormLabel, Button, Alert,
+  Container,
+  Row,
+  Col,
+  FormGroup,
+  FormControl,
+  FormLabel,
+  Button,
+  Alert,
 } from 'react-bootstrap';
 import axios from 'axios';
 import { deleteAddress } from '@/utils/transportFunctions.jsx';
@@ -41,29 +48,35 @@ class AddressDetail extends Component {
     const { url } = this.props;
     this.setState({ url });
     if (url !== '') {
-      Api
-        .get(url)
-        .then((response) => {
-          this.setState({ data: response.data });
-        });
+      let url_tmp = url;
+      if (location.protocol == 'https:' && url_tmp.includes('http:')) {
+        url_tmp = url_tmp.replace('http:', 'https:');
+      }
+      Api.get(url_tmp).then((response) => {
+        this.setState({ data: response.data });
+      });
     }
   }
 
   handleChange(event, name) {
-    this.setState({ data: { ...this.state.data, [name]: event.target.value } });
+    this.setState({
+      data: { ...this.state.data, [name]: event.target.value },
+    });
   }
 
   saveAddress() {
     this.setState({ saved: false });
     if (this.state.url !== '') {
-      Api
-        .put(this.state.url, this.state.data)
-        .then((resp) => {
-          this.setState({ saved: (resp.status === 200) });
-        });
+      let url_tmp = this.state.url;
+      if (location.protocol == 'https:' && url_tmp.includes('http:')) {
+        url_tmp = url.replace('http:', 'https:');
+      }
+      Api.put(url_tmp, this.state.data).then((resp) => {
+        this.setState({ saved: resp.status === 200 });
+      });
     } else {
       this.props.add(this.state.data, (resp) => {
-        this.setState({ saved: (resp.status === 201) });
+        this.setState({ saved: resp.status === 201 });
         this.props.close();
       });
     }
@@ -71,28 +84,26 @@ class AddressDetail extends Component {
 
   deleteAddress() {
     if (this.state.url !== '') {
-      deleteAddress(this.state.url)
-        .then((response) => {
-          if (response.status === 204) this.setState({ url: '', deleted: true });
-        });
+      deleteAddress(this.state.url).then((response) => {
+        if (response.status === 204) this.setState({ url: '', deleted: true });
+      });
     }
   }
 
   render() {
     const COL_WIDTH = 6;
-    const {
-      street, number, stair, level, door, postal_code,
-    } = this.state.data;
+    const { street, number, stair, level, door, postal_code } =
+      this.state.data;
     return (
-      <Container className="AddressDetail">
-        <FormGroup controlId="fourth" className="row">
+      <Container className='AddressDetail'>
+        <FormGroup controlId='fourth' className='row'>
           <Row>
             <Col xs={COL_WIDTH}>
               <FormLabel>Strasse</FormLabel>
               <Form.Control
-                type="text"
-                placeholder="Strassenname"
-                name="street"
+                type='text'
+                placeholder='Strassenname'
+                name='street'
                 value={street}
                 onChange={(event) => this.handleChange(event, 'street')}
               />
@@ -100,9 +111,9 @@ class AddressDetail extends Component {
             <Col xs={1}>
               <FormLabel>Hausnummer</FormLabel>
               <Form.Control
-                type="text"
-                placeholder="Hausnummer"
-                name="number"
+                type='text'
+                placeholder='Hausnummer'
+                name='number'
                 value={number}
                 onChange={(event) => this.handleChange(event, 'number')}
               />
@@ -110,9 +121,9 @@ class AddressDetail extends Component {
             <Col xs={1}>
               <FormLabel>Stiege</FormLabel>
               <Form.Control
-                type="text"
-                placeholder="Stiege"
-                name="stair"
+                type='text'
+                placeholder='Stiege'
+                name='stair'
                 value={stair}
                 onChange={(event) => this.handleChange(event, 'stair')}
               />
@@ -120,9 +131,9 @@ class AddressDetail extends Component {
             <Col xs={1}>
               <FormLabel>Stock</FormLabel>
               <Form.Control
-                type="text"
-                placeholder="Stock"
-                name="level"
+                type='text'
+                placeholder='Stock'
+                name='level'
                 value={level}
                 onChange={(event) => this.handleChange(event, 'level')}
               />
@@ -130,9 +141,9 @@ class AddressDetail extends Component {
             <Col xs={1}>
               <FormLabel>Tuer</FormLabel>
               <Form.Control
-                type="text"
-                placeholder="Tuer"
-                name="door"
+                type='text'
+                placeholder='Tuer'
+                name='door'
                 value={door}
                 onChange={(event) => this.handleChange(event, 'door')}
               />
@@ -140,9 +151,9 @@ class AddressDetail extends Component {
             <Col xs={1}>
               <FormLabel>Postleitzahl</FormLabel>
               <Form.Control
-                type="text"
-                placeholder="Postleitzahl"
-                name="postal_code"
+                type='text'
+                placeholder='Postleitzahl'
+                name='postal_code'
                 value={postal_code}
                 onChange={(event) => this.handleChange(event, 'postal_code')}
               />
@@ -153,11 +164,23 @@ class AddressDetail extends Component {
         <Row>
           <Col xs={3}>
             <Button onClick={this.saveAddress}>Addresse speichern</Button>
-            {this.state.url === '' ? '' : <Button onClick={this.deleteAddress}>Addresse loeschen</Button>}
+            {this.state.url === '' ? (
+              ''
+            ) : (
+              <Button onClick={this.deleteAddress}>Addresse loeschen</Button>
+            )}
           </Col>
           <Col xs={3}>
-            {this.state.saved ? <Alert variant="success">Addresse gespeichert!</Alert> : ''}
-            {this.state.deleted ? <Alert variant="success">Addresse geloescht!</Alert> : ''}
+            {this.state.saved ? (
+              <Alert variant='success'>Addresse gespeichert!</Alert>
+            ) : (
+              ''
+            )}
+            {this.state.deleted ? (
+              <Alert variant='success'>Addresse geloescht!</Alert>
+            ) : (
+              ''
+            )}
           </Col>
         </Row>
       </Container>

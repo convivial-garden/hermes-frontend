@@ -85,12 +85,13 @@ class ContractPosition extends Component {
         const matchingDispo = thisPosition.dispo.find(
           (dispo) => dispo.position === thisPosition.id && dispo.sequence === index,
         );
+        let url = matchingDispo.url;
+        if (BACKEND.includes('https:') && url.includes('http:')) {
+          url = url.replace('http:', 'https:');
+        }
         if (selection !== -1) {
           if (matchingDispo !== undefined) {
-            let url = matchingDispo.url;
-            if (BACKEND.includes('https:') && url.includes('http:')) {
-              url = url.replace('http:', 'https:');
-            }
+
             if (matchingDispo.dispatched_to === selection) {
               Api.put(url, { preliminary: false });
             } else {
@@ -116,7 +117,7 @@ class ContractPosition extends Component {
               .then(callback);
           }
         } else if (matchingDispo !== undefined) {
-          Api.delete(matchingDispo.url).then(callback);
+          Api.delete(url).then(callback);
         }
       },
     );

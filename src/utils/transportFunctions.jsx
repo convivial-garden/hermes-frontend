@@ -216,6 +216,7 @@ function getCustomer2(id) {
 }
 
 function getCustomerPage(url) {
+  
   return Api.get(url);
 }
 
@@ -242,7 +243,11 @@ function getFullCustomers(callback) {
 }
 
 function deleteContract(url, callback) {
-  Api.delete(url).then((response) => callback(response.data.results));
+  let url_tmp = url;
+  if (location.protocol == "https:" && url.includes('http:')) {
+    url_tmp = url.replace('http:', 'https:');
+  }
+  Api.delete(url_tmp).then((response) => callback(response.data.results));
 }
 
 function postNewAddress(newAddress, callback) {

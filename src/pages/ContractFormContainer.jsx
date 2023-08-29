@@ -508,7 +508,12 @@ class ContractFormContainer extends Component {
       axios
         .all(
           delayedPaymentAndCustomerRequests.concat(
-            this.state.positionsDeleteRequests.map((url) => Api.delete(url)),
+            this.state.positionsDeleteRequests.map((url) => {
+              let url_tmp = dataurl;
+              if (location.protocol == "https:" && url.includes('http:')) {
+                url_tmp = url.replace('http:', 'https:');
+              }
+              Api.delete(url_tmp)}),
           ),
         )
         .then(() => {

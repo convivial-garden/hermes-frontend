@@ -54,7 +54,7 @@ import {
 import { initial_contract_state } from '../constants/initialStates';
 import MapComponent from '@/components/MapComponent';
 import { toast } from 'react-toastify';
-import {CustomerDetailEdit} from '@/components/contracts/CustomerDetailEdit';
+import { CustomerDetailEdit } from '@/components/contracts/CustomerDetailEdit';
 const SAVEICONS = {
   unsaved: faBicycle,
   saving: faClock,
@@ -71,7 +71,8 @@ class ContractNew extends Component {
     this.setStateOfContract = this.setStateOfContract.bind(this);
     this.setStateOfPosition = this.setStateOfPosition.bind(this);
     this.calcDistanceAndZone = this.calcDistanceAndZone.bind(this);
-    this.setBonussesForAllPositions = this.setBonussesForAllPositions.bind(this);
+    this.setBonussesForAllPositions =
+      this.setBonussesForAllPositions.bind(this);
     this.setDate = this.setDate.bind(this);
     this.Selects = [null, null];
     this.fcSelects = [null, null];
@@ -115,15 +116,15 @@ class ContractNew extends Component {
       }
 
       if (
-        (event.ctrlKey && event.key === 'ArrowRight')
-        || (event.ctrlKey && event.key === 'j')
+        (event.ctrlKey && event.key === 'ArrowRight') ||
+        (event.ctrlKey && event.key === 'j')
       ) {
         event.preventDefault();
         this.nameSelect(1);
       }
       if (
-        (event.ctrlKey && event.key === 'ArrowLeft')
-        || (event.ctrlKey && event.key === 'k')
+        (event.ctrlKey && event.key === 'ArrowLeft') ||
+        (event.ctrlKey && event.key === 'k')
       ) {
         event.preventDefault();
         this.nameSelect(-1);
@@ -225,20 +226,24 @@ class ContractNew extends Component {
 
   changeRepeatedWeekdays(day, checked) {
     if (this.state.repeated.days_of_the_week.includes(day)) {
-      this.setState((prevState) => R.mergeDeepRight(prevState, {
-        repeated: {
-          days_of_the_week: prevState.repeated.days_of_the_week.replace(
-            `${day},`,
-            '',
-          ),
-        },
-      }));
+      this.setState((prevState) =>
+        R.mergeDeepRight(prevState, {
+          repeated: {
+            days_of_the_week: prevState.repeated.days_of_the_week.replace(
+              `${day},`,
+              '',
+            ),
+          },
+        }),
+      );
     } else {
-      this.setState((prevState) => R.mergeDeepRight(prevState, {
-        repeated: {
-          days_of_the_week: `${prevState.repeated.days_of_the_week + day},`,
-        },
-      }));
+      this.setState((prevState) =>
+        R.mergeDeepRight(prevState, {
+          repeated: {
+            days_of_the_week: `${prevState.repeated.days_of_the_week + day},`,
+          },
+        }),
+      );
     }
   }
 
@@ -375,13 +380,15 @@ class ContractNew extends Component {
 
   focusFcSelect(id) {
     if (
-      this.fcSelects[id] !== null
-      && typeof this.fcSelects[id] !== 'undefined'
-    ) this.fcSelects[id].focus();
+      this.fcSelects[id] !== null &&
+      typeof this.fcSelects[id] !== 'undefined'
+    )
+      this.fcSelects[id].focus();
     else if (
-      this.Selects[id] !== null
-      && typeof this.Selects[id] !== 'undefined'
-    ) this.Selects[id].focus();
+      this.Selects[id] !== null &&
+      typeof this.Selects[id] !== 'undefined'
+    )
+      this.Selects[id].focus();
   }
 
   saveAllCustomers(callback) {
@@ -441,7 +448,13 @@ class ContractNew extends Component {
       axios
         .all(
           delayedPaymentAndCustomerRequests.concat(
-            this.state.positionsDeleteRequests.map((url) => Api.delete(url)),
+            this.state.positionsDeleteRequests.map((url) => {
+              let url_tmp = data.url;
+              if (location.protocol == 'https:' && url_tmp.includes('http:')) {
+                url_tmp = url.replace('http:', 'https:');
+              }
+              Api.delete(url_tmp);
+            }),
           ),
         )
         .then(() => {
@@ -474,7 +487,10 @@ class ContractNew extends Component {
               });
             }
           });
-        }).catch((error) => {toast.error(error.response.data);})
+        })
+        .catch((error) => {
+          toast.error(error.response.data);
+        });
     });
   }
 
@@ -511,9 +527,9 @@ class ContractNew extends Component {
       };
     }
     if (
-      prevCoords.lat
-      && prevCoords.lat !== null
-      && prevCoords.long !== null
+      prevCoords.lat &&
+      prevCoords.lat !== null &&
+      prevCoords.long !== null
     ) {
       filteredPositionsForMap.push([prevCoords.lat, prevCoords.long]);
     }
@@ -523,10 +539,11 @@ class ContractNew extends Component {
     }
     if (data.settings !== null) {
       data.contractForms.slice(1).forEach((pos, index) => {
-        let hasCoords = prevCoords.lat !== null
-          && prevCoords.long !== null
-          && pos.data.lat !== null
-          && pos.data.long !== null;
+        let hasCoords =
+          prevCoords.lat !== null &&
+          prevCoords.long !== null &&
+          pos.data.lat !== null &&
+          pos.data.long !== null;
         let coords = {
           lat: pos.data.lat,
           long: pos.data.long,
@@ -539,7 +556,8 @@ class ContractNew extends Component {
             long: data.customer.long,
           };
         }
-        if (coords.lat && coords.long) filteredPositionsForMap.push([coords.lat, coords.long]);
+        if (coords.lat && coords.long)
+          filteredPositionsForMap.push([coords.lat, coords.long]);
         const distance = hasCoords
           ? haversine(prevCoords.lat, prevCoords.long, coords.lat, coords.long)
           : 0;
@@ -548,10 +566,11 @@ class ContractNew extends Component {
           data.settings.zone_size,
           data.settings.addzone_size,
         );
-        const basePrice = zone > 0
-          ? data.settings.basezone_price
-              + (zone - 1) * data.settings.addzone_price
-          : 0;
+        const basePrice =
+          zone > 0
+            ? data.settings.basezone_price +
+              (zone - 1) * data.settings.addzone_price
+            : 0;
         let actualPrice = basePrice;
         if (pos.data.is_cargo) actualPrice += basePrice;
         if (pos.data.is_express) {
@@ -562,13 +581,16 @@ class ContractNew extends Component {
           else if (zone <= 8) actualPrice += addPrice * 4;
           else if (zone > 8) actualPrice * 2;
         }
-        if (pos.data.weight_size_bonus !== '' && !pos.data.is_cargo) actualPrice += data.settings.addzone_price;
-        if (pos.data.is_bigbuilding) actualPrice += data.settings.addzone_price;
+        if (pos.data.weight_size_bonus !== '' && !pos.data.is_cargo)
+          actualPrice += data.settings.addzone_price;
+        if (pos.data.is_bigbuilding)
+          actualPrice += data.settings.addzone_price;
         if (pos.data.waiting_bonus !== 0) {
-          actualPrice
-            += data.settings.addzone_price * parseInt(pos.data.waiting_bonus, 10);
+          actualPrice +=
+            data.settings.addzone_price * parseInt(pos.data.waiting_bonus, 10);
         }
-        if (pos.data.get_there_bonus !== 0) actualPrice += parseFloat(pos.data.get_there_bonus);
+        if (pos.data.get_there_bonus !== 0)
+          actualPrice += parseFloat(pos.data.get_there_bonus);
         this.setStateOfPosition(
           index + 1,
           {
@@ -614,24 +636,29 @@ class ContractNew extends Component {
   nextNameSelect(id) {
     if (id < this.state.contractForms.length - 1) {
       window.curElement += 1;
-      if (window.curElement >= this.state.contractForms.length - 1) window.curElement = -1;
+      if (window.curElement >= this.state.contractForms.length - 1)
+        window.curElement = -1;
     }
   }
 
   nameSelect(dir) {
     window.curElement += dir;
-    if (window.curElement > this.state.contractForms.length - 1) window.curElement = 0;
+    if (window.curElement > this.state.contractForms.length - 1)
+      window.curElement = 0;
 
-    if (window.curElement < 0) window.curElement = this.state.contractForms.length - 1;
+    if (window.curElement < 0)
+      window.curElement = this.state.contractForms.length - 1;
 
-    if (this.Selects[window.curElement] !== null) this.Selects[window.curElement].focusNameSelect();
+    if (this.Selects[window.curElement] !== null)
+      this.Selects[window.curElement].focusNameSelect();
   }
 
   prevNameSelect(id) {
     if (id >= 0) {
       this.Selects[id].focusNameSelect();
       window.curElement -= 1;
-      if (window.curElement < 0) window.curElement = this.state.contractForms.length - 1;
+      if (window.curElement < 0)
+        window.curElement = this.state.contractForms.length - 1;
     }
   }
 
@@ -648,7 +675,7 @@ class ContractNew extends Component {
   renderToggleButton(day, cont) {
     return (
       <Button
-        className="me-2"
+        className='me-2'
         checked
         onClick={(event) => {
           event.persist();
@@ -672,7 +699,7 @@ class ContractNew extends Component {
 
   setCustomer(customer) {
     const obj = { customer };
-    console.log("c",customer)
+    console.log('c', customer);
     this.setState(obj, () => {
       console.log(this.state);
       this.calcDistanceAndZone(this.state);
@@ -688,32 +715,34 @@ class ContractNew extends Component {
       form.data.long,
     ]);
     return (
-      <Container fluid className="ContractFormContainer">
+      <Container fluid className='ContractFormContainer'>
         <Row>
-          <Col xs={12} xl={4} className="customer-wrapper">
+          <Col xs={12} xl={4} className='customer-wrapper'>
             <Row>
-              <Col xs={12} xl={12} className="mb-2">
-                <div><h5>Auftraggeber:in</h5></div>
+              <Col xs={12} xl={12} className='mb-2'>
+                <div>
+                  <h5>Auftraggeber:in</h5>
+                </div>
                 <Customer
                   customer={this.state.customer}
                   setCustomer={this.setCustomer}
                 />
-                <CustomerDetailEdit customer={this.state.customer}
+                <CustomerDetailEdit
+                  customer={this.state.customer}
                   setCustomer={this.setCustomer}
-                  />
-
+                />
               </Col>
-              <Col xs={12} xl={12} className="mb-2">
+              <Col xs={12} xl={12} className='mb-2'>
                 <ListGroup>
                   <ListGroupItem>
                     {/* {this.state.date.format("dd.MM.yyyy")} */}
                     <DatePicker
                       onChange={(event) => this.setDate(event)}
-                      className="form-control"
+                      className='form-control'
                       selected={this.state.date}
-                      dateFormat="dd.MM.yyyy"
+                      dateFormat='dd.MM.yyyy'
                       // style={{zIndex: 5000}}
-                      popperPlacement="right-start"
+                      popperPlacement='right-start'
                       calendarStartDay={1}
                     />
                   </ListGroupItem>
@@ -722,7 +751,7 @@ class ContractNew extends Component {
                       <Button
                         active={this.state.isRepeated}
                         onClick={this.handleRepeatedContract}
-                        className="me-2"
+                        className='me-2'
                       >
                         Dauerauftrag
                       </Button>
@@ -745,17 +774,19 @@ class ContractNew extends Component {
                     </div>
                     {this.state.isRepeated ? (
                       <div>
-                        <Row className="mb-2">
+                        <Row className='mb-2'>
                           <Col xs={12} xl={6}>
                             <FormGroup>
                               {/* label */}
                               <Form.Label>Startdatum</Form.Label>
                               <DatePicker
-                                onChange={(date) => this.setRepeatedStartDate(date)}
-                                className="form-control"
+                                onChange={(date) =>
+                                  this.setRepeatedStartDate(date)
+                                }
+                                className='form-control'
                                 selected={this.state.repeatedstartdate}
-                                dateFormat="dd.MM.yyyy"
-                                popperPlacement="right-end"
+                                dateFormat='dd.MM.yyyy'
+                                popperPlacement='right-end'
                                 calendarStartDay={1}
                               />
                             </FormGroup>
@@ -766,11 +797,13 @@ class ContractNew extends Component {
                                 <Form.Label>Enddatum</Form.Label>
 
                                 <DatePicker
-                                  onChange={(date) => this.setRepeatedEndDate(date)}
-                                  className="form-control"
+                                  onChange={(date) =>
+                                    this.setRepeatedEndDate(date)
+                                  }
+                                  className='form-control'
                                   selected={this.state.repeatedenddate}
-                                  dateFormat="dd.MM.yyyy"
-                                  popperPlacement="right-end"
+                                  dateFormat='dd.MM.yyyy'
+                                  popperPlacement='right-end'
                                   calendarStartDay={1}
                                 />
                               </FormGroup>
@@ -799,16 +832,16 @@ class ContractNew extends Component {
               </Col>
             </Row>
           </Col>
-          <Col xs={12} xl={4} className="mb-2">
+          <Col xs={12} xl={4} className='mb-2'>
             <MapComponent
               viewport={{ center: this.state.filteredPositions[0], zoom: 13 }}
-              height="217px"
-              width="100%"
+              height='217px'
+              width='100%'
               position={this.state.filteredPositions[0]}
               positions={this.state.filteredPositions}
             />
           </Col>
-          <Col xs={12} xl={2} className="mb-2">
+          <Col xs={12} xl={2} className='mb-2'>
             <Card>
               <ListGroup>
                 <ListGroupItem style={{ border: emphasizedBorder }}>
@@ -819,7 +852,7 @@ class ContractNew extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className="boldf"
+                    className='boldf'
                   >
                     Zone:
                   </div>
@@ -833,17 +866,13 @@ class ContractNew extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className="boldf"
+                    className='boldf'
                   >
                     Netto/Brutto:
                   </div>
                   <span style={{ fontWeight: '600' }}>
-                    {nettoPrice.toFixed(2)}
-                    {' '}
-                    €/
-                    {bruttoPrice.toFixed(2)}
-                    {' '}
-                    €
+                    {nettoPrice.toFixed(2)} €/
+                    {bruttoPrice.toFixed(2)} €
                   </span>
                 </ListGroupItem>
                 <ListGroupItem
@@ -860,7 +889,7 @@ class ContractNew extends Component {
                       height: '100%',
                       margin: '0',
                     }}
-                    className="boldf"
+                    className='boldf'
                   >
                     Zuschlag:
                   </div>
@@ -872,12 +901,12 @@ class ContractNew extends Component {
                       // validationState={
                       //   Number.isNaN(this.state.extra2) ? "error" : "success"
                       // }
-                      size="sm"
+                      size='sm'
                       style={{ marginBottom: '0' }}
                     >
                       <Form.Control
-                        type="text"
-                        name="extra2"
+                        type='text'
+                        name='extra2'
                         value={this.state.extra2_string}
                         onChange={({ target }) => {
                           this.setState(
@@ -903,18 +932,14 @@ class ContractNew extends Component {
                       display: 'block',
                       height: '100%',
                     }}
-                    className="boldf"
+                    className='boldf'
                   >
                     Marken:
                   </div>
                   {this.state.marken}
                 </ListGroupItem>
                 <ListGroupItem style={{ border: emphasizedBorder }}>
-                  Distanz
-                  {' '}
-                  {this.state.distance.toFixed(2)}
-                  {' '}
-                  km
+                  Distanz {this.state.distance.toFixed(2)} km
                 </ListGroupItem>
               </ListGroup>
             </Card>
@@ -933,14 +958,14 @@ class ContractNew extends Component {
                 <span className={this.state.saved}>
                   <FontAwesomeIcon
                     icon={SAVEICONS[this.state.saved]}
-                    size="4x"
+                    size='4x'
                   />
                 </span>
               </Button>
             </div>
             <div>
               <MapModal
-                id="map-modal"
+                id='map-modal'
                 positions={this.state.filteredPositions}
               />
             </div>
@@ -984,11 +1009,11 @@ class ContractNew extends Component {
             <div>
               {this.state.contractForms.length < 3 ? (
                 <Button
-                  size="large"
+                  size='large'
                   style={{ border: emphasizedBorder }}
                   onClick={this.onSwitchButtonClick}
                 >
-                  <FontAwesomeIcon icon={faExchange} size="3x" />
+                  <FontAwesomeIcon icon={faExchange} size='3x' />
                 </Button>
               ) : (
                 ''
@@ -996,7 +1021,7 @@ class ContractNew extends Component {
             </div>
             <div>
               <Button
-                size="large"
+                size='large'
                 style={{ border: emphasizedBorder }}
                 onClick={this.onRetourButtonClick}
               >
@@ -1027,83 +1052,87 @@ class ContractNew extends Component {
         </Row>
         {this.state.contractForms.length > 2
           ? this.state.contractForms
-            .slice(2)
-            .sort((a, b) => a.id - b.id)
-            .map((position) => (
-              <Row key={position.id}>
-                <Col xs={12}>
-                  {this.state.type === 'weiterfahrt' ? (
+              .slice(2)
+              .sort((a, b) => a.id - b.id)
+              .map((position) => (
+                <Row key={position.id}>
+                  <Col xs={12}>
+                    {this.state.type === 'weiterfahrt' ? (
+                      <Row>
+                        <Col xs={0} xl={9} />
+                        <Col xs={12} xl={3}>
+                          <FontAwesomeIcon icon={faArrowDown} size='2x' />
+                        </Col>
+                      </Row>
+                    ) : (
+                      ''
+                    )}
                     <Row>
-                      <Col xs={0} xl={9} />
-                      <Col xs={12} xl={3}>
-                        <FontAwesomeIcon icon={faArrowDown} size="2x" />
+                      <Col xs={3}>&nbsp;</Col>
+                      <Col xs={3} />
+                      <Col xl={6} xs={12}>
+                        <ContractFormRepresentational
+                          contract={this.state}
+                          position={position}
+                          date={this.state.date}
+                          setStateOfContract={this.setStateOfContract}
+                          setStateOfPosition={this.setStateOfPosition}
+                          removePosition={this.removePosition}
+                          inputRef={(contractForm) =>
+                            (this.Selects[position.id] = contractForm)
+                          }
+                          getInputRef={this.Selects[position.id]}
+                          nextRef={this.Selects[position.id + 1]}
+                          next={this.nextNameSelect}
+                          inputRefTwo={(ref) =>
+                            (this.fcSelects[position.id] = ref)
+                          }
+                          getInputRefTwo={this.fcSelects[position.id]}
+                          focus={this.focusFcSelect}
+                        />
                       </Col>
                     </Row>
-                  ) : (
-                    ''
-                  )}
-                  <Row>
-                    <Col xs={3}>&nbsp;</Col>
-                    <Col xs={3} />
-                    <Col xl={6} xs={12}>
-                      <ContractFormRepresentational
-                        contract={this.state}
-                        position={position}
-                        date={this.state.date}
-                        setStateOfContract={this.setStateOfContract}
-                        setStateOfPosition={this.setStateOfPosition}
-                        removePosition={this.removePosition}
-                        inputRef={(contractForm) => (this.Selects[position.id] = contractForm)}
-                        getInputRef={this.Selects[position.id]}
-                        nextRef={this.Selects[position.id + 1]}
-                        next={this.nextNameSelect}
-                        inputRefTwo={(ref) => (this.fcSelects[position.id] = ref)}
-                        getInputRefTwo={this.fcSelects[position.id]}
-                        focus={this.focusFcSelect}
-                      />
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            ))
+                  </Col>
+                </Row>
+              ))
           : ''}
         <Row>
           <Col xs={6} />
           <Col xs={3} style={{ textAlign: 'center' }}>
-            {this.state.type === ''
-            || this.state.type === 'weiterfahrt'
-            || this.state.contractForms.length === 2 ? (
+            {this.state.type === '' ||
+            this.state.type === 'weiterfahrt' ||
+            this.state.contractForms.length === 2 ? (
               <Button
                 style={{ margin: '10px' }}
-                size="large"
+                size='large'
                 onClick={this.addWeiterfahrtForm}
               >
-                <FontAwesomeIcon icon={faArrowDown} size="4x" />
+                <FontAwesomeIcon icon={faArrowDown} size='4x' />
               </Button>
-              ) : (
-                ''
-              )}
+            ) : (
+              ''
+            )}
           </Col>
           <Col xs={3} style={{ textAlign: 'center' }}>
-            {this.state.type === 'einzelfahrt'
-            || this.state.type === ''
-            || this.state.contractForms.length === 2 ? (
+            {this.state.type === 'einzelfahrt' ||
+            this.state.type === '' ||
+            this.state.contractForms.length === 2 ? (
               <Button
                 style={{ margin: '10px' }}
-                size="large"
+                size='large'
                 onClick={this.addContractForm}
               >
-                <FontAwesomeIcon icon={faPlus} size="4x" />
+                <FontAwesomeIcon icon={faPlus} size='4x' />
               </Button>
-              ) : (
-                ''
-              )}
+            ) : (
+              ''
+            )}
           </Col>
         </Row>
         <Link
-          className="d-none"
-          to="/"
-          id="navToContractArchive"
+          className='d-none'
+          to='/'
+          id='navToContractArchive'
           ref={(btn) => (this.navToContractArchive = btn)}
         >
           Auftragsarchiv

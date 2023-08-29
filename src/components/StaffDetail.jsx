@@ -241,7 +241,11 @@ class StaffDetail extends Component {
   resetSelect(pos) {
     const { entries } = this.state;
     if (entries[pos].times_url !== '') {
-      Api.delete(entries[pos].times_url).then(() => {
+      let url_tmp = entries[pos].times_url;
+      if (location.protocol == "https:" && url.includes('http:')) {
+        url_tmp = url.replace('http:', 'https:');
+      }
+      Api.delete(url_tmp).then(() => {
         entries.splice(pos, 1);
         this.setState({ entries });
       });

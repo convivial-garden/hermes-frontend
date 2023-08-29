@@ -53,7 +53,11 @@ function ActiveStaffEntry({ id, data, update, index }) {
         <Button
           size='sm'
           onClick={() => {
-            Api.delete(data.url).then(() => {
+            let url_tmp = data.url;
+            if (location.protocol == "https:" && url.includes('http:')) {
+              url_tmp = url.replace('http:', 'https:');
+            }
+            Api.delete(url_tmp).then(() => {
               update();
             });
           }}

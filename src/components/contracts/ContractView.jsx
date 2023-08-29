@@ -532,7 +532,13 @@ class ContractFormContainer extends Component {
       axios
         .all(
           delayedPaymentAndCustomerRequests.concat(
-            this.state.positionsDeleteRequests.map((url) => Api.delete(url)),
+            this.state.positionsDeleteRequests.map((url) => {
+              let url_tmp = url;
+              if (location.protocol == 'https:' && url_tmp.includes('http:')) {
+                url_tmp = url.replace('http:', 'https:');
+              }
+              Api.delete(url_tmp);
+            }),
           ),
         )
         .then(() => {
@@ -785,8 +791,10 @@ class ContractFormContainer extends Component {
                 <div>
                   <h5>Auftraggeber:in</h5>
                 </div>
-                <CustomerView customer={this.props.contract.customer}
-                setCustomer={this.setCustomer} />
+                <CustomerView
+                  customer={this.props.contract.customer}
+                  setCustomer={this.setCustomer}
+                />
               </Col>
               <Col xs={5} className='mb-2'>
                 <Row>
