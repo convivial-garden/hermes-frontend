@@ -14,6 +14,7 @@ const DEBUG = false;
 const CONTRACTS = `${BACKEND}contracts/`;
 const CONTRACTSBYDATE = 'contracts/date/';
 const CONTRACTSBYRIDER = 'contracts/rider/';
+const CONTRACTS_SELF = 'contracts/self/';
 const CUSTOMERSBYNAME = 'customers/name/';
 const CUSTOMERSBYID = 'customers/externalid/';
 const CUSTOMERS = 'customers/';
@@ -22,6 +23,20 @@ const GENERATEREPEATED = `${BACKEND}generaterepeatedcontracts/`;
 const DELAYEDPAYMENT = 'delayedpayment';
 const ANON = 'anon/';
 const SETTINGS = `${BACKEND}settings/`;
+const CONTRACTS_BY_DATE = CONTRACTSBYDATE;
+const CONTRACTS_BY_DATE_AND_RIDER = CONTRACTSBYRIDER;
+const CUSTOMERS_BY_NAME = CUSTOMERSBYNAME;
+const CUSTOMERS_BY_EXTERNAL_ID = CUSTOMERSBYID;
+const GET_ANON = ANON;
+const CUSTOMERS_ENDPOINT = CUSTOMERS;
+const CONTRACTS_ENDPOINT = CONTRACTS;
+const CONTRACTS_ARCHIVE = `contracts/archive/`;
+const CONTRACTS_ARCHIVE_BYCUSTOMER = `contracts/customer/`;
+const PREORDERS = `preorders/`;
+const STREETNAMES = `street/name/`;
+const STREETNAMES_FAST = `faststreet/name/`;
+const DELAYEDPAYMENTS = `payments/`;
+const SETTINGS_ALL = `${SETTINGS}1/`;
 
 const Api = axios.create({
   baseURL: BACKEND,
@@ -68,33 +83,7 @@ Api.interceptors.response.use(
   },
 );
 
-const CONTRACTS_BY_DATE = CONTRACTSBYDATE;
 
-const CONTRACTS_BY_DATE_AND_RIDER = CONTRACTSBYRIDER;
-
-const CUSTOMERS_BY_NAME = CUSTOMERSBYNAME;
-
-const CUSTOMERS_BY_EXTERNAL_ID = CUSTOMERSBYID;
-
-const GET_ANON = ANON;
-
-const CUSTOMERS_ENDPOINT = CUSTOMERS;
-
-const CONTRACTS_ENDPOINT = CONTRACTS;
-
-const CONTRACTS_ARCHIVE = `contracts/archive/`;
-
-const CONTRACTS_ARCHIVE_BYCUSTOMER = `contracts/customer/`;
-
-const PREORDERS = `preorders/`;
-
-const STREETNAMES = `street/name/`;
-
-const STREETNAMES_FAST = `faststreet/name/`;
-
-const DELAYEDPAYMENTS = `payments/`;
-
-const SETTINGS_ALL = `${SETTINGS}1/`;
 function getDelayedPaymentCustomers() {
   return Api.get(DELAYEDPAYMENTS).then((response) => response.data.results);
 }
@@ -208,7 +197,7 @@ function getAssignedContractSelfByDate(date, callback) {
   const year = date_moment.format('YYYY');
   const month = date_moment.format('MM');
   const day = date_moment.format('D');
-  Api.get(`${CONTRACTS_BY_DATE_AND_RIDER}/self/${year}/${month}/${day}/`).then(
+  Api.get(`${CONTRACTS_SELF}/${year}/${month}/${day}/`).then(
     (response) => {
       callback(response.data.results ? response.data.results : []);
     },
