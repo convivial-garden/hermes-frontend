@@ -70,7 +70,7 @@ class CustomerFormModal extends Component {
               size='lg'
             >
               <Modal.Header closeButton>
-                <Modal.Title>KundIn bearbeiten</Modal.Title>
+                <Modal.Title>Kund:in bearbeiten</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <CustomerForm

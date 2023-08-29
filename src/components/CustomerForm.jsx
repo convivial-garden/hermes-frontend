@@ -63,6 +63,7 @@ class CustomerForm extends Component {
         payment: '',
         has_delayed_payment: false,
         has_delayed_payment_memo: '',
+
       },
       address: {
         url: '',
@@ -74,6 +75,7 @@ class CustomerForm extends Component {
         postal_code: '',
         lat: null,
         long: null,
+        opening_hours: '',
       },
     };
   }
@@ -526,6 +528,23 @@ class CustomerForm extends Component {
                       placeholder='Postleitzahl'
                       name='postal_code'
                       value={this.state.address.postal_code}
+                      onChange={(event) => {
+                        event.persist();
+                        this.setStateOfAddress(event);
+                      }}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup>
+                  <Col xs={FIRSTCOLWIDTH}>
+                    <FormLabel className='boldf'>Öffnungszeiten:</FormLabel>
+                  </Col>
+                  <Col xs={9}>
+                    <Form.Control
+                      type='text'
+                      placeholder='10-14 Uhr'
+                      name='opening_hours'
+                      value={this.state.address.opening_hours}
                       onChange={(event) => {
                         event.persist();
                         this.setStateOfAddress(event);

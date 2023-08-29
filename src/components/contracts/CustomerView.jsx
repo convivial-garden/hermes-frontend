@@ -154,14 +154,14 @@ class CustomerView extends Component {
               </div>
             )}
           </Col>
-          <Col xs={2} className='boldf'>
+          <Col xs={4} className='boldf'>
             Name:
           </Col>
-          <Col xs={10}>{this.state.customer.name}</Col>
-          <Col xs={2} className='boldf'>
+          <Col xs={8}>{this.state.customer.name}</Col>
+          <Col xs={4} className='boldf'>
             Adresse:
           </Col>
-          <Col xs={10}>
+          <Col xs={8}>
             {this.state.customer.addresses ? (
               <div>
                 {this.state.customer.addresses[0].street}{' '}
@@ -174,26 +174,26 @@ class CustomerView extends Component {
             )}
           </Col>
           {this.state.customer.addresses && this.state.customer.addresses[0].opening_hours ? (
-            <Col xs={2} className='boldf'>
-              Öffnungszeiten:
+            <Col xs={4} className='boldf'>
+              Öffnungsztn:
             </Col>
           ) : (
             ''
           )}
           {this.state.customer.addresses && this.state.customer.addresses[0].opening_hours ? (
-            <Col xs={10}>{this.state.customer.addresses[0].opening_hours}</Col>
+            <Col xs={8}>{this.state.customer.addresses[0].opening_hours}</Col>
           ) : (
             ''
           )}
           {this.state.customer.phone_1 || this.state.customer.phone_2 ? (
-            <Col xs={2} className='boldf'>
+            <Col xs={4} className='boldf'>
               Telefon:
             </Col>
           ) : (
             ''
           )}
           {this.state.customer.phone_1 || this.state.customer.phone_2 ? (
-            <Col xs={10}>
+            <Col xs={8}>
               {this.state.customer.phone_1 ? (
                 <a href='tel:{this.state.customer.phone_1}'>
                   {this.state.customer.phone_1}
@@ -214,15 +214,15 @@ class CustomerView extends Component {
           ) : (
             ''
           )}
-          {this.state.customer.email_1 ? (
-            <Col xs={2} className='boldf'>
+                    {this.state.customer.email_1 ? (
+            <Col xs={4} className='boldf'>
               E-Mail:
             </Col>
           ) : (
             ''
           )}
           {this.state.customer.email_1 ? (
-            <Col xs={10}>
+            <Col xs={8}>
               <a href='mailto:{this.state.customer.email_1}'>
                 {this.state.customer.email_1}
               </a>
@@ -230,23 +230,23 @@ class CustomerView extends Component {
           ) : (
             ''
           )}
-          <Col xs={2} className='boldf'>
+          <Col xs={4} className='boldf'>
             Extra:
           </Col>
-          <Col xs={10}>
+          <Col xs={8}>
             {this.state.customer.talk_to}
             {this.state.customer.talk_to_extra}
             {this.state.customer.extra}
           </Col>
           {!this.props.hidePayment ? (
-            <Col xs={2} className='boldf'>
+            <Col xs={4} className='boldf'>
               Zahlung:
             </Col>
           ) : (
             ''
           )}
           {!this.props.hidePayment ? (
-            <Col xs={10}>{this.state.customer.payment}</Col>
+            <Col xs={8}>{this.state.customer.payment}</Col>
           ) : (
             ''
           )}

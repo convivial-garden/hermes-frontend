@@ -54,7 +54,7 @@ import {
 import { initial_contract_state } from '../constants/initialStates';
 import MapComponent from '@/components/MapComponent';
 import { toast } from 'react-toastify';
-
+import {CustomerDetailEdit} from '@/components/contracts/CustomerDetailEdit';
 const SAVEICONS = {
   unsaved: faBicycle,
   saving: faClock,
@@ -698,6 +698,10 @@ class ContractNew extends Component {
                   customer={this.state.customer}
                   setCustomer={this.setCustomer}
                 />
+                <CustomerDetailEdit customer={this.state.customer}
+                  setCustomer={this.setCustomer}
+                  />
+
               </Col>
               <Col xs={12} xl={12} className="mb-2">
                 <ListGroup>

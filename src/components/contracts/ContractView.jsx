@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import {
-  Form,
   Container,
   Row,
   Col,
   Button,
-  ListGroup,
-  ListGroupItem,
-  ButtonGroup,
   ToggleButton,
   FormGroup,
-  Card,
 } from 'react-bootstrap';
 import * as R from 'ramda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,7 +21,7 @@ import {
 
 import DatePicker from 'react-datepicker';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { NETTOBRUTTOFACTOR } from '@/constants/prices';
 import {
@@ -35,10 +30,8 @@ import {
 } from '@/constants/initialStates';
 import MapModal from '@/components/MapModal';
 import MapComponent from '@/components/MapComponent';
-import ContractBonusButtons from '@/components/contracts/ContractBonusButtons';
 import CustomerView from '@/components/contracts/CustomerView.jsx';
 import PositionView from '@/components/contracts/PositionView.jsx';
-import { ContractFormRepresentational } from '@/components/contracts/ContractFormRepresentational';
 
 import {
   getAnon,
@@ -50,6 +43,7 @@ import {
   Api,
 } from '@/utils/transportFunctions.jsx';
 import { toast } from 'react-toastify';
+import { CustomerDetailEdit } from './CustomerDetailEdit';
 
 const SAVEICONS = {
   unsaved: faBicycle,
@@ -243,7 +237,6 @@ class ContractFormContainer extends Component {
           ];
         }
         contract.positions.forEach((pos, index) => {
-          console.log(pos)
           newPositions[index].data = apiResponseToInitialState(pos);
           if (
             index == 0 &&
@@ -775,7 +768,9 @@ class ContractFormContainer extends Component {
         (value, index, self) =>
           index ===
           self.findIndex(
-            (form) => form.data.lat === value.data.lat && form.data.long === value.data.long,
+            (form) =>
+              form.data.lat === value.data.lat &&
+              form.data.long === value.data.long,
           ),
       )
       .map((form) => [form.data.lat, form.data.long]);
@@ -790,7 +785,8 @@ class ContractFormContainer extends Component {
                 <div>
                   <h5>Auftraggeber:in</h5>
                 </div>
-                <CustomerView customer={this.props.contract.customer} />
+                <CustomerView customer={this.props.contract.customer}
+                setCustomer={this.setCustomer} />
               </Col>
               <Col xs={5} className='mb-2'>
                 <Row>
@@ -837,11 +833,23 @@ class ContractFormContainer extends Component {
                       </div>
                     )}
                   </Col>
-                  <Col xs={12} className='d-flex flex-wrap'>
-                    <div>
+                  {this.props.contract.repeated_id !== null ? (
+                    <Col xs={12}>
+                      <Row>
+                        <Col xs={4} className='boldf'>
+                          Dauerauftrag:
+                        </Col>
+                        <Col xs={8}>{this.props.contract.repeated_id}</Col>
+                      </Row>
+                    </Col>
+                  ) : (
+                    ''
+                  )}
+                  <Col xs={12} className='d-flex flex-wrap mt-3'>
+                    <div className='me-1'>
                       <MapModal id='map-modal' positions={markerPositions} />
                     </div>
-                    <div>
+                    <div className='me-1'>
                       {this.state.contractForms.length < 3 ? (
                         <Button
                           style={{ border: emphasizedBorder }}
@@ -853,7 +861,7 @@ class ContractFormContainer extends Component {
                         ''
                       )}
                     </div>
-                    <div>
+                    <div className='me-1'>
                       <Button
                         style={{ border: emphasizedBorder }}
                         onClick={this.onRetourButtonClick}
@@ -861,7 +869,7 @@ class ContractFormContainer extends Component {
                         Retour
                       </Button>
                     </div>
-                    <div style={{ textAlign: 'center' }}>
+                    <div style={{ textAlign: 'center' }} className='me-1'>
                       {this.state.type === '' ||
                       this.state.type === 'weiterfahrt' ||
                       this.state.contractForms.length === 2 ? (
@@ -872,7 +880,7 @@ class ContractFormContainer extends Component {
                         ''
                       )}
                     </div>
-                    <div style={{ textAlign: 'center' }}>
+                    <div style={{ textAlign: 'center' }} className='me-1'>
                       {this.state.type === 'einzelfahrt' ||
                       this.state.type === '' ||
                       this.state.contractForms.length === 2 ? (
@@ -909,7 +917,7 @@ class ContractFormContainer extends Component {
                 <PositionView
                   position={position}
                   hideCustomerEditButton={true}
-                  hidePayment={id>0?true:false}
+                  hidePayment={id > 0 ? true : false}
                   setStateOfPosition={this.setStateOfPosition}
                 />
               ))}

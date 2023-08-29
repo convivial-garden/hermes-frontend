@@ -18,7 +18,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ContractFormTimesForm from '@/components/contracts/ContractFormTimesForm.jsx';
 import Customer from '@/components/contracts/Customer.jsx';
 import ContractBonusButtons from '@/components/contracts/ContractBonusButtons.jsx';
-import { INITIAL_CONTRACT_FORM_STATE, emptyContractForm } from '@/constants/initialStates.js';
+import {
+  INITIAL_CONTRACT_FORM_STATE,
+  emptyContractForm,
+} from '@/constants/initialStates.js';
 import {
   getStreetNamesFast,
   putDelayedPayment,
@@ -27,6 +30,7 @@ import {
   getSettings,
 } from '@/utils/transportFunctions.jsx';
 import 'react-datepicker/dist/react-datepicker.css';
+import { CustomerDetailEdit } from './CustomerDetailEdit';
 
 class ContractFormRepresentational extends Component {
   constructor() {
@@ -43,7 +47,8 @@ class ContractFormRepresentational extends Component {
     this.focusCustomerInput = this.focusCustomerInput.bind(this);
     this.saveCustomer = this.saveCustomer.bind(this);
     this.focusNextOnEnter = this.focusNextOnEnter.bind(this);
-    this.onCustomerSelectInputKeyDown = this.onCustomerSelectInputKeyDown.bind(this);
+    this.onCustomerSelectInputKeyDown =
+      this.onCustomerSelectInputKeyDown.bind(this);
     this.selectChangeHandler = this.selectChangeHandler.bind(this);
     this.handleNewId = this.handleNewId.bind(this);
     this.setCustomer = this.setCustomer.bind(this);
@@ -78,7 +83,8 @@ class ContractFormRepresentational extends Component {
   }
 
   handleBonusButtonChange(id, event, buttonState) {
-    const value = buttonState !== undefined ? buttonState : String(event.target.value);
+    const value =
+      buttonState !== undefined ? buttonState : String(event.target.value);
     const { name } = event.target;
     this.props.setStateOfPosition(id, { [name]: value }, () => {});
   }
@@ -155,9 +161,11 @@ class ContractFormRepresentational extends Component {
     if (filter.includes(' ')) {
       const parts = filter.split(' ');
       parts.forEach((part) => {
-        if (option.label.toLowerCase().includes(part.toLowerCase())) hasSubstring = true;
+        if (option.label.toLowerCase().includes(part.toLowerCase()))
+          hasSubstring = true;
       });
-    } else if (option.label.toLowerCase().includes(filter.toLowerCase())) hasSubstring = true;
+    } else if (option.label.toLowerCase().includes(filter.toLowerCase()))
+      hasSubstring = true;
     return hasSubstring;
   }
 
@@ -166,9 +174,11 @@ class ContractFormRepresentational extends Component {
     if (filter.includes(' ')) {
       const parts = filter.split(' ');
       parts.forEach((part) => {
-        if (option.label.toLowerCase().includes(part.toLowerCase())) hasSubstring = true;
+        if (option.label.toLowerCase().includes(part.toLowerCase()))
+          hasSubstring = true;
       });
-    } else if (option.label.toLowerCase().includes(filter.toLowerCase())) hasSubstring = true;
+    } else if (option.label.toLowerCase().includes(filter.toLowerCase()))
+      hasSubstring = true;
     return hasSubstring;
   }
 
@@ -191,8 +201,8 @@ class ContractFormRepresentational extends Component {
 
   saveCustomer() {
     if (
-      this.props.position.data.customer_url === ''
-      && this.props.position.data.new_customer === true
+      this.props.position.data.customer_url === '' &&
+      this.props.position.data.new_customer === true
     ) {
       postNewCustomer(this.props.position.data).then((resp) => {
         const { url, id: id_, external_id } = resp;
@@ -226,8 +236,6 @@ class ContractFormRepresentational extends Component {
       this.bzRef && this.bzRef.focus();
     }
   }
-
-
 
   idFilter(option, filter) {
     return true;
@@ -275,214 +283,51 @@ class ContractFormRepresentational extends Component {
               <Form>
                 {position.id == 0 ? (
                   <Form.Check
-                    type="checkbox"
-                    label="Abholung bei Auftraggeber:in"
-                    name="customer_is_pick_up"
+                    type='checkbox'
+                    label='Abholung bei Auftraggeber:in'
+                    name='customer_is_pick_up'
                     checked={data.customer_is_pick_up}
-                    onChange={({ target }) => setStateOfPosition(id, {
-                      [target.name]: target.checked,
-                    })}
+                    onChange={({ target }) =>
+                      setStateOfPosition(id, {
+                        [target.name]: target.checked,
+                      })
+                    }
                   />
                 ) : (
                   <Form.Check
-                    type="checkbox"
-                    label="Abgeben bei Auftraggeber:in"
-                    name="customer_is_drop_off"
+                    type='checkbox'
+                    label='Abgeben bei Auftraggeber:in'
+                    name='customer_is_drop_off'
                     checked={data.customer_is_drop_off}
-                    onChange={({ target }) => setStateOfPosition(id, {
-                      [target.name]: target.checked,
-                    })}
+                    onChange={({ target }) =>
+                      setStateOfPosition(id, {
+                        [target.name]: target.checked,
+                      })
+                    }
                   />
                 )}
-                {(data.customer_is_pick_up && position.id == 0)
-      
-                || (data.customer_is_drop_off && position.id !== 0) ? (
-                    ''
-                  ) : (
-                    <Customer
-                      setCustomer={this.setCustomer}
+                {(data.customer_is_pick_up && position.id == 0) ||
+                (data.customer_is_drop_off && position.id !== 0) ? (
+                  ''
+                ) : (
+                  <Customer setCustomer={this.setCustomer} customer={data} />
+                )}
+                {data.new_customer || data.customer_anon ? (
+                  <FormGroup controlId='secondRow' className='row'>
+                    <CustomerDetailEdit
                       customer={data}
-                    />
-                  )}
-                {data.new_customer || data.customer_anon ? (
-                  <FormGroup controlId="secondRow" className="row">
-                    <Col xs={12}>
-                      {data.street_selected ? (
-                        <InputGroup
-                          style={{ width: '100%' }}
-                          className="second"
-                        >
-                          <Form.Control
-                            type="text"
-                            placeholder="Strasse"
-                            name="street_name"
-                            value={data.street_name}
-                            onChange={(event) => setStateOfPosition(id, {
-                              [event.target.name]: event.target.value,
-                            })}
-                            onKeyPress={this.focusNextOnEnter(this.bzRef)}
-                          />
-                          <Button
-                            onClick={() => setStateOfPosition(id, {
-                              street_selected: false,
-                            })}
-                          >
-                            <FontAwesomeIcon icon={faCircleMinus} />
-                          </Button>
-                        </InputGroup>
-                      ) : (
-                        <AsyncSelect
-                          name="street_name"
-                          value={data.street_name}
-                          loadOptions={this.selectStreetLoadOptions}
-                          autoload={false}
-                          filterOption={this.streetFilter}
-                          onChange={this.handleStreetSelect}
-                          ignoreCase={false}
-                          ignoreAccents={false}
-                          ref={(ref) => (this.streetRef = ref)}
-                          cacheOptions
-                          defaultOptions
-                          placeholder="Straße"
-                        />
-                      )}
-                    </Col>
-                  </FormGroup>
-                ) : (
-                  ''
-                )}
-                {data.new_customer || data.customer_anon ? (
-                  <FormGroup controlId="thirdRow" className="row">
-                    <Col xs={3}>
-                      <Form.Control
-                        type="text"
-                        placeholder="BZ"
-                        name="postal_code"
-                        value={data.postal_code}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        onKeyPress={this.focusNextOnEnter(this.numberRef)}
-                        // inputRef={(ref) => this.bzRef = ref}
-                      />
-                    </Col>
-                    <Col xs={3}>
-                      <Form.Control
-                        type="text"
-                        placeholder="Hausnummer"
-                        name="number"
-                        value={data.number}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        // inputRef={ref => this.numberRef = ref}
-                        onKeyPress={this.focusNextOnEnter(this.stairRef)}
-                      />
-                    </Col>
-                    <Col xs={2}>
-                      <Form.Control
-                        type="text"
-                        placeholder="Stiege"
-                        name="stair"
-                        value={data.stair}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        // inputRef={ref => this.stairRef = ref}
-                        onKeyPress={this.focusNextOnEnter(this.levelRef)}
-                      />
-                    </Col>
-                    <Col xs={2}>
-                      <Form.Control
-                        type="text"
-                        placeholder="Stock"
-                        name="level"
-                        value={data.level}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        // inputRef={ref => this.levelRef = ref}
-                        onKeyPress={this.focusNextOnEnter(this.doorRef)}
-                      />
-                    </Col>
-                    <Col xs={2}>
-                      <Form.Control
-                        type="text"
-                        placeholder="Tuer"
-                        name="door"
-                        value={data.door}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        // inputRef={ref => this.doorRef = ref}
-                        onKeyPress={this.focusNextOnEnter(this.talkToRef)}
-                      />
-                    </Col>
-                  </FormGroup>
-                ) : (
-                  ''
-                )}
-                {data.new_customer || data.customer_anon ? (
-                  <FormGroup controlId="fourth" className="row">
-                    <Col xs={6}>
-                      <Form.Control
-                        type="text"
-                        placeholder="Ansprechperson"
-                        name="talk_to"
-                        value={data.talk_to}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        // inputRef={ref => this.talkToRef = ref}
-                        onKeyPress={this.focusNextOnEnter(this.phoneOneRef)}
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <Form.Control
-                        type="text"
-                        placeholder="Tel."
-                        name="phone_1"
-                        value={data.phone_1}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        // inputRef={ref => this.phoneOneRef = ref}
-                        onKeyPress={this.focusNextOnEnter(this.phoneTwoRef)}
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <Form.Control
-                        type="text"
-                        placeholder="Tel.2"
-                        name="phone_2"
-                        value={data.phone_2}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        // inputRef={ref => this.phoneTwoRef = ref}
-                        onKeyPress={this.focusNextOnEnter(this.memoRef)}
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <Form.Control
-                        type="text"
-                        placeholder="E-Mail"
-                        name="email"
-                        value={data.email}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
-                        // inputRef={ref => this.phoneTwoRef = ref}
-                        onKeyPress={this.focusNextOnEnter(this.memoRef)}
-                      />
-                    </Col>
+                      setCustomer={(event) => {
+                        console.log('setCustomer', event);
+                        setStateOfPosition(id, event);
+                      }}
+                    ></CustomerDetailEdit>
                   </FormGroup>
                 ) : (
                   ''
                 )}
                 <Row>
                   <Col xs={12} xl={8}>
-                    <FormGroup controlId="fourth" className="row">
+                    <FormGroup controlId='fourth' className='row'>
                       <ContractFormTimesForm
                         start_time={data.start_time}
                         start_time_to={data.start_time_to}
@@ -507,6 +352,7 @@ class ContractFormRepresentational extends Component {
                     )}
                     {!data.hasDelayedPayment ? (
                       <div></div>
+                    ) : (
                       // <Button
                       //   name="hasDelayedPayment"
                       //   active={data.hasDelayedPayment}
@@ -516,9 +362,8 @@ class ContractFormRepresentational extends Component {
                       // >
                       //   + Nachzahlung
                       // </Button>
-                    ) : (
                       <Button
-                        name="hasDelayedPayment"
+                        name='hasDelayedPayment'
                         onClick={() => {
                           this.handleDelayedPayement();
                         }}
@@ -528,7 +373,7 @@ class ContractFormRepresentational extends Component {
                     )}
                     {id > 0 && !this.state.hasBonus ? (
                       <Button
-                        name="hasBonus"
+                        name='hasBonus'
                         onClick={() => {
                           this.setState({ hasBonus: true });
                         }}
@@ -554,16 +399,18 @@ class ContractFormRepresentational extends Component {
 
                 {data.memo !== '' ? (
                   <div>
-                    <FormGroup controlId="fifth">
+                    <FormGroup controlId='fifth'>
                       <FormLabel>MEMO</FormLabel>
                       <Form.Control
-                        as="textarea"
-                        placeholder="MEMO"
-                        name="notes"
+                        as='textarea'
+                        placeholder='MEMO'
+                        name='notes'
                         // value={data.memo}
-                        onChange={({ target }) => setStateOfPosition(id, {
-                          [target.name]: target.value,
-                        })}
+                        onChange={({ target }) =>
+                          setStateOfPosition(id, {
+                            [target.name]: target.value,
+                          })
+                        }
                         // inputRef={ref => this.memoRef = ref}
                         onKeyPress={this.focusNextOnEnter(null)}
                       />
@@ -576,28 +423,6 @@ class ContractFormRepresentational extends Component {
             </Col>
           </Row>
           <Row>
-            <Col xs={10}>
-              {data.new_customer ? (
-                <Button onClick={this.saveCustomer}>KundIn speichern</Button>
-              ) : (
-                ''
-              )}
-              {false ? `Lat = ${data.lat}, Long = ${data.long}` : ''}
-              {data.hasDelayedPayment ? (
-                <FormGroup controlId="fifth">
-                  <FormLabel className="red">Achtung Nachzahlung!</FormLabel>
-                  <Form.Control
-                    as="textarea"
-                    placeholder="Memo"
-                    name="hasDelayedPaymentMemo"
-                    value={data.hasDelayedPaymentMemo}
-                    onChange={({ target }) => setStateOfPosition(id, { [target.name]: target.value })}
-                  />
-                </FormGroup>
-              ) : (
-                ''
-              )}
-            </Col>
             {id > 1 ? (
               <Col xs={2} style={{ float: 'right' }}>
                 <Button
@@ -618,11 +443,11 @@ class ContractFormRepresentational extends Component {
           <Modal
             show={this.state.showModal}
             onHide={this.close}
-            dialogClassName="smallModal"
+            dialogClassName='smallModal'
           >
             <Modal.Header closeButton>
               <Modal.Title>
-                <span className="red">Dieser Kunde hat eine Nachzahlung!</span>
+                <span className='red'>Dieser Kunde hat eine Nachzahlung!</span>
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
