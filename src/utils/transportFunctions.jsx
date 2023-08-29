@@ -4,9 +4,11 @@ import initKeycloak, { keycloak } from './keycloak';
 
 import { toast } from 'react-toastify';
 
-const BACKEND = `http://${window.location.hostname}:8000/api/hermes/disposerv/`;
+const BACKEND = import.meta.env.DEV
+  ? `http://${window.location.hostname}:8000/api/hermes/disposerv/`
+  : 'http://collectivo.hermes/api/hermes/disposerv/';
 // const BACKEND = "http://10.8.0.3:8000/";
-const PUBHOST = `http://${window.location.hostname}:3000/`;
+const PUBHOST = import.meta.env.DEV?`http://${window.location.hostname}:3000/`: `http://${window.location.hostname}/`;
 // const DEBUG_ = process.env.NODE_ENV === 'development';
 const DEBUG = false;
 const CONTRACTS = `${BACKEND}contracts/`;
