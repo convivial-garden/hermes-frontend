@@ -244,8 +244,8 @@ function getFullCustomers(callback) {
 
 function deleteContract(url, callback) {
   let url_tmp = url;
-  if (location.protocol == "https:" && url.includes('http:')) {
-    url_tmp = url.replace('http:', 'https:');
+  if (location.protocol == "https:" && url_tmp.includes('http:')) {
+    url_tmp = url_tmp.replace('http:', 'https:');
   }
   Api.delete(url_tmp).then((response) => callback(response.data.results));
 }

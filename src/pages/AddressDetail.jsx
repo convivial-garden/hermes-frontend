@@ -69,7 +69,7 @@ class AddressDetail extends Component {
     if (this.state.url !== '') {
       let url_tmp = this.state.url;
       if (location.protocol == 'https:' && url_tmp.includes('http:')) {
-        url_tmp = url.replace('http:', 'https:');
+        url_tmp = url_tmp.replace('http:', 'https:');
       }
       Api.put(url_tmp, this.state.data).then((resp) => {
         this.setState({ saved: resp.status === 200 });

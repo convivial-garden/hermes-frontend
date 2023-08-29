@@ -509,9 +509,9 @@ class ContractFormContainer extends Component {
         .all(
           delayedPaymentAndCustomerRequests.concat(
             this.state.positionsDeleteRequests.map((url) => {
-              let url_tmp = dataurl;
-              if (location.protocol == "https:" && url.includes('http:')) {
-                url_tmp = url.replace('http:', 'https:');
+              let url_tmp = url;
+              if (location.protocol == "https:" && url_tmp.includes('http:')) {
+                url_tmp = url_tmp.replace('http:', 'https:');
               }
               Api.delete(url_tmp)}),
           ),

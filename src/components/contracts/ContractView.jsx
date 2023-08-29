@@ -535,7 +535,7 @@ class ContractFormContainer extends Component {
             this.state.positionsDeleteRequests.map((url) => {
               let url_tmp = url;
               if (location.protocol == 'https:' && url_tmp.includes('http:')) {
-                url_tmp = url.replace('http:', 'https:');
+                url_tmp = url_tmp.replace('http:', 'https:');
               }
               Api.delete(url_tmp);
             }),

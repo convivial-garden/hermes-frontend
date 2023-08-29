@@ -242,8 +242,8 @@ class StaffDetail extends Component {
     const { entries } = this.state;
     if (entries[pos].times_url !== '') {
       let url_tmp = entries[pos].times_url;
-      if (location.protocol == "https:" && url.includes('http:')) {
-        url_tmp = url.replace('http:', 'https:');
+      if (location.protocol == "https:" && url_tmp.includes('http:')) {
+        url_tmp = url_tmp.replace('http:', 'https:');
       }
       Api.delete(url_tmp).then(() => {
         entries.splice(pos, 1);
