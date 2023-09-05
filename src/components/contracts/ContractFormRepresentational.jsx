@@ -250,6 +250,7 @@ class ContractFormRepresentational extends Component {
     const { position, setStateOfPosition, removePosition } = this.props;
     const { data, id } = position;
     let name = { name: data.customer_name, prop: 'customer_name' };
+    if (data.customer_name === "_anon") data.customer_anon = true;
     if (data.customer_anon) name = { name: data.anon_name, prop: 'anon_name' };
     return (
       <Card

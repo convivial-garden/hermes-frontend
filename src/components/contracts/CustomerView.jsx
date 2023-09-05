@@ -128,6 +128,13 @@ class CustomerView extends Component {
     // get the neccessary data
     if (this.state.customer || this.state.customer !== null) {
       const { setCustomer } = this.props;
+      let address = {};
+      if (this.state.customer.addresses && this.state.customer.addresses.length > 0) {
+        address = this.state.customer.addresses[0];
+      }
+      if (this.state.customer.name === "_anon") {
+        address = this.props.address;
+      }
       const delayedWarning = this.props.customer?.has_delayed_payment
         ? 'Kund*In hat Nachzahlung!'
         : '';
@@ -162,26 +169,28 @@ class CustomerView extends Component {
             Adresse:
           </Col>
           <Col xs={8}>
-            {this.state.customer.addresses ? (
+            {address.street ? (
               <div>
-                {this.state.customer.addresses[0].street}{' '}
-                {this.state.customer.addresses[0].number}{' '}
-                {this.state.customer.addresses[0].level}{' '}
-                {this.state.customer.addresses[0].door}{' '}
+                {address.street}{' '}
+                {address.number}{' '}
+                {address.level}{' '}
+                {address.door}{' '}
               </div>
             ) : (
               ''
             )}
           </Col>
-          {this.state.customer.addresses && this.state.customer.addresses[0].opening_hours ? (
+          {address.opening_hours ? (
             <Col xs={4} className='boldf'>
               Öffnungsztn:
             </Col>
           ) : (
             ''
           )}
-          {this.state.customer.addresses && this.state.customer.addresses[0].opening_hours ? (
-            <Col xs={8}>{this.state.customer.addresses[0].opening_hours}</Col>
+          {this.state.customer.addresses &&
+          this.state.customer.addresses.length > 0 &&
+          address.opening_hours ? (
+            <Col xs={8}>{address.opening_hours}</Col>
           ) : (
             ''
           )}
@@ -214,7 +223,7 @@ class CustomerView extends Component {
           ) : (
             ''
           )}
-                    {this.state.customer.email_1 ? (
+          {this.state.customer.email_1 ? (
             <Col xs={4} className='boldf'>
               E-Mail:
             </Col>

@@ -136,8 +136,7 @@ class PositionView extends Component {
       const waitingStr = response.waiting_bonus > 0 ? 'WZ' : '';
       const weightsizeStr =
         response.weightsize && response.weightsize !== '' ? weightOrSize : '';
-      console.log(response);
-      const extraStr = (
+      const extraStr = (  
         <span style={{ color: 'red', fontWeight: 'bolder' }}>
           {cargoStr !== '' ? `${cargoStr}, ` : ''}
           {expressStr !== '' ? `${expressStr}, ` : ''}
@@ -202,6 +201,7 @@ class PositionView extends Component {
                 hidePayment={this.props.hidePayment}
                 hideEditButton={this.props.hideCustomerEditButton}
                 customer={this.props.position.data.response.customer}
+                address={this.props.position.data.response.address[0]}
               />
             </Col>
             <Col xs={1}>

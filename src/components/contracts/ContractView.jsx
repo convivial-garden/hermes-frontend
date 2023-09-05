@@ -86,7 +86,7 @@ function markenFromPrice(price, basezoneprice) {
   return Math.floor(price / basezoneprice);
 }
 
-class ContractFormContainer extends Component {
+class ContractView extends Component {
   constructor() {
     super();
     this.addContractForm = this.addContractForm.bind(this);
@@ -754,13 +754,6 @@ class ContractFormContainer extends Component {
   }
 
   render() {
-    console.log(
-      'contractprize',
-      this.state.id,
-      this.state.price,
-      this.state.extra,
-      this.contract,
-    );
     const nettoPrice = this.state.price + this.state.extra;
     const bruttoPrice = nettoPrice * NETTOBRUTTOFACTOR;
     const emphasizedBorder = '1px #555 solid';
@@ -1025,4 +1018,4 @@ class ContractFormContainer extends Component {
   }
 }
 
-export default ContractFormContainer;
+export default ContractView;
