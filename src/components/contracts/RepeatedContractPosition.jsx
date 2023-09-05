@@ -8,6 +8,7 @@ import DeleteContractModal from '@/components/contracts/DeleteContractModal.jsx'
 import ContractPositionA from '@/components/contracts/ContractPositionA.jsx';
 import ContractPositionB from '@/components/contracts/ContractPositionB.jsx';
 import ContractModal from '@/components/contracts/ContractModal.jsx';
+import { BACKEND } from '../../utils/transportFunctions';
 
 const WEEKDAYS = {
   Monday: 'Montag',
@@ -28,6 +29,9 @@ class RepeatedContractPosition extends Component {
     const anyisExpress = contract.positions.some(
       (position) => position.is_express,
     );
+    if (contract.url == undefined){
+      contract.url = BACKEND + 'repeated/' + contract.id + '/';
+    }
     return (
       <Row style={{ marginBottom: '0px', marginTop: '0px' }}>
         <Col

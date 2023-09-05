@@ -273,6 +273,7 @@ class ContractView extends Component {
           ),
           price: contract.price,
           extra2: contract.extra,
+          customer: contract.customer,
           extra2_string:
             contract.extra !== null ? contract.extra.toString() : '',
           type: contract.type,
@@ -545,6 +546,7 @@ class ContractView extends Component {
         )
         .then(() => {
           this.setState({ saved: 'saving' }, () => {
+            console.log(this.state.url);
             if (this.state.url !== '') {
               putContract(this.state, (response) => {
                 this.setState(

@@ -6,6 +6,7 @@ import {
   Route,
   Link,
   useMatch,
+  useNavigate,
   useResolvedPath,
 } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -55,31 +56,46 @@ class App extends Component {
   constructor() {
     super();
     this.update = this.update.bind(this);
+    this.registerKeys = this.registerKeys.bind(this);
+    this.navigate = this.navigate.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.state = {
       totalSales: 0,
+      navigate: useNavigate,
     };
 
     moment.locale('de');
     // todo should run before render
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'F4') {
-        event.preventDefault();
-        window.location = `${PUBHOST}newcontract`;
-      }
-      if (event.key === 'F3') {
-        event.preventDefault();
-        window.location = `${PUBHOST}`;
-      }
-    });
 
     registerServiceWorker();
     if (keycloak == null || !keycloak.authenticated) {
       initKeycloak();
     }
   }
+  navigate(path) {
+    this.state.navigate(path);
+  }
+  registerKeys() {
+    console.log('register keys', this);
+    window.addEventListener('keydown', this.handleKeyDown);
+  }
+  handleKeyDown(event) {
+    if (event.key === 'F4') {
+      event.preventDefault();
+      document.getElementById('new-contract').click();
+    }
+    if (event.key === 'F3') {
+      event.preventDefault();
+      window.location = `${PUBHOST}`;
+    }
+  }
 
   componentDidMount() {
     this.update();
+    this.registerKeys();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleKeyDown);
   }
 
   update(date) {
@@ -104,7 +120,7 @@ class App extends Component {
                 className='btn btn-primary ms-3'
                 to='disposerv/disposerv/newcontract'
               >
-                <Nav>Neuer Auftrag</Nav>
+                <Nav id="new-contract">Neuer Auftrag</Nav>
               </CustomLink>
             </Nav>
             <Nav>

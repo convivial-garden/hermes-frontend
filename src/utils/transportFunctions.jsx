@@ -259,11 +259,14 @@ function deleteAddress(url) {
 }
 
 function contractPayloadFromFrontend(contract) {
+  console.log('contractPayloadFromFrontend', contract);
   return getAnon().then((resp) => {
     const { contractForms: contractPositions } = contract;
-    console.log(contract);
+    let customerUrl = contract.customer?.url;
+    if (customerUrl == undefined) customerUrl = contract.customer.customer_url;
+    // if (contract.isRepeated) customerUrl = contract.customer;
     const newContract = {
-      customer: contract.customer.customer_url,
+      customer: customerUrl,
       zone: contract.zone,
       distance: contract.distance,
       price: contract.price + contract.extra,
@@ -284,7 +287,6 @@ function contractPayloadFromFrontend(contract) {
       let customerUrl = position.customer_anon
         ? resp.data.url
         : position.customer_url;
-      console.log(position, pos);
       if (position.customer_is_pick_up && pos === 0) {
         customerUrl = newContract.customer;
       }
@@ -332,6 +334,9 @@ function contractPayloadFromFrontend(contract) {
         ],
       });
     });
+    if (contract.isRepeated){
+      newContract.url = BACKEND + 'repeated/' + contract.id + '/';
+    }
     return newContract;
   });
 }
@@ -344,6 +349,7 @@ function putContract(contract, callback) {
   prepareNewContract(contract).then((payload) =>
   {
     let url = contract.url;
+    if (url == undefined) url = payload.url; // for repeated contracts
     if (BACKEND.includes('https:') && url.includes('http:')) {
       url = url.replace('http:', 'https:');
     }

@@ -54,7 +54,7 @@ class DeleteContractModal extends Component {
           dialogClassName='smallModal'
         >
           <Modal.Header closeButton>
-            <Modal.Title>Auftrag wirklich loeschen?</Modal.Title>
+            <Modal.Title>Auftrag wirklich löschen?</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Container fluid>

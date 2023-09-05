@@ -26,19 +26,28 @@ class ContractModal extends Component {
   render() {
     return (
       <div>
-        <Button
-          onClick={this.open}
-          size="small"
-        >
-          <FontAwesomeIcon icon={faSearch} size="lg" />
+        <Button onClick={this.open} size='small'>
+          <FontAwesomeIcon icon={faSearch} size='lg' />
         </Button>
 
-        <Modal show={this.state.showModal} onHide={this.close} dialogClassName="wideModal contract-modal" size="xl">
+        <Modal
+          show={this.state.showModal}
+          onHide={this.close}
+          dialogClassName='wideModal contract-modal'
+          size='xl'
+        >
           <Modal.Header closeButton>
-            <Modal.Title>Auftrag {this.props.contract.id}</Modal.Title>
+            <Modal.Title>
+              {this.props.contract.repeated ? 'Dauerauftrag' : 'Auftrag'}{' '}
+              {this.props.contract.id}
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <ContractView contract={this.props.contract} add={this.props.add} close={this.close} />
+            <ContractView
+              contract={this.props.contract}
+              add={this.props.add}
+              close={this.close}
+            />
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.close}>Close</Button>
