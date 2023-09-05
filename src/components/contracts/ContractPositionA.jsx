@@ -20,7 +20,7 @@ class ContractPositionA extends Component {
     if (this.props.position) {
       const { start_time, start_time_to, address, anon_name } =
         this.props.position;
-      let customer = this.props.position.customer;
+      let customer = this.props.contract.customer;
       if (this.props.position.customer_is_pick_up && this.props.contract.customer) {
         customer = this.props.contract.customer;
       }

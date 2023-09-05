@@ -136,10 +136,15 @@ class StaffDetail extends Component {
     setTimeout(() => {
       const options = [];
 
-      if ((this.state.names && this.state.names.length === 0) || this.state.names === undefined) {
+      if (
+        (this.state.names && this.state.names.length === 0) ||
+        this.state.names === undefined
+      ) {
         getStaffNames((names) => {
           if (names) {
-            names.forEach((name) => options.push({ value: name.id, label: name.user__first_name }));
+            names.forEach((name) =>
+              options.push({ value: name.id, label: name.user__first_name }),
+            );
           }
           // options.push({ value: 'new', label: `Neue:r Kollege:in ${input}` });
           if (options.length > 0) this.setState({ options });
@@ -147,14 +152,14 @@ class StaffDetail extends Component {
           callback(options);
         });
       } else {
-        this.state.names.forEach((name) => options.push({ value: name.id, label: name.user__first_name }));
+        this.state.names.forEach((name) =>
+          options.push({ value: name.id, label: name.user__first_name }),
+        );
         // options.push({ value: 'new', label: `Neue:r Kollege:in ${input}` });
         if (options.length > 0) this.setState({ options });
         callback(options);
       }
-    }, Math.floor(
-      Math.random() * (700 - 500 + 1) + 500,
-    )); // avoid catching the names multiple times
+    }, Math.floor(Math.random() * (700 - 500 + 1) + 500)); // avoid catching the names multiple times
   }
 
   addEntry() {
@@ -170,9 +175,11 @@ class StaffDetail extends Component {
     if (filter.includes(' ')) {
       const parts = filter.split(' ');
       parts.forEach((part) => {
-        if (option.label.toLowerCase().includes(part.toLowerCase())) hasSubstring = true;
+        if (option.label.toLowerCase().includes(part.toLowerCase()))
+          hasSubstring = true;
       });
-    } else if (option.label.toLowerCase().includes(filter.toLowerCase())) hasSubstring = true;
+    } else if (option.label.toLowerCase().includes(filter.toLowerCase()))
+      hasSubstring = true;
     return hasSubstring;
   }
 
@@ -185,12 +192,17 @@ class StaffDetail extends Component {
             date: this.props.date,
             start_datetime:
               entry.start_datetime !== '' ? entry.start_datetime : null,
-            end_datetime: entry.end_datetime !== '' ? entry.end_datetime : null,
+            end_datetime:
+              entry.end_datetime !== '' ? entry.end_datetime : null,
             mode: entry.mode,
             staff_member: `${BACKEND}staff/${entry.id}/`,
             url: entry.url,
           };
-          requests.push(Api.put(entry.times_url, newTimes));
+          let url_tmp = entry.times_url;
+          if (location.protocol == 'https:' && url_tmp.includes('http:')) {
+            url_tmp = url_tmp.replace('http:', 'https:');
+          }
+          requests.push(Api.put(url_tmp, newTimes));
         } else {
           const newStaff = {
             user: entry.id,
@@ -198,14 +210,18 @@ class StaffDetail extends Component {
               {
                 date: this.props.date,
                 start_datetime:
-                entry.start_datetime !== '' ? entry.start_datetime : null,
+                  entry.start_datetime !== '' ? entry.start_datetime : null,
                 end_datetime:
-                entry.end_datetime !== '' ? entry.end_datetime : null,
+                  entry.end_datetime !== '' ? entry.end_datetime : null,
                 mode: entry.mode,
               },
             ],
           };
-          requests.push(Api.put(entry.url, newStaff));
+          let url_tmp = entry.url;
+          if (location.protocol == 'https:' && url_tmp.includes('http:')) {
+            url_tmp = url_tmp.replace('http:', 'https:');
+          }
+          requests.push(Api.put(url_tmp, newStaff));
         }
       } else if (entry.name !== '') {
         console.log('entry2', entry);
@@ -242,7 +258,7 @@ class StaffDetail extends Component {
     const { entries } = this.state;
     if (entries[pos].times_url !== '') {
       let url_tmp = entries[pos].times_url;
-      if (location.protocol == "https:" && url_tmp.includes('http:')) {
+      if (location.protocol == 'https:' && url_tmp.includes('http:')) {
         url_tmp = url_tmp.replace('http:', 'https:');
       }
       Api.delete(url_tmp).then(() => {
@@ -260,8 +276,8 @@ class StaffDetail extends Component {
     return (
       <div>
         <Modal.Body>
-          <Container className="staff-detail">
-            <FormGroup controlId="fourth" className="row rider">
+          <Container className='staff-detail'>
+            <FormGroup controlId='fourth' className='row rider'>
               {this.state.entries.map(
                 ({
                   pos,
@@ -271,25 +287,27 @@ class StaffDetail extends Component {
                   end_datetime,
                   mode,
                 }) => {
-                  const timeInputCallback = (name) => (value) => this.setEntry(
-                    pos,
-                    { [name]: value },
-                  );
+                  const timeInputCallback = (name) => (value) =>
+                    this.setEntry(pos, { [name]: value });
                   return (
                     <Row key={pos}>
                       <Col xs={8}>
-                        <InputGroup className="mb-3" style={{ width: '100%' }}>
+                        <InputGroup className='mb-3' style={{ width: '100%' }}>
                           {new_entry ? (
                             <Form.Control
-                              type="text"
-                              placeholder="Name"
-                              name="name"
+                              type='text'
+                              placeholder='Name'
+                              name='name'
                               value={name}
-                              onChange={(event) => this.setEntry(pos, { name: event.target.value })}
+                              onChange={(event) =>
+                                this.setEntry(pos, {
+                                  name: event.target.value,
+                                })
+                              }
                             />
                           ) : (
                             <AsyncSelect
-                              name="name"
+                              name='name'
                               value={this.state.options.find(
                                 (el) => el.value === id,
                               )}
@@ -299,8 +317,8 @@ class StaffDetail extends Component {
                               style={{ width: '100%' }}
                               cacheOptions
                               defaultOptions
-                              className="rider-select"
-                              placeholder="Name"
+                              className='rider-select'
+                              placeholder='Name'
                             />
                           )}
                           {id ? (
@@ -321,11 +339,11 @@ class StaffDetail extends Component {
                           <ToggleButton
                             onChange={(event) => this.setDispo(event, pos)}
                             checked={mode !== 'fahrer'}
-                            className="mb-2"
+                            className='mb-2'
                             id={`toggle-check_${pos}`}
-                            type="checkbox"
-                            variant="outline-primary"
-                            value="1"
+                            type='checkbox'
+                            variant='outline-primary'
+                            value='1'
                           >
                             Dispo?
                           </ToggleButton>
@@ -354,7 +372,7 @@ class StaffDetail extends Component {
             </Col>
             <Col xs={12}>
               {this.state.saved ? (
-                <Alert variant="success">Personal gespeichert</Alert>
+                <Alert variant='success'>Personal gespeichert</Alert>
               ) : (
                 ''
               )}

@@ -240,7 +240,8 @@ class ContractFormContainer extends Component {
           newPositions[index].data = apiResponseToInitialState(pos);
           if (
             index == 0 &&
-            newPositions[index].data.response.customer_is_pick_up
+            newPositions[index].data.response.customer_is_pick_up &&
+            this.props.contract.customer
           ) {
             newPositions[index].data.lat =
               this.props.contract.customer.addresses[0].lat;
@@ -248,7 +249,8 @@ class ContractFormContainer extends Component {
               this.props.contract.customer.addresses[0].lon;
           } else if (
             index > 0 &&
-            newPositions[index].data.response.customer_is_drop_off
+            newPositions[index].data.response.customer_is_drop_off &&
+            this.props.contract.customer
           ) {
             newPositions[index].data.lat =
               this.props.contract.customer.addresses[0].lat;
