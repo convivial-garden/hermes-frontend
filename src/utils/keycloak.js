@@ -13,9 +13,8 @@ function initKeycloak() {
   keycloak = new Keycloak(initOptions);
   keycloak.redirectUri = `${window.location.origin}/`;
   keycloak.onAuthSuccess = () => {
-    localStorage.setItem('token', keycloak.token);
     // @ts-ignore
-    console.log('onAuthSuccess', localStorage.getItem('token'));
+    console.log('onAuthSuccess');
   };
   keycloak.onAuthError = () => {
     // @ts-ignore

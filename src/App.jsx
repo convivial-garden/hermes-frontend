@@ -68,7 +68,7 @@ class App extends Component {
     // todo should run before render
 
     registerServiceWorker();
-    token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     // init keycloak when token is not set
     if (token == null) {
       if (keycloak == null || !keycloak.authenticated) {
