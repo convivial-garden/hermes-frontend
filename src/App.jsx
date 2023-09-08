@@ -68,8 +68,12 @@ class App extends Component {
     // todo should run before render
 
     registerServiceWorker();
-    if (keycloak == null || !keycloak.authenticated) {
-      initKeycloak();
+    token = localStorage.getItem('token');
+    // init keycloak when token is not set
+    if (token == null) {
+      if (keycloak == null || !keycloak.authenticated) {
+        initKeycloak();
+      }
     }
   }
   navigate(path) {
@@ -120,7 +124,7 @@ class App extends Component {
                 className='btn btn-primary ms-3'
                 to='disposerv/disposerv/newcontract'
               >
-                <Nav id="new-contract">Neuer Auftrag</Nav>
+                <Nav id='new-contract'>Neuer Auftrag</Nav>
               </CustomLink>
             </Nav>
             <Nav>

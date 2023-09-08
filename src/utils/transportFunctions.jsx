@@ -1,6 +1,6 @@
 import axios from 'axios';
 import moment from 'moment';
-import initKeycloak, { keycloak } from './keycloak';
+import { keycloak } from './keycloak';
 
 import { toast } from 'react-toastify';
 
