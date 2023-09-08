@@ -110,7 +110,7 @@ class App extends Component {
   }
 
   render() {
-    if (keycloak == null || !keycloak.authenticated) {
+    if ((keycloak == null || !keycloak.authenticated) && localStorage.getItem('token')==null) {
       return <div> not authenticated</div>;
     }
     return (
