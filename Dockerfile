@@ -15,7 +15,7 @@ COPY yarn.lock ./
 RUN yarn install --frozen-lockfile
 # add app
 COPY . ./
-
+ENV ASSET_URL https://frontend.hermes/
 RUN npm run build
 
 
