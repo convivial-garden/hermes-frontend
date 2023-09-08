@@ -9,6 +9,8 @@ console.log('say hy from component.jsx');
 
 export function render() {
   const App = React.lazy(() => import('./App'));
+  const parent = document.getElementById('remote_a');
+  parent.innerHTML = '<div id="disposerv"></div>';
   const el = document.getElementById('disposerv');
   const root = createRoot(el);
   root.render(<App />);
