@@ -129,7 +129,7 @@ class ContractPositionB extends Component {
               {this.props.first ? (
                 <div className='gesamt'>
                   <span>Gesamt: </span>
-                  <span className='boldf'>{this.props.contract.price} €</span>
+                  <span className='boldf'>{this.props.contract.price} € {this.props.contract.extra!=0?"+zs":""}</span>
                 </div>
               ) : (
                 ''

@@ -6,6 +6,7 @@ import {
   Button,
   ToggleButton,
   FormGroup,
+  Form,
 } from 'react-bootstrap';
 import * as R from 'ramda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,6 +18,7 @@ import {
   faBicycle,
   faCheck,
   faClock,
+  faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 
 import DatePicker from 'react-datepicker';
@@ -185,6 +187,7 @@ class ContractView extends Component {
     repeatedenddate: null,
     positionsDeleteRequests: [],
     editDate: false,
+    editExtra: false,
     repeated: {
       days_of_the_week: '',
     },
@@ -673,10 +676,21 @@ class ContractView extends Component {
         }
       });
 
+
       if (!Number.isNaN(this.state.extra2)) {
         totalExtra += this.state.extra2;
         totalPrice += this.state.extra2;
+      } else {
+        console.log('extra2 is NaN');
       }
+      console.log(
+        'extra2: ',
+        this.state.extra2,
+        'totalExtra: ',
+        totalExtra,
+        'totalPrice: ',
+        totalPrice,
+      );
       const zone = zoneFromDistance(
         totalDistance,
         this.state.settings.zone_size,
@@ -685,7 +699,7 @@ class ContractView extends Component {
       this.setState({
         zone,
         distance: totalDistance,
-        price: totalPrice - totalExtra,
+        price: totalPrice,
         extra: totalExtra,
         marken: markenFromPrice(totalPrice, this.state.settings.addzone_price),
       });
@@ -802,7 +816,7 @@ class ContractView extends Component {
                   <Col xs={4} className='boldf'>
                     Preis:
                   </Col>
-                  <Col xs={8}>{this.props.contract.price} €</Col>
+                  <Col xs={8}>{this.state.price} €</Col>
                   <Col xs={4} className='boldf'>
                     Distanz:
                   </Col>
@@ -813,6 +827,45 @@ class ContractView extends Component {
                     Zone(n):
                   </Col>
                   <Col xs={8}>{this.props.contract.zone}</Col>
+                  <Col xs={4} className='boldf'>
+                    Marke(n):
+                  </Col>
+                  {this.state.settings !== null ? (
+                  <Col xs={8}>{markenFromPrice(this.state.price,this.state.settings.addzone_price )}</Col>
+                  ) : (
+                    <Col xs={8}>0</Col>
+                  )}
+                  <Col xs={4} className='boldf'>
+                    Zuschlag:
+                  </Col>
+                  <Col xs={8}>
+                    {this.state.editExtra ? (
+                      <FormGroup size='sm' style={{ marginBottom: '0' }}>
+                        <Form.Control
+                          type='text'
+                          name='extra2'
+                          value={this.state.extra2_string}
+                          onChange={({ target }) => {
+                            this.setState({
+                              extra2: parseFloat(
+                                target.value.replace(/,/, '.'),
+                              ),
+                              extra2_string: target.value,
+                            }, (result)=>this.calcDistanceAndZone(result))
+                          }}
+                        />
+                      </FormGroup>
+                    ) : (
+                      <div className='d-flex'>
+                        {this.props.contract.extra} €
+                        <Button
+                          onClick={() => this.setState({ editExtra: true })}
+                        >
+                          <FontAwesomeIcon icon={faEdit} size='1x' />
+                        </Button>
+                      </div>
+                    )}
+                  </Col>
                   <Col xs={4} className='boldf'>
                     Datum:
                   </Col>

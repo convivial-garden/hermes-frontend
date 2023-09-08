@@ -512,6 +512,10 @@ class ContractNew extends Component {
   }
 
   calcDistanceAndZone(data) {
+    if (!data) {
+      console.log("data is null, can't calc distance and zone");
+      return;
+    }
     let totalDistance = 0;
     let totalPrice = 0;
     let totalExtra = 0;
@@ -604,7 +608,6 @@ class ContractNew extends Component {
 
         totalDistance += distance;
         totalPrice += actualPrice;
-        totalExtra += actualPrice - basePrice;
         if (data.type === 'weiterfahrt') {
           prevCoords = {
             lat: pos.data.lat,
@@ -612,11 +615,11 @@ class ContractNew extends Component {
           };
         }
       });
-
       if (!Number.isNaN(data.extra2)) {
         totalExtra += data.extra2;
         totalPrice += data.extra2;
       }
+      console.log('totalPrice', totalPrice);
       const zone = zoneFromDistance(
         totalDistance,
         data.settings.zone_size,
@@ -626,7 +629,7 @@ class ContractNew extends Component {
         zone,
         filteredPositions: filteredPositionsForMap,
         distance: totalDistance,
-        price: totalPrice - totalExtra,
+        price: totalPrice,
         extra: totalExtra,
         marken: markenFromPrice(totalPrice, data.settings.addzone_price),
       });
@@ -707,7 +710,7 @@ class ContractNew extends Component {
   }
 
   render() {
-    const nettoPrice = this.state.price + this.state.extra;
+    const nettoPrice = this.state.price;
     const bruttoPrice = nettoPrice * NETTOBRUTTOFACTOR;
     const emphasizedBorder = '1px #555 solid';
     const markerPositions = this.state.contractForms.map((form) => [
@@ -915,8 +918,9 @@ class ContractNew extends Component {
                                 target.value.replace(/,/, '.'),
                               ),
                               extra2_string: target.value,
-                            },
-                            this.calcDistanceAndZone.bind(this),
+                            },(result)=>{
+                              this.calcDistanceAndZone(this.state)
+                            }
                           );
                         }}
                       />

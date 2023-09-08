@@ -269,7 +269,7 @@ function contractPayloadFromFrontend(contract) {
       customer: customerUrl,
       zone: contract.zone,
       distance: contract.distance,
-      price: contract.price + contract.extra,
+      price: contract.price,
       extra: contract.extra2,
       dispo: [],
       type: contract.type,
