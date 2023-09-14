@@ -22,14 +22,17 @@ class ContractPositionB extends Component {
       anon_name,
     } = this.props.position;
     let address = this.props.position.address;
-    if(this.props.position.customer_is_drop_off){
-      address = this.props.contract.customer.addresses
-    } else{
-      if(this.props.position.customer && this.props.position.customer.addresses.length > 0)
-      address = this.props.position.customer.addresses
+    if (this.props.position.customer_is_drop_off) {
+      address = this.props.contract.customer.addresses;
+    } else {
+      if (
+        this.props.position.customer &&
+        this.props.position.customer.addresses.length > 0
+      )
+        address = this.props.position.customer.addresses;
     }
 
-    if (address[0]||customer.addresses[0]) {
+    if (address[0] || customer.addresses[0]) {
       const delayedWarning =
         this.props.position &&
         this.props.position.customer &&
@@ -125,15 +128,23 @@ class ContractPositionB extends Component {
             {extraStr}
           </Col>
           <Col xs={4}>
-            <Row className='minmarg'>
+            <Row className=''>
+              <Col xs={12}>
               {this.props.first ? (
                 <div className='gesamt'>
                   <span>Gesamt: </span>
-                  <span className='boldf'>{this.props.contract.price} € {this.props.contract.extra!=0?"+zs":""}</span>
+                  <span className='boldf'>
+                    {this.props.contract.price} €{' '}
+                    {this.props.contract.extra != 0 ? '+zs' : ''}
+                  </span>
                 </div>
               ) : (
                 ''
               )}
+              </Col>
+            </Row>
+            <Row className='ps-3'>
+              {Math.floor(this.props.contract.price / ADDZONEPRICE)} Mark.
             </Row>
             <Row
               className={
@@ -169,14 +180,13 @@ class ContractPositionB extends Component {
                         xs={8}
                         className={`blo bbo${this.props.first ? ' bto' : ''}`}
                       >
-                        {(pos_price + pos_bonus).toFixed(2)} € /
-                        {Math.floor((pos_price + pos_bonus) / ADDZONEPRICE)}{' '}
-                        Mark.
+                        {(pos_price + pos_bonus).toFixed(2)} €
                       </Col>
                     </Row>
                   </Col>
                 </Row>
               </Col>
+              {delayedWarning !== '' ? (
               <Col xs={12}>
                 <Row>
                   <Col xs={12} className='mh red boldf'>
@@ -184,6 +194,9 @@ class ContractPositionB extends Component {
                   </Col>
                 </Row>
               </Col>
+              ) : (
+                ''
+              )}
             </Row>
             <Row>
               <Col xs={12}>{memoWarning}</Col>

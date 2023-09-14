@@ -161,7 +161,7 @@ class ContractView extends Component {
   }
 
   state = {
-    saved: 'unsaved',
+    saved: 'saved',
     date: new Date(),
     url: '',
     id: '',
@@ -215,9 +215,26 @@ class ContractView extends Component {
   }
 
   onSwitchButtonClick() {
-    const tmp = this.state.contractForms[0].data;
-    this.setStateOfPosition(0, this.state.contractForms[1].data, () => {});
-    this.setStateOfPosition(1, tmp, () => {});
+    const tmp0 = this.state.contractForms[0].data;
+    const tmp1 = this.state.contractForms[1].data;
+    if (tmp0.response.customer_is_pick_up) {
+      tmp0.customer_is_pick_up = false;
+      tmp0.customer_is_drop_off = true;
+      tmp0.response.customer_is_pick_up = false;
+      tmp0.response.customer_is_drop_off = true;
+      tmp1.response.customer_is_pick_up = false;
+      tmp1.response.customer_is_drop_off = false;
+    }
+    if (tmp1.response.customer_is_drop_off) {
+      tmp1.customer_is_pick_up = true;
+      tmp1.customer_is_drop_off = false;
+      tmp1.response.customer_is_pick_up = true;
+      tmp1.response.customer_is_drop_off = false;
+      tmp0.response.customer_is_pick_up = false;
+      tmp0.response.customer_is_drop_off = false;
+    }
+    this.setStateOfPosition(0, tmp1, () => {});
+    this.setStateOfPosition(1, tmp0, () => {});
   }
 
   componentDidMount() {
@@ -297,7 +314,7 @@ class ContractView extends Component {
           this.Selects.push(0);
         }
         this.setState(newState, () => {
-          this.calcDistanceAndZone();
+          // this.calcDistanceAndZone();
           this.focusFcSelect(0);
         });
       }
@@ -549,7 +566,6 @@ class ContractView extends Component {
         )
         .then(() => {
           this.setState({ saved: 'saving' }, () => {
-            console.log(this.state.url);
             if (this.state.url !== '') {
               putContract(this.state, (response) => {
                 this.setState(
@@ -653,7 +669,7 @@ class ContractView extends Component {
         }
         if (pos.data.get_there_bonus !== 0)
           actualPrice += parseFloat(pos.data.get_there_bonus);
-
+        console.log('actualPrice', actualPrice)
         this.setStateOfPosition(
           index + 1,
           {
@@ -683,14 +699,6 @@ class ContractView extends Component {
       } else {
         console.log('extra2 is NaN');
       }
-      console.log(
-        'extra2: ',
-        this.state.extra2,
-        'totalExtra: ',
-        totalExtra,
-        'totalPrice: ',
-        totalPrice,
-      );
       const zone = zoneFromDistance(
         totalDistance,
         this.state.settings.zone_size,
@@ -960,6 +968,7 @@ class ContractView extends Component {
                       }}
                       onClick={this.onContractSaveClick}
                     >
+                      {this.state.saved}
                       <span className={this.state.saved}>
                         <FontAwesomeIcon
                           icon={SAVEICONS[this.state.saved]}

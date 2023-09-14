@@ -171,7 +171,11 @@ class ContractPosition extends Component {
         newPerPositionSelection.push(newSelection);
       });
     }
-    this.setState({ perPositionSelection: newPerPositionSelection });
+    let tmp = JSON.parse(JSON.stringify(this.props.contract.positions)) 
+    let sorted = tmp.sort((a, b) => a.position - b.position);
+    this.setState({ perPositionSelection: newPerPositionSelection,
+      positions: sorted
+     });
   }
 
   componentDidUpdate(nextProps) {
@@ -196,7 +200,7 @@ class ContractPosition extends Component {
       contract, updateContracts, riders, date,
     } = this.props;
     const positions = contract.positions?.sort(
-      (position1, position2) => position1.id - position2.id,
+      (position1, position2) => position1.position - position2.position,
     );
     const anyisExpress = contract.positions.some(
       (position) => position.is_express,

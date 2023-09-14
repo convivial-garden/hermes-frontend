@@ -80,7 +80,6 @@ class App extends Component {
     this.state.navigate(path);
   }
   registerKeys() {
-    console.log('register keys', this);
     window.addEventListener('keydown', this.handleKeyDown);
   }
   handleKeyDown(event) {

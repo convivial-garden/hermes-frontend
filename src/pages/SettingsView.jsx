@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Row, Col, Container, Form, Button,
-} from 'react-bootstrap';
+import { Row, Col, Container, Form, Button } from 'react-bootstrap';
 import { getSettings, saveSettings } from '@/utils/transportFunctions.jsx';
 import { toast } from 'react-toastify';
 
@@ -32,24 +30,31 @@ export default class SettingsView extends Component {
   }
 
   getTableBodyFromSettings() {
-    return (this.state.settings === null) ? null : (
+    return this.state.settings === null ? null : (
       <tbody>
-        {
-          Object.keys(this.state.settings).map((item, id) => (
-            <tr key="{id}" id={`setting-${id}`}>
-              <td>{item}</td>
-              <td />
-              <td>
+        {Object.keys(this.state.settings).map((item, id) => (
+          <tr key='{id}' id={`setting-${id}`}>
+            <td>{item}</td>
+            <td />
+            <td>
+              {item == 'city' ? (
                 <Form.Control
                   onChange={(e) => this.changeSettingsProperty(item, e)}
-                  step="0.1"
-                  type="number"
+                  step='0.1'
+                  type='text'
                   value={this.state.settings[item]}
                 />
-              </td>
-            </tr>
-          ))
-        }
+              ) : (
+                <Form.Control
+                  onChange={(e) => this.changeSettingsProperty(item, e)}
+                  step='0.1'
+                  type='number'
+                  value={this.state.settings[item]}
+                />
+              )}
+            </td>
+          </tr>
+        ))}
       </tbody>
     );
   }
@@ -62,9 +67,7 @@ export default class SettingsView extends Component {
             <h1>Einstellungen</h1>
           </Col>
           <Col xs={12}>
-            <table>
-              {this.getTableBodyFromSettings()}
-            </table>
+            <table>{this.getTableBodyFromSettings()}</table>
           </Col>
           <Col xs={12}>
             <Button onClick={this.saveSettings.bind(this)}>Save</Button>

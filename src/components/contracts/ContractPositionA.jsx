@@ -21,7 +21,10 @@ class ContractPositionA extends Component {
       const { start_time, start_time_to, address, anon_name } =
         this.props.position;
       let customer = this.props.contract.customer;
-      if (this.props.position.customer_is_pick_up && this.props.contract.customer) {
+      if (
+        this.props.position.customer_is_pick_up &&
+        this.props.contract.customer
+      ) {
         customer = this.props.contract.customer;
       }
       const delayedWarning =
@@ -97,24 +100,12 @@ class ContractPositionA extends Component {
                   <Col xs={2} className='mh boldf'>
                     {postal_code}
                   </Col>
-                  <Col xs={5} className='mh'>
-                    {street}
-                  </Col>
-                  <Col xs={5}>
-                    <Row>
-                      <Col xs={4} className='mh'>
-                        {number}
-                      </Col>
-                      <Col xs={1} className='mh'>
-                        {stair ? `/${stair}` : ''}
-                      </Col>
-                      <Col xs={1} className='mh'>
-                        {level ? `/${level}` : ''}
-                      </Col>
-                      <Col xs={1} className='mh'>
-                        {door ? `/${door}` : ''}
-                      </Col>
-                    </Row>
+                  <Col xs={10} className='mh d-flex'>
+                    {street}{' '}
+                    {number}
+                    {stair ? `/${stair}` : ''}
+                    {level ? `/${level}` : ''}
+                    {door ? `/${door}` : ''}
                   </Col>
                 </Row>
               </Col>

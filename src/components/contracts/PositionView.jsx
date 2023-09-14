@@ -15,6 +15,7 @@ class PositionView extends Component {
     this.update = this.update.bind(this);
     this.refresh = this.refresh.bind(this);
     this.model = this.modal.bind(this);
+    this.setStateOfPosition = this.setStateOfPosition.bind(this);
     this.state = {
       customer: INITIAL_CONTRACT_FORM_STATE,
     };
@@ -68,7 +69,7 @@ class PositionView extends Component {
           <ContractFormRepresentational
             contract={this.props.contract}
             position={this.props.position}
-            setStateOfPosition={this.props.setStateOfPosition}
+            setStateOfPosition={this.setStateOfPosition}
           ></ContractFormRepresentational>
         </Modal.Body>
         <Modal.Footer>
@@ -77,10 +78,12 @@ class PositionView extends Component {
       </Modal>
     );
   }
+  setStateOfPosition(id, data, callback) {
+    this.props.setStateOfPosition(id, data, callback);
+  }
 
   render() {
     // get the neccessary data
-
     if (this.state.customer || this.state.customer !== null) {
       const { setCustomer } = this.props;
       const delayedWarning = this.props.customer?.has_delayed_payment
@@ -91,7 +94,7 @@ class PositionView extends Component {
           <div>
             <ContractFormRepresentational
               position={this.props.position}
-              setStateOfPosition={this.props.setStateOfPosition}
+              setStateOfPosition={this.setStateOfPosition}
             ></ContractFormRepresentational>
           </div>
         );
@@ -102,6 +105,31 @@ class PositionView extends Component {
         return (
           <Col xs={12}>
             Abholen bei Auftraggeber:in{' '}
+            <Button variant='link' onClick={this.open}>
+              <FontAwesomeIcon icon={faEdit} />
+            </Button>
+            {this.modal()}
+            {this.props.position.data.memo ? (
+              <Row>
+                <Col xs={12} className='boldf'>
+                  Abhol-Memo:
+                </Col>
+                <Col xs={12} className=''>
+                  {this.props.position.data.memo}
+                </Col>
+              </Row>
+            ) : (
+              ''
+            )}
+          </Col>
+        );
+      } else if (
+        this.props.position.id > 0 &&
+        this.props.position.data.response.customer_is_drop_off
+      ) {
+        return (
+          <Col xs={12}>
+            Abgeben bei Auftraggeber:in{' '}
             <Button variant='link' onClick={this.open}>
               <FontAwesomeIcon icon={faEdit} />
             </Button>
@@ -136,7 +164,7 @@ class PositionView extends Component {
       const waitingStr = response.waiting_bonus > 0 ? 'WZ' : '';
       const weightsizeStr =
         response.weightsize && response.weightsize !== '' ? weightOrSize : '';
-      const extraStr = (  
+      const extraStr = (
         <span style={{ color: 'red', fontWeight: 'bolder' }}>
           {cargoStr !== '' ? `${cargoStr}, ` : ''}
           {expressStr !== '' ? `${expressStr}, ` : ''}

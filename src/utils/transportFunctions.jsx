@@ -45,8 +45,8 @@ const Api = axios.create({
 
 Api.interceptors.request.use(
   (config) => {
-    console.log('interceptor request', config.url);
-    console.log('interceptor request', keycloak?.authenticated);
+    // console.log('interceptor request', config.url);
+    // console.log('interceptor request', keycloak?.authenticated);
     const controller = new AbortController();
     if (keycloak?.authenticated) {
       config.headers.Authorization = `Token ${keycloak.token}`;
@@ -68,13 +68,13 @@ Api.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
-    console.log('interceptor response', response.status, response.config.url);
+    // console.log('interceptor response', response.status, response.config.url);
     return response;
   },
   function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    console.log('interceptor error', error.response);
+    // console.log('interceptor error', error.response);
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       console.log('interceptor error 401');
@@ -259,7 +259,6 @@ function deleteAddress(url) {
 }
 
 function contractPayloadFromFrontend(contract) {
-  console.log('contractPayloadFromFrontend', contract);
   return getAnon().then((resp) => {
     const { contractForms: contractPositions } = contract;
     let customerUrl = contract.customer?.url;
@@ -298,9 +297,9 @@ function contractPayloadFromFrontend(contract) {
         position: pos,
         start_time: position.start_time.format('YYYY-MM-DDTHH:mm:ssZ'),
         start_time_to: position.start_time_to.format('YYYY-MM-DDTHH:mm:ssZ'),
-        customer_is_drop_off: position.customer_is_drop_off,
-        customer_is_pick_up: position.customer_is_pick_up,
-        memo: position.notes,
+        customer_is_drop_off: position.response.customer_is_drop_off,
+        customer_is_pick_up: position.response.customer_is_pick_up,
+        memo: position.memo,
         new_customer: customerUrl,
         weight_size_bonus: position.weight_size_bonus,
         is_cargo: position.is_cargo,

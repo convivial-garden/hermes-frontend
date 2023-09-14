@@ -405,8 +405,8 @@ class ContractFormRepresentational extends Component {
                       <Form.Control
                         as='textarea'
                         placeholder='MEMO'
-                        name='notes'
-                        // value={data.memo}
+                        name='memo'
+                        value={data.memo}
                         onChange={({ target }) =>
                           setStateOfPosition(id, {
                             [target.name]: target.value,
