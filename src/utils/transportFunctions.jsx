@@ -293,10 +293,10 @@ function contractPayloadFromFrontend(contract) {
       // existing vs new contract
       let customer_is_drop_off = position.response
         ? position.response.customer_is_drop_off
-        : position.response.customer_is_drop_off;
+        : position.customer_is_drop_off;
       let customer_is_pick_up = position.response
         ? position.response.customer_is_pick_up
-        : position.response.customer_is_pick_up;
+        : position.customer_is_pick_up;
       newContract.positions.push({
         position: pos,
         start_time: position.start_time.format('YYYY-MM-DDTHH:mm:ssZ'),
