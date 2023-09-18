@@ -8,7 +8,9 @@ const BACKEND = import.meta.env.DEV
   ? `http://${window.location.hostname}:8000/api/hermes/disposerv/`
   : 'https://collectivo.hermes/api/hermes/disposerv/';
 // const BACKEND = "http://10.8.0.3:8000/";
-const PUBHOST = import.meta.env.DEV?`http://${window.location.hostname}:3000/`: `https://${window.location.hostname}/`;
+const PUBHOST = import.meta.env.DEV
+  ? `http://${window.location.hostname}:3000/`
+  : `https://${window.location.hostname}/`;
 // const DEBUG_ = process.env.NODE_ENV === 'development';
 const DEBUG = false;
 const CONTRACTS = `${BACKEND}contracts/`;
@@ -82,7 +84,6 @@ Api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
 
 function getDelayedPaymentCustomers() {
   return Api.get(DELAYEDPAYMENTS).then((response) => response.data.results);
@@ -197,11 +198,9 @@ function getAssignedContractSelfByDate(date, callback) {
   const year = date_moment.format('YYYY');
   const month = date_moment.format('MM');
   const day = date_moment.format('D');
-  Api.get(`${CONTRACTS_SELF}${year}/${month}/${day}/`).then(
-    (response) => {
-      callback(response.data.results ? response.data.results : []);
-    },
-  );
+  Api.get(`${CONTRACTS_SELF}${year}/${month}/${day}/`).then((response) => {
+    callback(response.data.results ? response.data.results : []);
+  });
 }
 function getCustomer(id, callback) {
   console.log('getCustomer', CUSTOMERS_ENDPOINT, id);
@@ -216,7 +215,6 @@ function getCustomer2(id) {
 }
 
 function getCustomerPage(url) {
-  
   return Api.get(url);
 }
 
@@ -244,7 +242,7 @@ function getFullCustomers(callback) {
 
 function deleteContract(url, callback) {
   let url_tmp = url;
-  if (location.protocol == "https:" && url_tmp.includes('http:')) {
+  if (location.protocol == 'https:' && url_tmp.includes('http:')) {
     url_tmp = url_tmp.replace('http:', 'https:');
   }
   Api.delete(url_tmp).then((response) => callback(response.data.results));
@@ -292,13 +290,19 @@ function contractPayloadFromFrontend(contract) {
       if (position.customer_is_drop_off && pos > 0) {
         customerUrl = position.customer_url;
       }
-
+      // existing vs new contract
+      let customer_is_drop_off = position.response
+        ? position.response.customer_is_drop_off
+        : position.response.customer_is_drop_off;
+      let customer_is_pick_up = position.response
+        ? position.response.customer_is_pick_up
+        : position.response.customer_is_pick_up;
       newContract.positions.push({
         position: pos,
         start_time: position.start_time.format('YYYY-MM-DDTHH:mm:ssZ'),
         start_time_to: position.start_time_to.format('YYYY-MM-DDTHH:mm:ssZ'),
-        customer_is_drop_off: position.response.customer_is_drop_off,
-        customer_is_pick_up: position.response.customer_is_pick_up,
+        customer_is_drop_off: customer_is_drop_off,
+        customer_is_pick_up: customer_is_pick_up,
         memo: position.memo,
         new_customer: customerUrl,
         weight_size_bonus: position.weight_size_bonus,
@@ -333,7 +337,7 @@ function contractPayloadFromFrontend(contract) {
         ],
       });
     });
-    if (contract.isRepeated){
+    if (contract.isRepeated) {
       newContract.url = BACKEND + 'repeated/' + contract.id + '/';
     }
     return newContract;
@@ -345,8 +349,7 @@ function prepareNewContract(contract) {
 }
 
 function putContract(contract, callback) {
-  prepareNewContract(contract).then((payload) =>
-  {
+  prepareNewContract(contract).then((payload) => {
     let url = contract.url;
     if (url == undefined) url = payload.url; // for repeated contracts
     if (BACKEND.includes('https:') && url.includes('http:')) {
@@ -356,8 +359,8 @@ function putContract(contract, callback) {
       .then((response) => {
         callback(response);
       })
-      .catch((error) => console.log(error))},
-  );
+      .catch((error) => console.log(error));
+  });
 }
 
 function postNewContract(contract, callback) {
