@@ -55,12 +55,15 @@ class ContractPositionA extends Component {
       const { street, number, stair, level, door, postal_code } =
         address_tmp || {};
       const sameDay = moment(start_time).isSame(this.props.date, 'day');
-      const name =
-        customer !== null
-          ? customer.name === '_anon'
-            ? anon_name
-            : customer.name
-          : '';
+      let nameTmp = customer !== null
+        ? customer.name === '_anon'
+          ? anon_name
+          : customer.name
+        : '';
+      if (!this.props.position.customer_is_pick_up) {
+        nameTmp = this.props.position.customer.name;
+      } 
+      const name = nameTmp
       let positionTime = '';
       let positionTimeTo = '';
       let positionDate = '';
@@ -101,11 +104,18 @@ class ContractPositionA extends Component {
                     {postal_code}
                   </Col>
                   <Col xs={10} className='mh d-flex'>
-                    {street}{' '}
-                    {number}
-                    {stair ? `/${stair}` : ''}
-                    {level ? `/${level}` : ''}
-                    {door ? `/${door}` : ''}
+                    <Row>
+                      <Col xs={12} className='boldf'>
+                        {name}
+                      </Col>
+                      <Col xs={12}>
+                        {street}{' '}
+                        {number}
+                        {stair ? `/${stair}` : ''}
+                        {level ? `/${level}` : ''}
+                        {door ? `/${door}` : ''}
+                      </Col>
+                    </Row>
                   </Col>
                 </Row>
               </Col>

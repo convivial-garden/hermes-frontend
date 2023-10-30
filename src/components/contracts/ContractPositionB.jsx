@@ -51,13 +51,16 @@ class ContractPositionB extends Component {
         );
 
       const { street, number, stair, level, door, postal_code } = address[0];
+      let nameTmp = customer !== null
+        ? customer.name === '_anon'
+          ? anon_name
+          : customer.name
+        : '';
+        if (this.props.position.customer_is_drop_off) {
+          nameTmp = this.props.contract.customer.name;
+        } 
+      const name = nameTmp
 
-      const name =
-        customer !== null
-          ? customer.name === '_anon'
-            ? anon_name
-            : customer.name
-          : '';
       const weightOrSize = weightsize === 'weight' ? 'GZ' : 'GZ';
       const sameDay = moment(start_time).isSame(this.props.date, 'day');
       const cargoStr = cargo ? 'C' : '';
