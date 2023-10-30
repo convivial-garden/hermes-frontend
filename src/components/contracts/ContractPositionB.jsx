@@ -98,10 +98,15 @@ class ContractPositionB extends Component {
               <Col xs={2} className='mh boldf'>
                 {postal_code}
               </Col>
-              <Col xs={6} className='mh'>
-                {street}
-              </Col>
-              <Col xs={4}>
+              <Col xs={10} className='mh'>
+                <Row>
+                  <Col xs={12} className='boldf'>
+                    {name}
+                  </Col>
+                  <Col xs={6}>
+                    {street}
+                  </Col>
+                  <Col xs={4}>
                 <Row>
                   <Col xs={4} className='mh'>
                     {number}
@@ -117,6 +122,9 @@ class ContractPositionB extends Component {
                   </Col>
                 </Row>
               </Col>
+                </Row>
+              </Col>
+
             </Row>
           </Col>
           <Col xs={2} className='timec'>
