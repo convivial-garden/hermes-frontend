@@ -26,7 +26,7 @@ function CustomerListEntry({ customer, update }) {
                 Name:
               </Col>
               <Col xs={SECOND_COLUMN_WIDTH}>
-                {customer.name}
+                {customer?.name}
               </Col>
             </Row>
 

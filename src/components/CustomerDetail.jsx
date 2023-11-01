@@ -44,7 +44,7 @@ function CustomerDetail({ customer, cl, update, refresh }) {
                     className='text-danger pe-2'
                   />
                 )}
-                {customer.name}
+                {customer?.name}
               </Col>
             </Row>
           </Col>
