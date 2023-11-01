@@ -57,7 +57,7 @@ class ContractPositionB extends Component {
           : customer.name
         : '';
         if (this.props.position.customer_is_drop_off) {
-          nameTmp = this.props.contract.customer.name;
+          nameTmp = this.props.contract.customer?.name;
         } 
       const name = nameTmp
 
