@@ -23,6 +23,7 @@ class ContractPositionB extends Component {
     } = this.props.position;
     let address = this.props.position.address;
     if (this.props.position.customer_is_drop_off) {
+      if (this.props.contract.customer)
       address = this.props.contract.customer.addresses;
     } else {
       if (
