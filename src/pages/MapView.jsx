@@ -93,7 +93,7 @@ export default class MapView extends Component {
               style={{ height: '800px' }}
             >
               <TileLayer
-                url="https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png"
+                url="https://mapsneu.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png"
                 subdomains={['maps', 'maps1', 'maps2', 'maps3']}
                 minZoom="1"
                 maxZoom="18"
