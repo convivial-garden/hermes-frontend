@@ -24,7 +24,7 @@ export default class MapComponent extends Component {
           style={{ height: this.props.height, width: this.props.width }}
         >
           <TileLayer
-            url='https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png'
+            url='https://mapsneu.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png'
             subdomains={['maps', 'maps1', 'maps2', 'maps3']}
             minZoom='1'
             maxZoom='18'
